@@ -1,5 +1,5 @@
 var config = require('./config');
-//database/orm require goes here
+var db = require('./db');
 var server = require('./server');
 
 /*makes it so we can output api logs to a file using logger.info(log)

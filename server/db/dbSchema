@@ -1,0 +1,168 @@
+
+
+
+
+-- ---
+-- Globals
+-- ---
+
+-- SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+-- SET FOREIGN_KEY_CHECKS=0;
+
+-- ---
+-- Table 'users'
+-- 
+-- ---
+
+DROP TABLE IF EXISTS `users`;
+		
+CREATE TABLE `users` (
+  `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
+  `username` VARCHAR NOT NULL DEFAULT 'NULL',
+  `password` VARCHAR NOT NULL DEFAULT 'NULL',
+  `created_at` TIMESTAMP NULL DEFAULT NULL,
+  `last_updated` TIMESTAMP NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+
+-- ---
+-- Table 'leagues'
+-- 
+-- ---
+
+DROP TABLE IF EXISTS `leagues`;
+		
+CREATE TABLE `leagues` (
+  `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
+  `name` VARCHAR NOT NULL DEFAULT 'NULL',
+  `owner` INTEGER NOT NULL DEFAULT NULL,
+  `start_date` TIMESTAMP NULL DEFAULT NULL,
+  `end_date` TIMESTAMP NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+
+-- ---
+-- Table 'characters'
+-- 
+-- ---
+
+DROP TABLE IF EXISTS `characters`;
+		
+CREATE TABLE `characters` (
+  `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
+  `league_id` INTEGER NULL DEFAULT NULL,
+  `name` VARCHAR NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+-- ---
+-- Table 'events'
+-- 
+-- ---
+
+DROP TABLE IF EXISTS `events`;
+		
+CREATE TABLE `events` (
+  `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
+  `league_id` INTEGER NOT NULL DEFAULT NULL,
+  `description` VARCHAR NOT NULL DEFAULT 'NULL',
+  `score_up` INTEGER NOT NULL DEFAULT 0,
+  `score_down` INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+);
+
+-- ---
+-- Table 'user_rosters'
+-- 
+-- ---
+
+DROP TABLE IF EXISTS `user_rosters`;
+		
+CREATE TABLE `user_rosters` (
+  `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
+  `league_id` INTEGER NOT NULL DEFAULT NULL,
+  `user_id` INTEGER NOT NULL DEFAULT NULL,
+  `character_id` INTEGER NOT NULL DEFAULT NULL,
+  `created_at` TIMESTAMP NULL DEFAULT NULL,
+  `last_updated` TIMESTAMP NULL DEFAULT NULL,
+  `current_score` INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+);
+
+-- ---
+-- Table 'character_events'
+-- 
+-- ---
+
+DROP TABLE IF EXISTS `character_events`;
+		
+CREATE TABLE `character_events` (
+  `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
+  `character_id` INTEGER NOT NULL DEFAULT NULL,
+  `event_id` INTEGER NOT NULL DEFAULT NULL,
+  `ocurred_at` TIMESTAMP NOT NULL DEFAULT 'NULL',
+  `league_id` INTEGER NOT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+
+-- ---
+-- Table 'user_leagues'
+-- 
+-- ---
+
+DROP TABLE IF EXISTS `user_leagues`;
+		
+CREATE TABLE `user_leagues` (
+  `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
+  `user_id` INTEGER NOT NULL DEFAULT NULL,
+  `league_id` INTEGER NOT NULL DEFAULT NULL,
+  `current_score` INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+);
+
+-- ---
+-- Foreign Keys 
+-- ---
+
+ALTER TABLE `leagues` ADD FOREIGN KEY (owner) REFERENCES `users` (`id`);
+ALTER TABLE `characters` ADD FOREIGN KEY (league_id) REFERENCES `leagues` (`id`);
+ALTER TABLE `events` ADD FOREIGN KEY (league_id) REFERENCES `leagues` (`id`);
+ALTER TABLE `user_rosters` ADD FOREIGN KEY (league_id) REFERENCES `leagues` (`id`);
+ALTER TABLE `user_rosters` ADD FOREIGN KEY (user_id) REFERENCES `users` (`id`);
+ALTER TABLE `user_rosters` ADD FOREIGN KEY (character_id) REFERENCES `characters` (`id`);
+ALTER TABLE `character_events` ADD FOREIGN KEY (character_id) REFERENCES `characters` (`id`);
+ALTER TABLE `character_events` ADD FOREIGN KEY (event_id) REFERENCES `events` (`id`);
+ALTER TABLE `character_events` ADD FOREIGN KEY (league_id) REFERENCES `leagues` (`id`);
+ALTER TABLE `user_leagues` ADD FOREIGN KEY (user_id) REFERENCES `users` (`id`);
+ALTER TABLE `user_leagues` ADD FOREIGN KEY (league_id) REFERENCES `leagues` (`id`);
+
+-- ---
+-- Table Properties
+-- ---
+
+-- ALTER TABLE `users` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `leagues` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `characters` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `events` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `user_rosters` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `character_events` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `user_leagues` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ---
+-- Test Data
+-- ---
+
+-- INSERT INTO `users` (`id`,`username`,`password`,`created_at`,`last_updated`) VALUES
+-- ('','','','','');
+-- INSERT INTO `leagues` (`id`,`name`,`owner`,`start_date`,`end_date`) VALUES
+-- ('','','','','');
+-- INSERT INTO `characters` (`id`,`league_id`,`name`) VALUES
+-- ('','','');
+-- INSERT INTO `events` (`id`,`league_id`,`description`,`score_up`,`score_down`) VALUES
+-- ('','','','','');
+-- INSERT INTO `user_rosters` (`id`,`league_id`,`user_id`,`character_id`,`created_at`,`last_updated`,`current_score`) VALUES
+-- ('','','','','','','');
+-- INSERT INTO `character_events` (`id`,`character_id`,`event_id`,`ocurred_at`,`league_id`) VALUES
+-- ('','','','','');
+-- INSERT INTO `user_leagues` (`id`,`user_id`,`league_id`,`current_score`) VALUES
+-- ('','','','');

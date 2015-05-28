@@ -1,7 +1,7 @@
 function setup(app, routeHandlers) {
 	app.route('/')
-		.get(routeHandlers.homeGet);
-		//.post(POSTHANDLERFUNCTION)
+		.get(routeHandlers.homeGET);
+		// .post(POSTHANDLERFUNCTION)
 }
 
 exports.setup = setup;

@@ -1,6 +1,6 @@
 module.exports = {
 	db : {
-		//db setup
+		//db setup - I actually think we might not need this part anymore
 	},
 
 	logger: {
