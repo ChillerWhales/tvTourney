@@ -12,11 +12,8 @@ var routeHandlers = require('./routeHandlers');
 var expressLogFile = fs.createWriteStream('./logs/express.log', {flags: 'a'});
 
 //configuration
-//log to stdOut
+//log requests/responses to file
 app.use(logger('combined', {stream: expressLogFile}));
-
-//log to file
-// app.use(logger('combined', {stream: expressLogFile}));
 
 /*allows the server to automatically process urlencoded stuff into a javscript object
 if we decided to pass JSON to the server instead we'll need to change this to parser.JSON()*/
