@@ -17,7 +17,8 @@ app.use(logger('combined', {stream: expressLogFile}));
 
 /*allows the server to automatically process urlencoded stuff into a javscript object
 if we decided to pass JSON to the server instead we'll need to change this to parser.JSON()*/
-app.use(parser.urlencoded({extended: true}));
+app.use(parser.json());
+// app.use(parser.urlencoded({extended: true}));
 
 //start server functions and export
 var start = function() {

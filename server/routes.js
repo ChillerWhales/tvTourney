@@ -1,7 +1,8 @@
 function setup(app, routeHandlers) {
 	app.route('/')
 		.get(routeHandlers.homeGET);
-		// .post(POSTHANDLERFUNCTION)
+	app.route('/signup')
+		.post(routeHandlers.signupPOST);
 }
 
 exports.setup = setup;
