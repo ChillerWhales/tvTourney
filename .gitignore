@@ -3,3 +3,4 @@ server/logs/
 server/db/db.sqlite
 client/lib/
 client/node_modules/
+npm-debug.log
