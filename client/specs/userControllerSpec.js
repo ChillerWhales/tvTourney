@@ -36,36 +36,41 @@ describe('UserController', function () {
     expect($scope.user).to.be.a('object');
   });
 
-  it('should have return 201 when new user is created', function() {
+  it('should have call to POST /signup when user signs up and redirect to login angular route', function() {
     var newUser = {
       username: 'testing123',
       email: 'testing123@gmail.com',
       password: '123456'
     };
 
-    $httpBackend.expectPOST('/signup', newUser).respond(201);
+    $scope.user = newUser;
+    
+    $httpBackend.expect('POST', '/signup', $scope.user).respond(201);
+
+    $httpBackend.expect('GET', 'app/user/login.html').respond(200);
+
     $scope.signup();
+
+    $httpBackend.flush();
+
+  });
+
+  it('should have call to POST /login when user logs in and redirect to leagues angular route', function() {
+    var user = {
+      username: 'testing123',
+      password: '123456'
+    };
+
+    $scope.user = user;
+
+    $httpBackend.expect('POST', '/login', user).respond(200);
+
+    $httpBackend.expect('GET', 'app/leagues/leagues.html').respond(200);
+
+    $scope.login();
+
     $httpBackend.flush();
   });
 
-  // it('should have return 400 when new user is already exist', function() {
-  //   var newUser = {
-  //     username: 'testing123',
-  //     email: 'testing123@gmail.com',
-  //     password: '123456'
-  //   };
-
-  //   $httpBackend.expectPOST('/signup', newUser).respond(400);
-  // });
-
-  // it('should have return 500 when new user is error to storage in db', function() {
-  //   var newUser = {
-  //     username: null,
-  //     email: null,
-  //     password: '123456'
-  //   };
-
-  //   $httpBackend.expectPOST('/signup', newUser).respond(500);
-  // });
 });
 
