@@ -48,7 +48,7 @@ module.exports = {
 			}
 			else if (user && user.password === params.password) {
 				//create a sessions
-				req.session.token = user.id;
+				req.session.token = user.username;
 				res.status(200).json(user);
 				logger.info("User successfully logged in");
 			}
