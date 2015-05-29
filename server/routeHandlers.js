@@ -10,7 +10,7 @@ module.exports = {
 	signupPOST: function(req, res) {
 		//get form data
 		var params = req.body;
-		//check if user existss
+		//check if user exists
 		db.User.findOne({where: {username: params.username}}).then(function(user) {
 			//if user doesnt exist, create user
 			if (!user) {
@@ -43,7 +43,6 @@ module.exports = {
 			//if user doesnt exist, create user
 			if (!user || user.password !== params.password) {
 				logger.info("User attempted to login with invalid information");
-				console.log("User attempted to login with invalid information");
 				res.status(401).send("That username/password combination doesn't exist");
 			}
 			else if (user && user.password === params.password) {
@@ -64,5 +63,44 @@ module.exports = {
 			logger.info("User was successfully logged out");
 			res.status(200).send("User successfully logged out");
 		});
+	},
+
+	/*this code expects that the req will have the id of the league event so it
+	can confirm that the user is indeed the owner of the the league specified.*/
+	eventGET: function(req, res) {
+		//checks if user is the current owner of the league.
+		db.League.findOne({where: {id : req.session.league.id, owner: req.session.user.id}}).then(function(result) {
+			//checks to see if the league under that id's owner is the same as our session user.
+			if(result) {
+				logger.info("User is the owner of the league. Create events!");
+				res.status(200).send("You have access for creating events on this league")
+			}
+			else {
+				logger.info("User does not have access creating events on this league")
+				res.status(403).send("User doesn't have access to this page.")
+			}
+		});
 	}
+
+	/*creates individual events that the user writes*/
+	eventPost: function(req, res) {
+		//gets form data
+		var params = req.body;
+			//expects league_id, description, score
+			db.LeagueEvent.create({
+			league_id : params.id,
+			description : params.description,
+			//doesnt account for the fact that score could be negative. all scores will be in score_up
+			score_up : params.score
+			})
+	}
+
+
+
+
+
+
+
+
+
 }

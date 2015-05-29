@@ -7,6 +7,9 @@ function setup(app, routeHandlers) {
 		.post(routeHandlers.loginPOST);
 	app.route('/logout')
 		.get(routeHandlers.logoutGET);
+  app.route('/league/:id/events')
+    .get(routeHandlers.eventGET)
+    .post(routeHandlers.eventPOST);
 }
 
 exports.setup = setup;
