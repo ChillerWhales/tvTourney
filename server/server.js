@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express();
+var should = require('should');
 //middleware that automatically logs responses, requests, and associated data
 var logger = require('morgan');
 var routes = require('./routes');

@@ -14,12 +14,14 @@ var sequelize = new Sequelize('database', 'root', '', {
 	storage: './db/db.sqlite'
 });
 
-// these define the schema for our tables
+/* these define the schema for our tables - refactor later to be more
+organized (perhaps separate files) and more dry because they are repeated
+in the testing specs*/
+
 var User = sequelize.define('user', {
   username: Sequelize.STRING,
   email: Sequelize.STRING,
   password: Sequelize.STRING
-  //date created and last updated
 }); 
 
 var UserLeague = sequelize.define('user_league', {

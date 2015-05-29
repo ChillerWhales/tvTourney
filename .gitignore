@@ -1,6 +1,7 @@
 server/node_modules/
 server/logs/
 server/db/db.sqlite
+server/db/dbTest.sqlite
 client/lib/
 client/node_modules/
 npm-debug.log
