@@ -1,3 +1,5 @@
 server/node_modules/
 server/logs/
 server/db/db.sqlite
+client/lib/
+client/node_modules/
