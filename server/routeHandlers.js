@@ -69,7 +69,7 @@ module.exports = {
 	can confirm that the user is indeed the owner of the the league specified.*/
 	eventGET: function(req, res) {
 		//checks if user is the current owner of the league.
-		db.League.findOne({where: {id : req.id, owner: req.session.user.id}}).then(function(result) {
+		db.League.findOne({where: {id : req.session.league.id, owner: req.session.user.id}}).then(function(result) {
 			//checks to see if the league under that id's owner is the same as our session user.
 			if(result) {
 				logger.info("User is the owner of the league. Create events!");
@@ -86,7 +86,13 @@ module.exports = {
 	eventPost: function(req, res) {
 		//gets form data
 		var params = req.body;
-		db.events.
+			//expects league_id, description, score
+			db.LeagueEvent.create({
+			league_id : params.id,
+			description : params.description,
+			//doesnt account for the fact that score could be negative. all scores will be in score_up
+			score_up : params.score
+			})
 	}
 
 
