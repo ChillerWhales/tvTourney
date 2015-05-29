@@ -16,30 +16,33 @@ var sequelize = new Sequelize('database', 'root', '', {
 
 // these define the schema for our tables
 var User = sequelize.define('user', {
+  username: Sequelize.STRING,
+  email: Sequelize.STRING,
+  password: Sequelize.STRING
+  //date created and last updated
+}); 
+
+var UserLeague = sequelize.define('user_league', {
 
 }); 
 
-UserLeague = sequelize.define('user_league', {
+var UserRoster = sequelize.define('user_roster', {
 
 }); 
 
-UserRoster = sequelize.define('user_roster', {
+var League = sequelize.define('league', {
 
 }); 
 
-League = sequelize.define('league', {
+var LeagueCharacter = sequelize.define('league_character', {
 
 }); 
 
-LeagueCharacter = sequelize.define('league_character', {
+var LeagueEvent = sequelize.define('league_event', {
 
 }); 
 
-LeagueEvent = sequelize.define('league_event', {
-
-}); 
-
-CharacterEvent = sequelize.define('character_event', {
+var CharacterEvent = sequelize.define('character_event', {
 
 }); 
 
