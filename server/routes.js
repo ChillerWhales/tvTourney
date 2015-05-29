@@ -3,6 +3,8 @@ function setup(app, routeHandlers) {
 		.get(routeHandlers.homeGET);
 	app.route('/signup')
 		.post(routeHandlers.signupPOST);
+	app.route('/login')
+		.post(routeHandlers.loginPOST);
 }
 
 exports.setup = setup;

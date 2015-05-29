@@ -35,5 +35,23 @@ module.exports = {
 				res.status(500).send("Check your code bro");
 			}
 		})
+	},
+
+	loginPOST: function(req, res) {
+		var params = req.body;
+		db.User.findOne({where: {username: params.username}}).then(function(user) {
+			//if user doesnt exist, create user
+			if (!user || user.password !== params.password) {
+				logger.info("User attempted to login with invalid information");
+				console.log("User attempted to login with invalid information");
+				res.status(401).send("That username/password combination doesn't exist");
+			}
+			else if (user && user.password === params.password) {
+				//create a sessions
+				req.session.token = user.id;
+				res.status(200).json(user);
+				logger.info("User ", username, " successfully logged in");
+			}
+		});
 	}
 }
