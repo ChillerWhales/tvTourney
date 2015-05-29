@@ -43,7 +43,6 @@ module.exports = {
 			//if user doesnt exist, create user
 			if (!user || user.password !== params.password) {
 				logger.info("User attempted to login with invalid information");
-				console.log("User attempted to login with invalid information");
 				res.status(401).send("That username/password combination doesn't exist");
 			}
 			else if (user && user.password === params.password) {
@@ -64,5 +63,22 @@ module.exports = {
 			logger.info("User was successfully logged out");
 			res.status(200).send("User successfully logged out");
 		});
+	},
+
+	leagueCreatePOST: function(req, res) {
+		//Inputs: league name, show, roster limit
+		var params = req.body;
+		var ownerId = req.session.token;
+
+		db.League.create({
+			name: params.name,
+			show: params.show,
+			owner: ownerId,
+			roster_limit: params.roster_limit
+		}).then(function(newLeague) {
+			logger.info("New league successfully created");
+			res.status(200).json(newLeague);
+			})
+			// }		
 	}
 }

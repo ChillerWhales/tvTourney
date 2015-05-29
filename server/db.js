@@ -31,7 +31,10 @@ var UserRoster = sequelize.define('user_roster', {
 }); 
 
 var League = sequelize.define('league', {
-
+  name: Sequelize.STRING,
+  show: Sequelize.STRING,
+  owner: Sequelize.INTEGER,
+  roster_limit: Sequelize.INTEGER
 }); 
 
 var LeagueCharacter = sequelize.define('league_character', {

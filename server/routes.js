@@ -7,6 +7,8 @@ function setup(app, routeHandlers) {
 		.post(routeHandlers.loginPOST);
 	app.route('/logout')
 		.get(routeHandlers.logoutGET);
+  app.route('/league/')
+    .post(routeHandlers.leagueCreatePOST);
 }
 
 exports.setup = setup;
