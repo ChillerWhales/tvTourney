@@ -28,7 +28,7 @@ describe('API', function() {
 		storage: '../db/db.sqlite'
 	});
 
-	describe('signup', function() {
+	describe('signup and login/logout', function() {
 
 		//user tests will try to create
 		var testUser = {
@@ -72,9 +72,11 @@ describe('API', function() {
 				})
 				.end(function(err, res) {
 					if (err) {
-						return done(err);
+						done(err);
 					}
-					done();
+					else {
+						done();
+					}
 					/*if there was a get method we could test to see if the user was created
 					it would go here, but there is no GET equivalent of signup since we dont
 					have a "view profile" equivalent */
@@ -83,14 +85,51 @@ describe('API', function() {
 
 		it('should respond with status code 400 if username already exists', function(done) {
 			request.post('/signup')
-			.send(testUser)
-			.expect(400)
-			.end(function (err, res) {
-				if (err) {
-					return done(err);
-				}
-				done();
+				.send(testUser)
+				.expect(400)
+				.end(function (err, res) {
+					if (err) {
+						done(err);
+					}
+					else {
+						done();
+					}
 			});
 		});
-	})
-})
+
+		it('should respond with status code 200 if username/password is correct', function(done) {
+			request.post('/login')
+				.send(testUser)
+				.expect(200)
+				.end(function(err, res) {
+					if (err) {
+						done(err);
+					}
+					else {
+						done();
+					}
+				});
+		});
+
+		it('should respond with status code 401 if username/password is incorrect', function(done) {
+			var wrongTestUser = {
+				username: "doesntexist",
+				password: "wrongpassword"
+			}
+
+			request.post('/login')
+				.send(wrongTestUser)
+				.expect(401)
+				.end(function(err, res) {
+					if (err) {
+						done(err);
+					}
+					else {
+						done();
+					}
+				});
+		});
+
+		//should be a logout test here, as well as sessions tests, but too much work for MVP
+	});
+});
