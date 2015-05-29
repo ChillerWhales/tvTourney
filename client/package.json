@@ -1,0 +1,22 @@
+{
+  "name": "tvTourney",
+  "version": "1.0.0",
+  "description": "A interactive and customizable fantasy bracket app where users choose the rules.",
+  "main": "",
+  "scripts": {
+    "test": "karma start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ChillerWhales/tvTourney.git"
+  },
+  "author": "ChillerWhales Developers",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ChillerWhales/tvTourney/issues"
+  },
+  "homepage": "https://github.com/ChillerWhales/tvTourney",
+  "dependencies": {
+    "expect.js": "^0.3.1"
+  }
+}

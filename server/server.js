@@ -6,6 +6,8 @@ var routes = require('./routes');
 var fs = require('fs');
 var parser = require('body-parser');
 var routeHandlers = require('./routeHandlers');
+var session = require('express-session');
+var cors = require('cors');
 
 //what does flag do?
 //setup log file
@@ -19,6 +21,16 @@ app.use(logger('combined', {stream: expressLogFile}));
 if we decided to pass JSON to the server instead we'll need to change this to parser.JSON()*/
 app.use(parser.json());
 // app.use(parser.urlencoded({extended: true}));
+
+//set up sessions
+app.use(session({
+	secret: 'chillestWhales',
+	resave: false,
+	saveUninitialized: false
+}));
+
+//allows cors
+app.use(cors());
 
 //start server functions and export
 var start = function() {
