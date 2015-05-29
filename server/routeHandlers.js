@@ -64,5 +64,10 @@ module.exports = {
 			logger.info("User was successfully logged out");
 			res.status(200).send("User successfully logged out");
 		});
+
+	eventGET: function(req, res) {
+		//Checks if user in the session ID is the current owner of the league.
+		// db.User.findOne({where: })
+	};
 	}
 }
