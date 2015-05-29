@@ -18,6 +18,7 @@
     "mocha": "^2.2.5",
     "morgan": "^1.5.3",
     "sequelize": "^3.1.1",
+    "should": "^6.0.3",
     "sqlite3": "^3.0.8",
     "supertest": "^1.0.1"
   }
