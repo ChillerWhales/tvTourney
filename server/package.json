@@ -20,6 +20,7 @@
     "sequelize": "^3.1.1",
     "should": "^6.0.3",
     "sqlite3": "^3.0.8",
+    "superagent": "^1.2.0",
     "supertest": "^1.0.1"
   }
 }

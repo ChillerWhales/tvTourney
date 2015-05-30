@@ -64,5 +64,10 @@ module.exports = {
 			logger.info("User was successfully logged out");
 			res.status(200).send("User successfully logged out");
 		});
+	},
+
+	testAuthGET: function(req, res) {
+		//user should only make it here if they pass authentication
+		res.status(200).send("You're authenticated!")
 	}
 }

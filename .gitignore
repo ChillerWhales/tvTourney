@@ -1,5 +1,7 @@
 server/node_modules/
-server/logs/
+server/logs/api.log
+server/logs/exception.log
+server/logs/express.log
 server/db/db.sqlite
 server/db/dbTest.sqlite
 client/lib/
