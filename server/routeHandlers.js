@@ -48,7 +48,7 @@ module.exports = {
 			}
 			else if (user && user.password === params.password) {
 				//create a sessions
-				req.session.token = user.id;
+				req.session.token = user.username;
 				res.status(200).json(user);
 				logger.info("User successfully logged in");
 			}
@@ -64,5 +64,10 @@ module.exports = {
 			logger.info("User was successfully logged out");
 			res.status(200).send("User successfully logged out");
 		});
+	},
+
+	testAuthGET: function(req, res) {
+		//user should only make it here if they pass authentication
+		res.status(200).send("You're authenticated!")
 	}
 }
