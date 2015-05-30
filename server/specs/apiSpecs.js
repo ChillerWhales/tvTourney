@@ -6,9 +6,6 @@ var assert = require('assert');
 var supertest = require('supertest');
 var request = supertest(serverHost);
 var Sequelize = require('sequelize');
-// var superagent = require('superagent');
-//will be used to capture and send cookies
-// var agent = superagent.agent();
 
 describe('API', function() {
 
