@@ -44,11 +44,11 @@ describe('LeagueController', function () {
     $httpBackend.flush();
   });
 
-  it('should GET request to /user/leagues when Leagues factory is called through getLeagues scope function', function() {
+  it('should GET request to /user/leagues when ListLeague factory is called through getLeagues scope function', function() {
     var leagues = [{}, {}];
     $httpBackend.expect('GET', '/user/leagues').respond(leagues);
 
-    League.getLeagues();
+    ListLeague.getLeagues();
 
     $httpBackend.flush();
   });
