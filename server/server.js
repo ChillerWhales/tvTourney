@@ -10,6 +10,10 @@ var routeHandlers = require('./routeHandlers');
 var session = require('express-session');
 var cors = require('cors');
 
+// authentication and encryption middleware//
+var passport =  require('passport');
+
+
 //what does flag do?
 //setup log file
 var expressLogFile = fs.createWriteStream('./logs/express.log', {flags: 'a'});
@@ -17,6 +21,9 @@ var expressLogFile = fs.createWriteStream('./logs/express.log', {flags: 'a'});
 //configuration
 //log requests/responses to file
 app.use(logger('combined', {stream: expressLogFile}));
+
+
+
 
 /*allows the server to automatically process urlencoded stuff into a javscript object
 if we decided to pass JSON to the server instead we'll need to change this to parser.JSON()*/
@@ -30,8 +37,13 @@ app.use(session({
 	saveUninitialized: false
 }));
 
+
 //serves the client
 app.use(express.static(__dirname + '/../client/'));
+// Initialize passport and passport session
+// passport session invocation must be after the express sessions declaration as it is going to piggyback on that
+app.use(passport.initialize());
+app.use(passport.session());
 
 //allows cors
 app.use(cors());

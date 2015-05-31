@@ -7,5 +7,8 @@ module.exports = {
 		//server logger
 		api: "logs/api.log",
 		exception: "logs/exception.log"
-	}
+	},
+
+  // passport config
+  passport:
 }
