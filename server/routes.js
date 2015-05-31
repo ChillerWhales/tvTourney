@@ -14,14 +14,17 @@ function setup(app, routeHandlers) {
 	app.route('/league/:id/events')
     .get(routeHandlers.eventGET)
     .post(routeHandlers.eventPOST);
-	/*adding auth here protects the route from unauthenticated users
-	if user is authenticated, auth will call next and the next routehandler
-	will catch the requeset and process it, otherwise the user will receive
-	a 401 */
-	app.route('/testauth')
-		//basically route-specific middleware
-		.all(auth)
-		.get(routeHandlers.testAuthGET);
+  app.route('/league/:leagueId/characters')
+  .get(routeHandlers.leagueCharactersGET)
+  .post(routeHandlers.leagueCharactersPOST);
+  /*adding auth here protects the route from unauthenticated users
+  if user is authenticated, auth will call next and the next routehandler
+  will catch the requeset and process it, otherwise the user will receive
+  a 401 */
+  app.route('/testauth')
+    //basically route-specific middleware
+    .all(auth)
+    .get(routeHandlers.testAuthGET);
 }
 
 exports.setup = setup;

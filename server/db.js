@@ -39,8 +39,15 @@ var League = sequelize.define('league', {
 }); 
 
 var LeagueCharacter = sequelize.define('league_character', {
-
+  name: Sequelize.STRING,
+  league_id: Sequelize.INTEGER
 }); 
+// associations
+LeagueCharacter.belongsTo(League)
+League.hasMany(LeagueCharacter)
+
+// assocaite to user rosters as well
+
 
 var LeagueEvent = sequelize.define('league_event', {
 

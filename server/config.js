@@ -10,5 +10,5 @@ module.exports = {
 	},
 
   // passport config
-  passport:
+
 }

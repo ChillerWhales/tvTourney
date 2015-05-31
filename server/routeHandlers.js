@@ -134,6 +134,29 @@ module.exports = {
 	},
 	testAuthGET: function(req, res) {
 		//user should only make it here if they pass authentication
-		res.status(200).send("You're authenticated!")
+		res.status(200).send("You're authenticated!");
+	},
+	/*
+	leaugesCharactersGET: This returns a JSON of characters for the requested league ID token
+	leaugesCharactersPOST: This will insert the array of characters in the table (for the league id)
+
+	 */
+	leagueCharactersPOST: function(req, res) {
+		// receive leagueId as leagueId from req params and character  (name) and creates one record
+		// 
+		// create records for league id
+		// return 201 and obj containing created rows
+		var params = req.body;
+		db.LeagueCharacter.create({ league_id: req.param('leagueId'), name: params.name })
+		.then(function(character) {
+			console.log("character created -  ", character);
+			res.status(201).send(JSON.stringify(character));
+		});
+	},
+
+	leagueCharactersGET: function(req, res) {
+
 	}
-}
+
+
+};
