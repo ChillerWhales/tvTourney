@@ -1,12 +1,10 @@
 var logger = require('bristol');
 var db = require('./db');
+var utils = require('./lib/utils');
 
 module.exports = {
 	homeGET: function(req, res) {
-		res.send("Hello world");
-		logger.info("Hello world delivered to client");
 	},
-
 	signupPOST: function(req, res) {
 		//get form data
 		var params = req.body;
@@ -36,7 +34,6 @@ module.exports = {
 			}
 		})
 	},
-
 	loginPOST: function(req, res) {
 		var params = req.body;
 		db.User.findOne({where: {username: params.username}}).then(function(user) {
@@ -54,7 +51,6 @@ module.exports = {
 			}
 		});
 	},
-
 	/*session will exist in each request, but calling destroy() causes
 	the token property (which contains the users id) to be removed
 	from the cookie, effectively logging the user out.*/
@@ -65,7 +61,85 @@ module.exports = {
 			res.status(200).send("User successfully logged out");
 		});
 	},
+	leagueCreatePOST: function(req, res) {
+		//Inputs: league name, show, roster limit
+		var params = req.body;
+		utils.findUserId(req.session.token, function(user) {
+			var ownerId = user.id;
+			if (ownerId) {
+				db.League.create({
+					name: params.name,
+					show: params.show,
+					owner: ownerId,
+					roster_limit: params.roster_limit
+				}).then(function(newLeague) {
+					logger.info("New league successfully created");
+					console.log('newLeague', newLeague);
+					res.status(200).json(newLeague);
+				});
+			} else if (ownerId === undefined) {
+				logger.info("League was not successfully created");
+				res.status(400).send("League was not created.");
+			}
+		});
 
+	},
+	/*this code expects that the req will have the id of the league event so it
+	can confirm that the user is indeed the owner of the the league specified.*/
+	eventGET: function(req, res) {
+		var params = req.body;
+		utils.findUserId(req.session.token, function(user) {
+			var ownerId = user.id;
+			if(ownerId) {
+				db.League.findOne({where: {id : params.id, owner: userId}}).then(function(result) {
+					//checks to see if the league under that id's owner is the same as our session user.
+					if(result) {
+						logger.info("User is the owner of the league. Create events!");
+						res.status(200).send("You have access for creating events on this league");
+						db.LeagueEvent.findAll({
+							where: {
+								league_id: params.id
+							}
+						}).then(function(result) {
+							res.write(result);
+							res.end();
+						});
+					}
+					else {
+						logger.info("User does not have access creating events on this league");
+						res.status(403).send("User doesn't have access to this page.");
+						res.end();
+					}
+				});
+			}
+			else {
+				logger.info("User not logged in!");
+				res.status(401).send("No user token!");
+			}
+		});
+		//checks if user is the current owner of the league.
+	},
+	/*creates individual events that the user writes*/
+	eventPOST: function(req, res) {
+		//gets form data
+		var params = req.body;
+			//expects league_id, description, score
+			if(!params.id || !params.description || params.score === undefined) {
+				logger.info("There are missing inputs from the form");
+				res.status(500).send("Wrong inputs please try again");
+			}
+			else {
+				db.LeagueEvent.create({
+				league_id : params.id,
+				description : params.description,
+				//doesnt account for the fact that score could be negative. all scores will be in score_up
+				score_up : params.score
+				}).then(function(newLeagueEvent) {
+					logger.info("Adds event successfully");
+					res.status(201).send("Event created successfully");
+				});
+			}
+	},
 	testAuthGET: function(req, res) {
 		//user should only make it here if they pass authentication
 		res.status(200).send("You're authenticated!")

@@ -30,6 +30,9 @@ app.use(session({
 	saveUninitialized: false
 }));
 
+//serves the client
+app.use(express.static(__dirname + '/../client/'));
+
 //allows cors
 app.use(cors());
 

@@ -25,14 +25,14 @@ angular.module('app.routes', ['ui.router'])
       templateUrl: 'app/leagues/new/new.html',
       controller: 'newLeagueController'
     })
+    .state('leagues.list', {
+      url: 'leagues/list',
+      templateUrl: 'app/leagues/list/list.html',
+      controller: 'listLeagueController'
+    })
     .state('leagues.show', {
       url: 'leagues/:id/show',
       templateUrl: 'app/leagues/show/show.html',
       controller: 'showLeagueController'
-    })
-    .state('leagues.draft', {
-      url: 'leagues/:id/draft',
-      templateUrl: 'app/leagues/draft/draft.html',
-      controller: 'draftLeagueController'
     });
 });
