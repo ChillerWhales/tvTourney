@@ -37,9 +37,11 @@ describe('LeagueController', function () {
 
   it('should have GET request when getLeague in a ShowLeague factory is called', function() {
     var league = {};
-    $httpBacked.expect('GET', '/league/1').respond(league);
+    $httpBackend.expect('GET', '/league/1').respond({});
 
-    ShowLeague.getLeague(1);
+    ShowLeague.getLeague(1, function(err, response){
+      expect(response).to.be.a('object');
+    });
 
     $httpBackend.flush();
   });
