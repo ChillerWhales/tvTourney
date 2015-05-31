@@ -134,6 +134,51 @@ module.exports = {
 	},
 	testAuthGET: function(req, res) {
 		//user should only make it here if they pass authentication
-		res.status(200).send("You're authenticated!")
-	}
-}
+		res.status(200).send("You're authenticated!");
+	},
+
+	/*
+	leaugesCharactersGET: This returns a JSON of characters for the requested league ID token
+	leaugesCharactersPOST: This will insert the array of characters in the table (for the league id)
+	 */
+	leagueCharactersPOST: function(req, res) {
+		// Receive leagueId as leagueId from req params and character  (name) and creates one record
+		// create records for league id --> return 201 and obj containing created row
+		
+		if(!req.params('leagueId')) {
+			logger.info("leagueCharactersPOST attempted without leagueId");
+			res.status(403).send("yo - where's your league_id");
+		}
+		var params = req.body;
+		db.LeagueCharacter.create({
+			league_id: req.params('leagueId'),
+			name: params.name
+		})
+		.then(function(character) {
+			console.log("character created -  ", character);
+			res.status(201).send(JSON.stringify(character));
+		});
+	},
+
+	leagueCharactersGET: function(req, res) {
+		// if leagueid present -- fetch list of characters for the given leagueId
+		db.LeagueCharacter.findAll({
+			where: {
+				league_id: req.params('leagueId')
+			}
+		})
+		.then(function(characters){
+			if(characters) {
+				res.write(characters);
+				res.end();
+			} else {
+				logger.info("No characters exist for league : " +leagueId);
+				res.status(403).send("No characters exist for league : " +leagueId);
+				res.end();
+			}
+		});
+	},
+
+
+
+}; // end module
