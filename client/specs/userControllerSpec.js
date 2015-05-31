@@ -1,5 +1,5 @@
 describe('UserController', function () {
-  var $scope, $rootScope, $location, $window, $httpBackend, createController, User, $controller, $state;
+  var $scope, $rootScope, $location, $httpBackend, createController, User, $controller, $state;
 
   beforeEach(module('app'));
   beforeEach(inject(function ($injector) {
