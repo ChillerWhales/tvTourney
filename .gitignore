@@ -4,6 +4,7 @@ server/logs/exception.log
 server/logs/express.log
 server/db/db.sqlite
 server/db/dbTest.sqlite
+server/.DS_Store
 client/lib/
 client/node_modules/
 npm-debug.log

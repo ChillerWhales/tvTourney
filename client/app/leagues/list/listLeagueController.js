@@ -18,7 +18,7 @@ angular.module('app.leagues.list', [])
   var getLeagues = function() {
     return $http({
       method: 'GET',
-      url: '/leagues'
+      url: '/users/leagues'
     }).then(function(resp) {
       //haven't tested what the response data looks like yet subject to change
       return resp.data;

@@ -156,7 +156,7 @@ module.exports = {
 				logger.info("Event was not created");
 				res.status(400).send("Event not created!");
 			}
-		}
+		});
 	},
 	testAuthGET: function(req, res) {
 		//user should only make it here if they pass authentication
