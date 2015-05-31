@@ -1,6 +1,6 @@
 var logger = require('bristol');
 var db = require('./db');
-var utils = require('./lib/utils.js');
+var utils = require('./lib/utils');
 
 module.exports = {
 	homeGET: function(req, res) {
@@ -70,22 +70,25 @@ module.exports = {
 	leagueCreatePOST: function(req, res) {
 		//Inputs: league name, show, roster limit
 		var params = req.body;
-		var ownerId = utils.findUserId(req.session.token);
-		console.log('post request');
-		if (ownerId) {
-			db.League.create({
-				name: params.name,
-				show: params.show,
-				owner: ownerId,
-				roster_limit: params.roster_limit
-			}).then(function(newLeague) {
-				logger.info("New league successfully created");
-				res.status(200).json(newLeague);
-			});
-		} else if (ownerId === undefined) {
-			logger.info("League was not successfully created");
-			res.status(400).send("League was not created.");
-		}
+		var ownerId = utils.findUserId(req.session.token, function(user) {
+			var ownerId = user.id;
+			if (ownerId) {
+				db.League.create({
+					name: params.name,
+					show: params.show,
+					owner: ownerId,
+					roster_limit: params.roster_limit
+				}).then(function(newLeague) {
+					logger.info("New league successfully created");
+					console.log('newLeague', newLeague);
+					res.status(200).json(newLeague);
+				});
+			} else if (ownerId === undefined) {
+				logger.info("League was not successfully created");
+				res.status(400).send("League was not created.");
+			}
+		});
+
 	},
 
 	testAuthGET: function(req, res) {
