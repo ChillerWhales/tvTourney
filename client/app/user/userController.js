@@ -1,8 +1,9 @@
 angular.module('app.user', [])
 .controller('userController', function ($scope, $state, User) {
-  
+  console.log("controller created");
   var user = {};
   $scope.signup = function () {
+    console.log('test');
     user = {
       email: $scope.emailInput,
       username: $scope.usernameInput,
@@ -28,7 +29,7 @@ angular.module('app.user', [])
   };
 
   $scope.logout = User.logout;
-  $scope.getUserInfo = getUserInfo
+  $scope.getUserInfo = User.getUserInfo
 
 })
 .factory('User', function($http) {
