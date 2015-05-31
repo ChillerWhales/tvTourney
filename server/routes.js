@@ -9,6 +9,9 @@ function setup(app, routeHandlers) {
 		.post(routeHandlers.loginPOST);
 	app.route('/logout')
 		.get(routeHandlers.logoutGET);
+  app.route('/league/')
+    .post(routeHandlers.leagueCreatePOST);
+
 	/*adding auth here protects the route from unauthenticated users
 	if user is authenticated, auth will call next and the next routehandler
 	will catch the requeset and process it, otherwise the user will receive
