@@ -7,3 +7,4 @@ server/db/dbTest.sqlite
 client/lib/
 client/node_modules/
 npm-debug.log
+.DS_Store
