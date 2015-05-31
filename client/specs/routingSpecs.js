@@ -50,13 +50,12 @@ describe('Routing', function () {
     expect(state.controller).to.be('showLeagueController');
   });
 
-  it('Should have /leagues/:id/draft route, view and controller', function () {
-    var state = $state.get('leagues.draft');
-    expect(state.url).to.be('leagues/:id/draft');
-    expect(state.name).to.be('leagues.draft');
-    expect($state.href('leagues.draft', {id: 66})).to.be('#/leagues/66/draft');
-    expect(state.templateUrl).to.be('app/leagues/draft/draft.html');
-    expect(state.controller).to.be('draftLeagueController');
+  it('Should have /leagues/list route, view and controller', function () {
+    var state = $state.get('leagues.list');
+    expect(state.url).to.be('leagues/list');
+    expect(state.name).to.be('leagues.list');
+    expect(state.templateUrl).to.be('app/leagues/list/list.html');
+    expect(state.controller).to.be('listLeagueController');
   });
 
 });

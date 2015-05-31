@@ -1,12 +1,12 @@
 describe('LeagueController', function () {
-  var $scope, $rootScope, $location, $httpBackend, createController, LeagueNew, $controller, $state;
+  var $scope, $rootScope, $location, $httpBackend, createController, NewLeague, $controller, $state;
 
   beforeEach(module('app'));
   beforeEach(inject(function ($injector){
     $rootScope = $injector.get('$rootScope');
     $location = $injector.get('$location');
     $httpBackend = $injector.get('$httpBackend');
-    LeagueNew = $injector.get('LeagueNew');
+    NewLeague = $injector.get('NewLeague');
     $scope = $rootScope.$new();
     $state = $injector.get('$state');
     var $controller = $injector.get('$controller');
@@ -70,7 +70,7 @@ describe('LeagueController', function () {
   if('should POST request to /league/:id/characters when LeagueNew factory is called through addCharacter scope function', function () {
     $httpBacked.expect('POST', '/league/1/characters').respond(201);
 
-    LeagueNew.addCharacter(1, {});
+    NewLeague.addCharacter(1, {});
 
     $httpBackend.flus();
   });

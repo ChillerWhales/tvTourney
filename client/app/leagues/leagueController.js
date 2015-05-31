@@ -1,7 +1,7 @@
 angular.module('app.leagues', [
   'app.leagues.show',
   'app.leagues.new',
-  'app.leagues.draft'
+  'app.leagues.list'
 ])
 .controller('leagueController', function ($scope) { 
 
