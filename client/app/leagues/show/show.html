@@ -1,1 +1,23 @@
-show
+<div>
+  Name: {{league.name}}
+</div>
+<div>
+  Show: {{league.show}}
+</div>
+<div>
+  Owner: {{league.owner}}
+</div>
+<div>
+  Roster limit: {{league.roster_limit}}
+</div>
+<div>
+  Users
+</div>
+<div ng-repeat='user in league.users'>
+  <span ng-click='selectUser($index)'>User: {{user.name}} Points: {{user.points}}</span>
+  <div ng-show='$index == indexUser'>
+    <div ng-repeat='character in user.roster'>
+      Character: {{character.name}}  Points: {{character.points}}
+    </div>
+  </div>
+</div>
