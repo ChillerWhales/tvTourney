@@ -50,7 +50,7 @@ League.hasMany(LeagueCharacter)
 
 
 var LeagueEvent = sequelize.define('league_event', {
-
+  
 }); 
 
 var CharacterEvent = sequelize.define('character_event', {

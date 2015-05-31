@@ -64,7 +64,7 @@ module.exports = {
 	leagueCreatePOST: function(req, res) {
 		//Inputs: league name, show, roster limit
 		var params = req.body;
-		var ownerId = utils.findUserId(req.session.token, function(user) {
+		utils.findUserId(req.session.token, function(user) {
 			var ownerId = user.id;
 			if (ownerId) {
 				db.League.create({
@@ -88,28 +88,36 @@ module.exports = {
 	can confirm that the user is indeed the owner of the the league specified.*/
 	eventGET: function(req, res) {
 		var params = req.body;
-		var userId = utils.findUserId(req.session.token);
-		//checks if user is the current owner of the league.
-		db.League.findOne({where: {id : params.id, owner: userId}}).then(function(result) {
-			//checks to see if the league under that id's owner is the same as our session user.
-			if(result) {
-				logger.info("User is the owner of the league. Create events!");
-				res.status(200).send("You have access for creating events on this league");
-				db.LeagueEvent.findAll({
-					where: {
-						league_id: params.id
+		utils.findUserId(req.session.token, function(user) {
+			var ownerId = user.id;
+			if(ownerId) {
+				db.League.findOne({where: {id : params.id, owner: userId}}).then(function(result) {
+					//checks to see if the league under that id's owner is the same as our session user.
+					if(result) {
+						logger.info("User is the owner of the league. Create events!");
+						res.status(200).send("You have access for creating events on this league");
+						db.LeagueEvent.findAll({
+							where: {
+								league_id: params.id
+							}
+						}).then(function(result) {
+							res.write(result);
+							res.end();
+						});
 					}
-				}).then(function(result) {
-					res.write(result);
-					res.end();
+					else {
+						logger.info("User does not have access creating events on this league");
+						res.status(403).send("User doesn't have access to this page.");
+						res.end();
+					}
 				});
 			}
 			else {
-				logger.info("User does not have access creating events on this league");
-				res.status(403).send("User doesn't have access to this page.");
-				res.end();
+				logger.info("User not logged in!");
+				res.status(401).send("No user token!");
 			}
 		});
+		//checks if user is the current owner of the league.
 	},
 	/*creates individual events that the user writes*/
 	eventPOST: function(req, res) {
