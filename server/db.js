@@ -22,31 +22,41 @@ var User = sequelize.define('user', {
   username: Sequelize.STRING,
   email: Sequelize.STRING,
   password: Sequelize.STRING
-}); 
+}, {underscored: true}); 
 
 var UserLeague = sequelize.define('user_league', {
-
-}); 
+}, {underscored: true}); 
 
 var UserRoster = sequelize.define('user_roster', {
 
-}); 
+}, {underscored: true}); 
 
 var League = sequelize.define('league', {
-
-}); 
+  name: Sequelize.STRING,
+  show: Sequelize.STRING,
+  owner: Sequelize.INTEGER,
+  roster_limit: Sequelize.INTEGER
+}, {underscored: true}); 
 
 var LeagueCharacter = sequelize.define('league_character', {
+  name: Sequelize.STRING,
+}, {underscored: true}); 
+// associations
+LeagueCharacter.belongsTo(League)
+League.hasMany(LeagueCharacter)
 
-}); 
+// assocaite to user rosters as well
+
 
 var LeagueEvent = sequelize.define('league_event', {
 
-}); 
+}, {underscored: true}); 
 
 var CharacterEvent = sequelize.define('character_event', {
-
-}); 
+	league_id: Sequelize.STRING,
+	character_id: Sequelize.STRING,
+	event_id: Sequelize.STRING
+}, {underscored: true}); 
 
 //define the relationships between the tables here
 
