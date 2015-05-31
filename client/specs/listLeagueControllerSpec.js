@@ -35,20 +35,13 @@ describe('LeagueController', function () {
     expect($scope.leagues).to.be.a('object');
   });
 
-  it('should GET request to /user/leagues when getLeagues is called', function() {
-    var leagues = [{}, {}];
-    $httpBackend.expect('GET', '/user/leagues').respond(leagues);
-
-    $scope.getLeagues();
-
-    $httpBackend.flush();
-  });
-
   it('should GET request to /user/leagues when ListLeague factory is called through getLeagues scope function', function() {
     var leagues = [{}, {}];
     $httpBackend.expect('GET', '/user/leagues').respond(leagues);
 
-    ListLeague.getLeagues();
+    ListLeague.getLeagues(function (response) {
+      expect(response).toBeArray();
+    });
 
     $httpBackend.flush();
   });
