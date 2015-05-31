@@ -6,6 +6,7 @@ var assert = require('assert');
 var supertest = require('supertest');
 var request = supertest(serverHost);
 var Sequelize = require('sequelize');
+var db = require('../dbConfig');
 
 describe('API', function() {
 
@@ -13,21 +14,25 @@ describe('API', function() {
 	can be performed after running tests. For example, after creating
 	a testuser, this connection can be used to dive directly into the
 	database and delete hat user*/
-	var sequelize = new Sequelize('database', 'root', '', {
-		host:'localhost',
-		dialect: 'sqlite',
+	// var sequelize = new Sequelize('database', 'root', '', {
+	// 	host:'localhost',
+	// 	dialect: 'sqlite',
 
-		pool: {
-			max: 5,
-			min: 0,
-			idle: 10000
-		},
+	// 	pool: {
+	// 		max: 5,
+	// 		min: 0,
+	// 		idle: 10000
+	// 	},
 
-		//queries wont be console logged
-		logging: false,
+	// 	//queries wont be console logged
+	// 	logging: false,
 
-		storage: '../db/db.sqlite'
-	});
+	// 	storage: '../db/db.sqlite'
+	// });
+	var sequelize = db.connect('../db/db.sqlite');
+	var schemas = db.createSchemas(sequelize,false);
+	var User = schemas.User;
+	var League = schemas.League;
 
 	describe('user management', function() {
 
@@ -44,11 +49,6 @@ describe('API', function() {
 			construct the queries properly - this is not DRY with the 
 			database models, can refactor this later for them to share
 			models from the same file */
-			var User = sequelize.define('user', {
-	  		username: Sequelize.STRING,
-	  		email: Sequelize.STRING,
-	  		password: Sequelize.STRING
-			});
 
 			//find and destroy user
 			User.find({where: {username: testUser.username}})
@@ -214,24 +214,19 @@ describe('API', function() {
 									}
 								});
 						});
-				});
 		});
+	});
 
-		after(function(done) {
-				var User = sequelize.define('user', {
-		  		username: Sequelize.STRING,
-		  		email: Sequelize.STRING,
-		  		password: Sequelize.STRING
-				});
+	after(function(done) {
 
-				//find and destroy user
-				User.find({where: {username: testUser.username}})
-					.then(function(foundUser) {
-						foundUser.destroy().then(function() {
-							done();
-						});
+			//find and destroy user
+			User.find({where: {username: testUser.username}})
+				.then(function(foundUser) {
+					foundUser.destroy().then(function() {
+						done();
 					});
-			});	
+				});
+		});	
 
 		//the new league tests will try to create
 		var testLeague = {
@@ -309,120 +304,4 @@ describe('API', function() {
 			});
 		});
 	});
-
-	describe("league events", function() {
-		var agent = supertest.agent(serverHost);
-		
-		var testUser = {
-				username: 'testUser',
-				email: "testemail@gmail.com",
-				password: '123qwe'
-		}
-
-		var testLeague = {
-			name: 'testleague',
-			//owner points to user id
-			tv_show: 'testshow',
-			roster_size: '10'
-		}
-
-		var testEvent = {
-			description: "testdescription",
-			score_up: "5",
-			//league_id points to id of league
-		}
-
-		before(function(done) {
-			//login and capture cookie before attempting route
-			agent.post('/signup')
-				.send(testUser)
-				.expect(201)
-				.end(function(err, res) {
-					if (err) {
-						done(err);
-					}
-					agent.post('/login')
-						.send(testUser)
-						.expect(200)
-						.end(function(err, res) {
-							if (err) {
-								done(err);
-							}
-							agent.get('/testauth').expect(200)
-								.end(function(err, res) {
-									if (err) {
-										done(err);
-									}
-									agent.post("/league/")
-										.send(testLeague)
-										//makes sure status code is correct
-										.expect(200)
-										//makes sure properties are correct
-										.expect(function(res) {
-										})
-										.end(function(err, res) {
-											if (err) {
-												done(err);
-											}
-											else {
-												done();
-											}
-										});
-								});
-						});
-				});
-		});
-
-		//cleanup - deletes inserted league from database
-		after(function(done) {
-			var User = sequelize.define('user', {
-		  	username: Sequelize.STRING,
-		  	email: Sequelize.STRING,
-		  	password: Sequelize.STRING
-			});
-
-			var League = sequelize.define("league", {
-			  name: Sequelize.STRING,
-			  show: Sequelize.STRING,
-			  owner: Sequelize.INTEGER,
-			  roster_limit: Sequelize.INTEGER
-			});
-
-			var Event = sequelize.define("league_event", {
-				league_id: Sequelize.INTEGER,
-  			description: Sequelize.STRING,
-  			score_up: Sequelize.INTEGER,
-  			score_down: Sequelize.INTEGER
-			}); 
-
-				//find and destroy user, league, and event
-			User.find({where: {username: testUser.username}})
-				.then(function(foundUser) {
-					foundUser.destroy().then(function() {
-						League.find({where: {name: testLeague.name}})
-							.then(function(foundLeague) {
-								foundLeague.destroy().then(function() {
-									Event.find({where: {description: testEvent.description}})
-										.then(function(foundEvent) {
-											foundEvent.destroy().then(function() {
-												done();
-											});
-										});
-								})
-							});
-					});
-				});
-		});	
-		
-		it('should return 403 if user is not the owner of league', function(done) {	
-			
-		});
-
-		it('should return 200 if user is the owner of the league', function(done) {
-			done();
-		});
-
-		it('should ')
-		});	
-
 });
