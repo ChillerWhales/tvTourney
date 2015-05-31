@@ -43,7 +43,7 @@ var LeagueCharacter = sequelize.define('league_character', {
 }); 
 
 var LeagueEvent = sequelize.define('league_event', {
-
+  
 }); 
 
 var CharacterEvent = sequelize.define('character_event', {

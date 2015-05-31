@@ -214,24 +214,24 @@ describe('API', function() {
 									}
 								});
 						});
-		});
-	});
-
-	after(function(done) {
-			var User = sequelize.define('user', {
-	  		username: Sequelize.STRING,
-	  		email: Sequelize.STRING,
-	  		password: Sequelize.STRING
-			});
-
-			//find and destroy user
-			User.find({where: {username: testUser.username}})
-				.then(function(foundUser) {
-					foundUser.destroy().then(function() {
-						done();
-					});
 				});
-		});	
+		});
+
+		after(function(done) {
+				var User = sequelize.define('user', {
+		  		username: Sequelize.STRING,
+		  		email: Sequelize.STRING,
+		  		password: Sequelize.STRING
+				});
+
+				//find and destroy user
+				User.find({where: {username: testUser.username}})
+					.then(function(foundUser) {
+						foundUser.destroy().then(function() {
+							done();
+						});
+					});
+			});	
 
 		//the new league tests will try to create
 		var testLeague = {
@@ -309,4 +309,120 @@ describe('API', function() {
 			});
 		});
 	});
+
+	describe("league events", function() {
+		var agent = supertest.agent(serverHost);
+		
+		var testUser = {
+				username: 'testUser',
+				email: "testemail@gmail.com",
+				password: '123qwe'
+		}
+
+		var testLeague = {
+			name: 'testleague',
+			//owner points to user id
+			tv_show: 'testshow',
+			roster_size: '10'
+		}
+
+		var testEvent = {
+			description: "testdescription",
+			score_up: "5",
+			//league_id points to id of league
+		}
+
+		before(function(done) {
+			//login and capture cookie before attempting route
+			agent.post('/signup')
+				.send(testUser)
+				.expect(201)
+				.end(function(err, res) {
+					if (err) {
+						done(err);
+					}
+					agent.post('/login')
+						.send(testUser)
+						.expect(200)
+						.end(function(err, res) {
+							if (err) {
+								done(err);
+							}
+							agent.get('/testauth').expect(200)
+								.end(function(err, res) {
+									if (err) {
+										done(err);
+									}
+									agent.post("/league/")
+										.send(testLeague)
+										//makes sure status code is correct
+										.expect(200)
+										//makes sure properties are correct
+										.expect(function(res) {
+										})
+										.end(function(err, res) {
+											if (err) {
+												done(err);
+											}
+											else {
+												done();
+											}
+										});
+								});
+						});
+				});
+		});
+
+		//cleanup - deletes inserted league from database
+		after(function(done) {
+			var User = sequelize.define('user', {
+		  	username: Sequelize.STRING,
+		  	email: Sequelize.STRING,
+		  	password: Sequelize.STRING
+			});
+
+			var League = sequelize.define("league", {
+			  name: Sequelize.STRING,
+			  show: Sequelize.STRING,
+			  owner: Sequelize.INTEGER,
+			  roster_limit: Sequelize.INTEGER
+			});
+
+			var Event = sequelize.define("league_event", {
+				league_id: Sequelize.INTEGER,
+  			description: Sequelize.STRING,
+  			score_up: Sequelize.INTEGER,
+  			score_down: Sequelize.INTEGER
+			}); 
+
+				//find and destroy user, league, and event
+			User.find({where: {username: testUser.username}})
+				.then(function(foundUser) {
+					foundUser.destroy().then(function() {
+						League.find({where: {name: testLeague.name}})
+							.then(function(foundLeague) {
+								foundLeague.destroy().then(function() {
+									Event.find({where: {description: testEvent.description}})
+										.then(function(foundEvent) {
+											foundEvent.destroy().then(function() {
+												done();
+											});
+										});
+								})
+							});
+					});
+				});
+		});	
+		
+		it('should return 403 if user is not the owner of league', function(done) {	
+			
+		});
+
+		it('should return 200 if user is the owner of the league', function(done) {
+			done();
+		});
+
+		it('should ')
+		});	
+
 });
