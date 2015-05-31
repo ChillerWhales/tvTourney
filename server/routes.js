@@ -11,7 +11,9 @@ function setup(app, routeHandlers) {
 		.get(routeHandlers.logoutGET);
   app.route('/league/')
     .post(routeHandlers.leagueCreatePOST);
-
+	app.route('/league/:id/events')
+    .get(routeHandlers.eventGET)
+    .post(routeHandlers.eventPOST);
 	/*adding auth here protects the route from unauthenticated users
 	if user is authenticated, auth will call next and the next routehandler
 	will catch the requeset and process it, otherwise the user will receive
