@@ -4,8 +4,6 @@ var utils = require('./lib/utils');
 
 module.exports = {
 	homeGET: function(req, res) {
-		res.send("Hello world");
-		logger.info("Hello world delivered to client");
 	},
 
 	signupPOST: function(req, res) {
