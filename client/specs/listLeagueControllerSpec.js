@@ -15,7 +15,7 @@ describe('LeagueController', function () {
       return $controller('listLeagueController', {
         $scope: $scope,
         $location: $location,
-        League: League
+        ListLeague: ListLeague
       });
     };
 
