@@ -5,7 +5,6 @@ var utils = require('./lib/utils');
 module.exports = {
 	homeGET: function(req, res) {
 	},
-
 	signupPOST: function(req, res) {
 		//get form data
 		var params = req.body;
@@ -35,7 +34,6 @@ module.exports = {
 			}
 		})
 	},
-
 	loginPOST: function(req, res) {
 		var params = req.body;
 		db.User.findOne({where: {username: params.username}}).then(function(user) {
