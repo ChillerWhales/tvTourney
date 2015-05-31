@@ -5,7 +5,6 @@ var utils = require('./lib/utils');
 module.exports = {
 	homeGET: function(req, res) {
 	},
-
 	signupPOST: function(req, res) {
 		//get form data
 		var params = req.body;
@@ -35,7 +34,6 @@ module.exports = {
 			}
 		})
 	},
-
 	loginPOST: function(req, res) {
 		var params = req.body;
 		db.User.findOne({where: {username: params.username}}).then(function(user) {
@@ -53,7 +51,6 @@ module.exports = {
 			}
 		});
 	},
-
 	/*session will exist in each request, but calling destroy() causes
 	the token property (which contains the users id) to be removed
 	from the cookie, effectively logging the user out.*/
@@ -64,7 +61,6 @@ module.exports = {
 			res.status(200).send("User successfully logged out");
 		});
 	},
-
 	leagueCreatePOST: function(req, res) {
 		//Inputs: league name, show, roster limit
 		var params = req.body;
@@ -88,7 +84,6 @@ module.exports = {
 		});
 
 	},
-
 	/*this code expects that the req will have the id of the league event so it
 	can confirm that the user is indeed the owner of the the league specified.*/
 	eventGET: function(req, res) {
@@ -116,7 +111,6 @@ module.exports = {
 			}
 		});
 	},
-
 	/*creates individual events that the user writes*/
 	eventPOST: function(req, res) {
 		//gets form data
@@ -138,7 +132,6 @@ module.exports = {
 				});
 			}
 	},
-
 	testAuthGET: function(req, res) {
 		//user should only make it here if they pass authentication
 		res.status(200).send("You're authenticated!")

@@ -1,5 +1,4 @@
 <!-- subject to changes-->
-<div ui-view> 
   <div href="#/signout"></div>
   <div ng-controller="leagueController" class="userHome">
     <div id="userLeagues">
@@ -7,5 +6,6 @@
       <div ng-click="#/league/id/" ng-repeat="league in leagues">{{league.name}}</div>
     </div>
   </div> 
-  <div href="#/league"></div>
-</div>
+  <button href="#/league"></button>
+  
+<div ui-view> </div>
