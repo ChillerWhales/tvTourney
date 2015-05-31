@@ -1,3 +1,5 @@
+var auth = require('./authentication');
+
 function setup(app, routeHandlers) {
 	app.route('/')
 		.get(routeHandlers.homeGET);
@@ -7,6 +9,14 @@ function setup(app, routeHandlers) {
 		.post(routeHandlers.loginPOST);
 	app.route('/logout')
 		.get(routeHandlers.logoutGET);
+	/*adding auth here protects the route from unauthenticated users
+	if user is authenticated, auth will call next and the next routehandler
+	will catch the requeset and process it, otherwise the user will receive
+	a 401 */
+	app.route('/testauth')
+		//basically route-specific middleware
+		.all(auth)
+		.get(routeHandlers.testAuthGET);
 }
 
 exports.setup = setup;
