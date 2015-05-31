@@ -187,6 +187,10 @@ module.exports = {
 		});
 	},
 
+	triggerEventCharacterPOST: function(req, res) {
+		var params = req.body;
+	}
+
 
 
 }; // end module
