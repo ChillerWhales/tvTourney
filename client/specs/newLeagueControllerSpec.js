@@ -51,26 +51,24 @@ describe('LeagueController', function () {
     expect($scope.events).to.be.an('array');
   });
 
-  it('should POST request to /league when createLeague is called', function() {
-    $httpBacked.expect('POST', '/league').respond(201);
-
-    $scope.createLeague();
-
-    $httpBackend.flus();
-  });
 
   it('should POST request to /league when LeagueNew factory is called throught createLeague scope function', function() {
     $httpBacked.expect('POST', '/league').respond(201);
 
-    League.createLeague({});
+    NewLeague.createLeague({}, function (err, response){
+      expect(response).to.be(201);
+    });
 
     $httpBackend.flus();
   });
 
   if('should POST request to /league/:id/characters when LeagueNew factory is called through addCharacter scope function', function () {
+    
     $httpBacked.expect('POST', '/league/1/characters').respond(201);
 
-    NewLeague.addCharacter(1, {});
+    NewLeague.addCharacter(1, function (err, response) {
+      expect(response).to.be(201);
+    });
 
     $httpBackend.flus();
   });
