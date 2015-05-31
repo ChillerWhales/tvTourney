@@ -29,6 +29,6 @@ angular.module('app.leagues', [
     });
   };
   return {
-    'getLeagues' : getLeagues;
+    'getLeagues' : getLeagues
   }
 });
