@@ -1,12 +1,10 @@
 var logger = require('bristol');
 var db = require('./db');
+var utils = require('./lib/utils');
 
 module.exports = {
 	homeGET: function(req, res) {
-		res.send("Hello world");
-		logger.info("Hello world delivered to client");
 	},
-
 	signupPOST: function(req, res) {
 		//get form data
 		var params = req.body;
@@ -36,14 +34,12 @@ module.exports = {
 			}
 		})
 	},
-
 	loginPOST: function(req, res) {
 		var params = req.body;
 		db.User.findOne({where: {username: params.username}}).then(function(user) {
 			//if user doesnt exist, create user
 			if (!user || user.password !== params.password) {
 				logger.info("User attempted to login with invalid information");
-				console.log("User attempted to login with invalid information");
 				res.status(401).send("That username/password combination doesn't exist");
 			}
 			else if (user && user.password === params.password) {
@@ -54,7 +50,6 @@ module.exports = {
 			}
 		});
 	},
-
 	/*session will exist in each request, but calling destroy() causes
 	the token property (which contains the users id) to be removed
 	from the cookie, effectively logging the user out.*/
@@ -65,9 +60,152 @@ module.exports = {
 			res.status(200).send("User successfully logged out");
 		});
 	},
+	leagueCreatePOST: function(req, res) {
+		//Inputs: league name, show, roster limit
+		var params = req.body;
+		utils.findUserId(req.session.token, function(user) {
 
+			var ownerId = user.id;
+			db.League.create({
+				name: params.name,
+				show: params.show,
+				owner: ownerId,
+				roster_limit: params.roster_limit
+			}).then(function(newLeague) {
+				logger.info("New league successfully created");
+				res.status(200).json(newLeague);
+			});
+			if (ownerId) {
+				db.League.create({
+					name: params.name,
+					show: params.show,
+					owner: ownerId,
+					roster_limit: params.roster_limit
+				}).then(function(newLeague) {
+					logger.info("New league successfully created");
+					res.status(200).json(newLeague);
+				});
+			} else if (ownerId === undefined) {
+				logger.info("League was not successfully created");
+				res.status(400).send("League was not created.");
+			}
+		});
+	},
+	/*this code expects that the req will have the id of the league event so it
+	can confirm that the user is indeed the owner of the the league specified.*/
+	eventGET: function(req, res) {
+		var params = req.body;
+		utils.findUserId(req.session.token, function(user) {
+			var ownerId = user.id;
+			if(ownerId) {
+				//checks if user is the current owner of the league.
+				db.League.findOne({where: {id : params.id, owner: ownerId}}).then(function(result) {
+					//checks to see if the league under that id's owner is the same as our session user.
+					if(result) {
+						logger.info("User is the owner of the league. Create events!");
+						res.status(200).send("You have access for creating events on this league");
+						db.LeagueEvent.findAll({
+							where: {
+								league_id: params.id
+							}
+						}).then(function(result) {
+							res.write(result);
+							res.end();
+						});
+					}
+					else {
+						logger.info("User does not have access creating events on this league");
+						res.status(403).send("User doesn't have access to this page.");
+						res.end();
+					}
+				});
+			}
+			else {
+				logger.info("User not logged in!");
+				res.status(401).send("No user token!");
+			}
+		});
+	},
+	/*creates individual events that the user writes*/
+	eventPOST: function(req, res) {
+		//gets form data
+		var params = req.body;
+		utils.findUserId(req.session.token, function(user) {
+			var ownerId = user.id;
+			//expects league_id, description, score
+			if(ownerId) {
+				db.League.findOne({where: {id: params.id, owner: ownerId}}).then(function(result) {
+					if(!params.id || !params.description || !params.score) {
+						logger.info("Invalid form inputs");
+						res.status(500).send("Invalid inputs");
+					}
+					else {
+						db.LeagueEvent.create({
+							league_id : params.id,
+							description : params.description,
+							//doesnt account for the fact that score could be negative. all scores will be in score_up
+							score_up : params.score
+						}).then(function(newLeagueEvent) {
+							logger.info("Added event successfully");
+							res.status(201).json(newLeagueEvent);
+						});
+					}
+				});
+			}
+			else {
+				logger.info("User not logged in!");
+				res.status(400).send("Not logged in!");
+			}
+		});
+	},
 	testAuthGET: function(req, res) {
 		//user should only make it here if they pass authentication
-		res.status(200).send("You're authenticated!")
+		res.status(200).send("You're authenticated!");
+	},
+
+	/*
+	leaugesCharactersGET: This returns a JSON of characters for the requested league ID token
+	leaugesCharactersPOST: This will insert the array of characters in the table (for the league id)
+	 */
+	leagueCharactersPOST: function(req, res) {
+		// Receive leagueId as leagueId from req params and character  (name) and creates one record
+		// create records for league id --> return 201 and obj containing created row
+		
+		if(!req.params('leagueId')) {
+			logger.info("leagueCharactersPOST attempted without leagueId");
+			res.status(403).send("yo - where's your league_id");
+		}
+		var params = req.body;
+		db.LeagueCharacter.create({
+			league_id: req.params('leagueId'),
+			name: params.name
+		})
+		.then(function(character) {
+			res.status(201).send(JSON.stringify(character));
+		});
+	},
+
+	leagueCharactersGET: function(req, res) {
+		// if leagueid present -- fetch list of characters for the given leagueId
+		db.LeagueCharacter.findAll({
+			where: {
+				league_id: req.params('leagueId')
+			}
+		})
+		.then(function(characters){
+			if(characters) {
+				res.write(characters);
+				res.end();
+			} else {
+				logger.info("No characters exist for league : " +leagueId);
+				res.status(403).send("No characters exist for league : " +leagueId);
+				res.end();
+			}
+		});
+	},
+
+	triggerEventCharacterPOST: function(req, res) {
+		var params = req.body;
 	}
-}
+		
+}; // end module

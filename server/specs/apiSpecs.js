@@ -6,110 +6,137 @@ var assert = require('assert');
 var supertest = require('supertest');
 var request = supertest(serverHost);
 var Sequelize = require('sequelize');
+var db = require('../dbConfig');
 
-describe('API', function() {
-
-	/*establish a direct connection to the database so that cleanup
-	can be performed after running tests. For example, after creating
-	a testuser, this connection can be used to dive directly into the
-	database and delete hat user*/
-	var sequelize = new Sequelize('database', 'root', '', {
-		host:'localhost',
-		dialect: 'sqlite',
-
-		pool: {
-			max: 5,
-			min: 0,
-			idle: 10000
-		},
-
-		//queries wont be console logged
-		logging: false,
-
-		storage: '../db/db.sqlite'
-	});
-
-	describe('user management', function() {
-
-		//user tests will try to create
-		var testUser = {
+var utils = {
+	testUser: {
 				username: 'testUser',
 				email: "testemail@gmail.com",
 				password: '123qwe'
-			}
+	},
 
-		//cleanup - deletes inserted user from database after all user management tests are complete
-		after(function(done) {
-			/* define the schema for the user model so that sequelize can
-			construct the queries properly - this is not DRY with the 
-			database models, can refactor this later for them to share
-			models from the same file */
-			var User = sequelize.define('user', {
-	  		username: Sequelize.STRING,
-	  		email: Sequelize.STRING,
-	  		password: Sequelize.STRING
+	errOrDone: function(err, res, done) {
+		if (err) {
+			done(err);
+		}
+		else {
+			done();
+		}
+	},
+
+	createAgent: function(server) {
+		var server = server || serverHost
+		return supertest.agent(server);
+	},
+
+	signUpUser: function(credentials, callback) {
+		request.post('/signup')
+			.send(credentials)
+			.end(function(err, res) {
+				if (callback) {
+					if (err) {
+						callback(err);
+					}
+					else {
+						callback();
+					}
+				}
 			});
+	},
 
-			//find and destroy user
-			User.find({where: {username: testUser.username}})
-				.then(function(foundUser) {
+	logInAgent: function(agent, credentials, callback) {
+		agent.post('/login')
+			.send(credentials)
+			.end(function(err, res) {
+				if (callback) {
+					if (err) {
+						callback(err);
+					}
+					else {
+						callback();
+					}
+				}
+			});
+	},
+
+	logOutAgent: function(agent, callback) {
+		agent.get('/logout')
+			.end(function(err, res) {
+				if (callback) {
+					if (err) {
+						callback(err);
+					}
+					else {
+						callback();
+					}
+				}
+			});
+	},
+
+	destroyUser: function(schema, credentials, callback) {
+		schema.find({where: {username: this.testUser.username}})
+			.then(function(foundUser) {
+				if (foundUser) {
 					foundUser.destroy().then(function() {
-						done();
+						callback();
 					});
-				});
-		});
+				}
+				else {
+					callback();
+				}
+			});
+	}
+}
+
+describe('API', function() {
+	//connect to the database
+	var sequelize = db.connect('../db/db.sqlite');
+	//pass the the second parameter as false so that the function does not execute sync()
+	var schemas = db.createSchemas(sequelize,false);
+	//schemas that will be used to execute queries
+	var User = schemas.User;
+	var League = schemas.League;
+
+	//deletes inserted user from database after all tests are complete
+	after(function(done) {
+		utils.destroyUser(User,utils.testUser, done);
+	})
+
+	describe('user management', function() {
 
 		describe('signup and login/logout', function() {
 			it('signup should respond with the users object', function(done) {
 				request.post('/signup')
-					.send(testUser)
+					.send(utils.testUser)
 					//makes sure status code is correct
 					.expect(201)
 					//makes sure properties are correct
 					.expect(function(res) {
 						res.body.id.should.exist;
-						res.body.username.should.equal(testUser.username);
-						res.body.email.should.equal(testUser.email);
-						res.body.password.should.equal(testUser.password);
+						res.body.username.should.equal(utils.testUser.username);
+						res.body.email.should.equal(utils.testUser.email);
+						res.body.password.should.equal(utils.testUser.password);
 					})
 					.end(function(err, res) {
-						if (err) {
-							done(err);
-						}
-						else {
-							done();
-						}
-						/*if there was a get method we could test to see if the user was created
-						it would go here, but there is no GET equivalent of signup since we dont
-						have a "view profile" equivalent */
-					})
+						utils.errOrDone(err, res, done);
+					});
 			});
 
 			it('signup should respond with status code 400 if username already exists', function(done) {
 				request.post('/signup')
-					.send(testUser)
+					.send(utils.testUser)
 					.expect(400)
 					.end(function (err, res) {
-						if (err) {
-							done(err);
-						}
-						else {
-							done();
-						}
+						utils.errOrDone(err, res, done);
 				});
 			});
 
 			it('login should respond with status code 200 if username/password is correct', function(done) {
 				request.post('/login')
-					.send(testUser)
+					.send(utils.testUser)
 					.expect(200)
 					.end(function(err, res) {
-						if (err) {
-							done(err);
-						}
-						else {
-							done();
-						}
+						utils.errOrDone(err, res, done);
 					});
 			});
 
@@ -123,53 +150,84 @@ describe('API', function() {
 					.send(wrongTestUser)
 					.expect(401)
 					.end(function(err, res) {
-						if (err) {
-							done(err);
-						}
-						else {
-							done();
-						}
+						utils.errOrDone(err, res, done);
 					});
 			});
-
-			//should be a logout test here, as well as sessions tests, but too much work for MVP
 		});
 
 		describe('authentication', function() {
+			var agent = utils.createAgent();
+			before(function(done) {
+				utils.signUpUser(utils.testUser);
+				utils.logInAgent(agent, utils.testUser, done);
+			});
+
 			it('should respond with a 401 if user attempts to access protected route while not logged in', function(done) {
 				request.get('/testauth')
 				.expect(401)
 				.end(function(err, res) {
-					if (err) {
-						done(err);
-					}
-					else {
-						done();
-					}
+					utils.errOrDone(err, res, done);
 				});
 			});
 
 			it('should respond with a 200 if user attempts to access protected route while logged in', function(done) {
-				var agent = supertest.agent(serverHost);
-				//login and capture cookie before attempting route
-				agent.post('/login')
-					.send(testUser)
-					.expect(200)
+				agent.get('/testauth').expect(200)
 					.end(function(err, res) {
-						if (err) {
-							done(err);
-						}
-						agent.get('/testauth').expect(200)
-							.end(function(err, res) {
-								if (err) {
-									done(err);
-								}
-								else {
-									done();
-								}
-							});
+						utils.errOrDone(err, res, done);
 					});
 			});
+		});
+	}); //closes user management describe
+
+	describe("/league/", function() {
+		var agent = utils.createAgent();
+
+		var testLeague = {
+			name: "leagueName",
+			show: "tvShow",
+			roster_limit: 10
+		}	
+
+		before(function(done) {
+			utils.signUpUser(utils.testUser);
+			utils.logInAgent(agent, utils.testUser, done);
+		})
+
+		after(function(done) {
+			//find and destroy league
+			League.find({where: {name: testLeague.name}})
+				.then(function(foundLeague) {
+					foundLeague.destroy().then(function() {
+						done();
+					});
+				});
+		});
+
+		it("should respond with the new league object", function(done) {
+			agent.post("/league/")
+				.send(testLeague)
+				.expect(200)
+				.expect(function(res) {
+					res.body.id.should.exist;
+					res.body.name.should.equal(testLeague.name);
+					res.body.show.should.equal(testLeague.show);
+					res.body.owner.should.exist;
+					res.body.roster_limit.should.equal(testLeague.roster_limit);
+				})
+				.end(function(err, res) {
+					utils.errOrDone(err, res, done);
+				})
+		});
+
+		it('should respond with status code 400 if user is logged out', function(done) {
+			utils.logOutAgent(agent, function() {
+				agent.post("/league")
+					.send(testLeague)
+					.expect(401)
+					.end(function (err, res) {
+						utils.errOrDone(err, res, done);
+			 		});
+	 		});
 		});
 	});
 });
