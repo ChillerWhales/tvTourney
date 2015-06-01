@@ -40,7 +40,6 @@ module.exports = {
 			//if user doesnt exist, create user
 			if (!user || user.password !== params.password) {
 				logger.info("User attempted to login with invalid information");
-				console.log("User attempted to login with invalid information");
 				res.status(401).send("That username/password combination doesn't exist");
 			}
 			else if (user && user.password === params.password) {
@@ -74,9 +73,7 @@ module.exports = {
 				roster_limit: params.roster_limit
 			}).then(function(newLeague) {
 				logger.info("New league successfully created");
-				console.log('newLeague', newLeague);
 				res.status(200).json(newLeague);
-				console.log("sent 200");
 			});
 			
 		});
@@ -160,7 +157,6 @@ module.exports = {
 			name: params.name
 		})
 		.then(function(character) {
-			console.log("character created -  ", character);
 			res.status(201).send(JSON.stringify(character));
 		});
 	},
