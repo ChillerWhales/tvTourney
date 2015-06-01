@@ -45,11 +45,7 @@ angular.module('app.leagues.new', ['new.event.create'])
   }
 
 })
-.controller('setCharactersCtrl', function ($scope) {
 
-})
-.controller('scoreSettingCtrl', function ($scope) {
-})
-.controller('inviteFriendsCtrl', function ($scope) {
+.controller('inviteCtrl', function ($scope) {
 
 })
