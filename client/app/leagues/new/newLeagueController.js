@@ -1,4 +1,6 @@
-angular.module('app.leagues.new', [])
+angular.module('app.leagues.new', [
+  'new.event.create'
+])
 .factory('League', function($http){
   
   return {
@@ -22,7 +24,7 @@ angular.module('app.leagues.new', [])
 
 })
 .controller('newLeagueController', function ($scope) {
-  $scope.step = 1;
+  $scope.step = 3;
   $scope.league = {};
   $scope.nextStep = function(step) {
     $scope.step = step;
