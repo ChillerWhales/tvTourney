@@ -189,6 +189,10 @@ module.exports = {
 		});
 	},
 
+	leagueInvitePOST: function(req, res) {
+		
+	},
+
 	triggerEventCharacterPOST: function(req, res) {
 		var params = req.body;
 	}
