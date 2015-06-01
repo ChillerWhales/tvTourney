@@ -19,11 +19,8 @@ function setup(app, routeHandlers) {
   app.route('/league/:leagueId/characters')
   .get(routeHandlers.leagueCharactersGET)
   .post(routeHandlers.leagueCharactersPOST);
-<<<<<<< HEAD
   app.route('/league/:id/invite')
     .post(routeHandlers.leagueInvitePOST);
-=======
->>>>>>> e7c0867510d2ac1bfa231eaa8efcf7f038d0a5ba
   app.route('/user/leagues')
     .get(routeHandlers.userLeaguesGET);
   /*adding auth here protects the route from unauthenticated users
