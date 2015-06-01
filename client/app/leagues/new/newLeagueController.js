@@ -78,8 +78,8 @@ angular.module('app.leagues.new', ['new.event.create'])
 
 .controller('scoreSettingCtrl', function ($scope) {
 })
-.controller('inviteFriendsCtrl', function ($scope) {
-})
+
+.controller('inviteCtrl', function ($scope) {
 
 .factory('Character', function($http) {
   var saveCharacter = function(leagueId, callback){
