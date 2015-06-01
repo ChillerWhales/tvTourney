@@ -1,6 +1,6 @@
-<div class="userHome">
-    <div id="userLeagues">
+<div>
+    <div>
       <!-- ng-click doesn't direct to the right path yet. need to write it in later-->
-      <div ng-click="" ng-repeat="league in leagues">{{league.name}}</div>
+      <div ui-sref='leagues.show({ id: league.id })' ng-repeat='league in leagues'>{{league.name}}</div>
     </div>
 </div> 

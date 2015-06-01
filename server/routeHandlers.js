@@ -218,6 +218,28 @@ module.exports = {
 
 	triggerEventCharacterPOST: function(req, res) {
 		var params = req.body;
+	},
+
+	userLeaguesGET: function(req, res) {
+		var username = req.session.token;
+		db.User.findOne({
+			where: {
+				username: username
+			},
+			include: [
+    		{ 
+    			model: db.League
+    		}
+    	] 
+		}).then(function (user) {
+			if (user) {
+				console.log('ENTER USER LEAGUES');
+				res.status(200).json(user);
+			}else {
+				console.log('ERROR USER LEAGUES');
+				res.status(401);
+			}
+		});
 	}
 		
 }; // end module
