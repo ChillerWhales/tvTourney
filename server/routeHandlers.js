@@ -200,7 +200,8 @@ module.exports = {
 					db.UserLeague.create({
 						league_id: params.id,
 						owner: ownerId,
-						email: req.params.email
+						email: req.params.email,
+						username: req.params.username
 					}).then(function(newLeagueUsers) {
 						logger.info("Added new users to league successfully");
 						res.status(201).json(newLeagueUsers);
