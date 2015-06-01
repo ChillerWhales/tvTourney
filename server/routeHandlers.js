@@ -194,7 +194,7 @@ module.exports = {
 		var params = req.body;
 		utils.findUserId(req.session.token, function(user) {
 			var ownerId = user.id;
-			//expects league_id, description, score
+			//expects league_id, owner, email?
 			if(ownerId) {
 				db.League.findOne({where: {id: params.id, owner: ownerId}}).then(function(result) {
 					db.UserLeague.create({
@@ -202,14 +202,14 @@ module.exports = {
 						owner: ownerId,
 						email: req.params.email
 					}).then(function(newLeagueUsers) {
-						logger.info("Added event successfully");
+						logger.info("Added new users to league successfully");
 						res.status(201).json(newLeagueUsers);
 					});				
 				});
 			}
 			else {
-				logger.info("User is not owner");
-				res.status(400).send("User is not owner");
+				logger.info("User is not owner and cannot invite users to league");
+				res.status(400).send("You must be the league owner to invite players");
 			}
 		});
 	},
