@@ -1,6 +1,5 @@
 var Sequelize = require("sequelize");
 
-
 //no password
 var connect = function(dbPath) {
 	var sequelize = new Sequelize('database', 'root', '', {
@@ -22,6 +21,7 @@ var connect = function(dbPath) {
 	return sequelize;
 }
 
+//construct is just a boolean input - allows same function to be used for testing and the actual server
 var createSchemas = function(dbConnection, construct) {
 	var tableConfig = {
 		underscored: true,
@@ -40,6 +40,14 @@ var createSchemas = function(dbConnection, construct) {
 	// associations - define relationships between tables here
 	LeagueCharacter.belongsTo(League)
 	League.hasMany(LeagueCharacter)
+
+	//associations for the CharacterEvent table
+	CharacterEvent.belongsTo(League);
+	CharacterEvent.belongsTo(LeagueCharacter);
+	CharacterEvent.belongsTo(LeagueEvent);
+	League.hasMany(CharacterEvent);
+	LeagueCharacter.hasMany(CharacterEvent);
+	LeagueEvent.hasMany(CharacterEvent);
 
 	//Basically check if tables exists, if not, creates it
 	if (construct) {

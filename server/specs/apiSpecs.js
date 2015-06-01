@@ -207,7 +207,7 @@ describe('API', function() {
 		it("should respond with the new league object", function(done) {
 			agent.post("/league/")
 				.send(testLeague)
-				.expect(200)
+				.expect(201)
 				.expect(function(res) {
 					res.body.id.should.exist;
 					res.body.name.should.equal(testLeague.name);
@@ -234,7 +234,6 @@ describe('API', function() {
 
 	describe("league events", function() {
 		var agent = utils.createAgent();
-
 		var testLeague = {
 			name: "leagueName",
 			show: "tvShow",
@@ -254,36 +253,23 @@ describe('API', function() {
 
 		before(function(done) {
 			utils.signUpUser(utils.testUser);
-			utils.signUpUser(fakeUser);
 			utils.logInAgent(agent, utils.testUser, function() {
-				agent.post("/league")
+				agent.post('/league')
 					.send(testLeague)
-					.expect(200)
-					.expect(function(res) {
+					.expect(201)
+					.end(function(err, res) {
 						testEvent.league_id = res.body.id;
+						done();
 					})
-					.end(function (err, res) {
-						utils.errOrDone(err, res, done);
-					});
 			});
 		});
 
 		after(function(done) {
-			//find and destroy league
-			League.find({where: {name: testLeague.name}})
-				.then(function(foundLeague) {
-					foundLeague.destroy();
-				});
-			LeagueEvent.find({where: {description: testEvent.description}})
-				.then(function(foundEvent) {
-					foundEvent.destroy().then(function() {
-						done();
-					})
-			})
+			//JACK FILL THIS OUT PLEASE
+			done();
 		});
 
 		describe("League Event POST", function() {
-
 			it('should respond with event object when successful', function(done) {
 				agent.post("/league/" + testEvent.league_id + "/events")
 					.send(testEvent)
@@ -313,14 +299,16 @@ describe('API', function() {
 
 			it('should respond with 403 if league_id don"t match with user_id', function(done) {
 				var agent2 = utils.createAgent();
-				utils.logInAgent(agent2, fakeUser, function() {
-					agent2.post("/league/" + testEvent.league_id + "/events")
-						.send(testEvent)
-						.expect(403)
-						.end(function(err, res) {
-							utils.errOrDone(err, res, done);
-						});
-				});
+				utils.signUpUser(fakeUser, function() {
+					utils.logInAgent(agent2, fakeUser, function() {
+						agent2.post("/league/" + testEvent.league_id + "/events")
+							.send(testEvent)
+							.expect(403)
+							.end(function(err, res) {
+								utils.errOrDone(err, res, done);
+							});
+					});
+				})
 			}); 
 
 			it('should respond with 401 if user is not logged in', function(done) {
@@ -335,8 +323,8 @@ describe('API', function() {
 			});
 
 		});
-		xdescribe("League Event GET", function() {
 
+		xdescribe("League Event GET", function() {
 			it('should respond ', function(done) {
 				agent.get("/league/" + testEvent.league_id + "/events")
 					.expect(200)
@@ -352,4 +340,63 @@ describe('API', function() {
 
 	}); //end of league events test
 
+	xdescribe('triggering events on characters', function() {
+		var agent = utils.createAgent();
+
+		before(function(done) {
+			utils.signUpUser(utils.testUser);
+			utils.signUpUser(fakeUser);
+			utils.logInAgent(agent, utils.testUser, function() {
+				agent.post("/league")
+					.send(testLeague)
+					.expect(200)
+					.expect(function(res) {
+						testEvent.league_id = res.body.id;
+					})
+					.end(function (err, res) {
+						utils.errOrDone(err, res, done);
+					});
+			})
+		});	
+
+		before(function(done) {
+			utils.signUpUser(utils.testUser);
+			utils.logInAgent(agent, utils.testUser, function() {
+				agent.post('/league')
+					.send(testLeague)
+					.expect(201)
+					.end(function(err, res) {
+						utils.errOrDone(err, res, done);
+					})
+			});
+		});
+
+		after(function(done) {
+			//find and destroy league
+			League.find({where: {name: testLeague.name}})
+				.then(function(foundLeague) {
+					foundLeague.destroy();
+				});
+			LeagueEvent.find({where: {description: testEvent.description}})
+				.then(function(foundEvent) {
+					foundEvent.destroy().then(function() {
+						done();
+					})
+			})
+		});
+	})
+
 }); //end test
+// 			League.find({where: {name: testLeague.name}})
+// 				.then(function(foundLeague) {
+// 					foundLeague.destroy().then(function() {
+// 						done();
+// 					});
+// 				});
+// 		})
+
+// 		// it('should trigger events on a character') {
+
+// 		// }
+// 	})
+// });

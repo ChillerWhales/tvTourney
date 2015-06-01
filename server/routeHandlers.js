@@ -74,9 +74,10 @@ module.exports = {
 						owner: ownerId,
 						roster_limit: params.roster_limit
 					}
-				}).then(function(newLeague) {
+				}).then(function(newLeague, created) {
 					logger.info("New league successfully created");
-					res.status(200).json(newLeague);
+					//have to send the 0 index because findOrCreate returns an array
+					res.status(201).json(newLeague[0]);
 				});
 			} else if (ownerId === undefined) {
 				logger.info("League was not successfully created");
@@ -171,7 +172,6 @@ module.exports = {
 
 	leagueCharactersGET: function(req, res) {
 		// if leagueid present -- fetch list of characters for the given leagueId
-		console.log("leagueCharactersGET called");
 		db.LeagueCharacter.findAll({
 			where: {
 				league_id: req.params.leagueId
@@ -182,8 +182,8 @@ module.exports = {
 				res.write(characters);
 				res.end();
 			} else {
-				logger.info("No characters exist for league : " +leagueId);
-				res.status(403).send("No characters exist for league : " +leagueId);
+				logger.info("No characters exist for league : " + leagueId);
+				res.status(403).send("No characters exist for league : " + leagueId);
 				res.end();
 			}
 		});
@@ -218,6 +218,35 @@ module.exports = {
 
 	triggerEventCharacterPOST: function(req, res) {
 		var params = req.body;
+		db.CharacterEvent.create({
+			league_id: params.league_id,
+			league_character_id: params.character_id,
+			league_event_id: params.event_id
+		}).then(function(triggeredEvent) {
+			if (triggeredEvent) {
+				logger.info("Triggered the following event:", triggeredEvent)
+				res.status(201).JSON(triggeredEvent);
+			}
+			else {
+				logger.info("Event was not triggered");
+				res.status(500).send("Event was not triggered");
+			}
+		})
+	},
+
+	triggerEventCharacterGET: function(req, res) {
+		db.CharacterEvent.findAll(
+			{where: {league_id: req.params('leagueId')}}
+		).then(function(triggeredEvents) {
+			if (triggeredEvents) {
+				logger.info("Retrieved the following events:", triggeredEvents);
+				res.status(200).json(triggeredEvents);
+			}
+			else {
+				logger.info("Unable to retrieve triggered events");
+				res.status(500).send("Unable to retrieve triggered events");
+			}
+		})
 	}
 		
 }; // end module
