@@ -1,8 +1,5 @@
-angular.module('app.leagues.new', [
-  'new.event.create'
-])
+angular.module('app.leagues.new', ['new.event.create'])
 .factory('League', function($http){
-  
   return {
     postLeague: function(league, callback) {
       $http.post('/league', league)
@@ -24,7 +21,7 @@ angular.module('app.leagues.new', [
 
 })
 .controller('newLeagueController', function ($scope) {
-  $scope.step = 3;
+  $scope.step = 1;
   $scope.league = {};
   $scope.nextStep = function(step) {
     $scope.step = step;

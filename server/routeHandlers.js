@@ -135,9 +135,9 @@ module.exports = {
 			//expects league_id, description, score
 			if(ownerId) {
 				db.League.findOne({where: {id: params.id, owner: ownerId}}).then(function(result) {
-					if(!params.id || !params.description || params.score === undefined) {
-						logger.info("There are missing inputs from the form");
-						res.status(500).send("Wrong inputs please try again");
+					if(!params.id || !params.description || !params.score) {
+						logger.info("Invalid form inputs");
+						res.status(500).send("Invalid inputs");
 					}
 					else {
 						db.LeagueEvent.create({
@@ -146,15 +146,15 @@ module.exports = {
 							//doesnt account for the fact that score could be negative. all scores will be in score_up
 							score_up : params.score
 						}).then(function(newLeagueEvent) {
-							logger.info("Adds event successfully");
+							logger.info("Added event successfully");
 							res.status(201).json(newLeagueEvent);
 						});
 					}
 				});
 			}
 			else {
-				logger.info("Event was not created");
-				res.status(400).send("Event not created!");
+				logger.info("User not logged in!");
+				res.status(400).send("Not logged in!");
 			}
 		});
 	},
