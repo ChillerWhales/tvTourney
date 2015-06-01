@@ -3,7 +3,8 @@
  * set State, url, templateUrl and controller
 */
 angular.module('app.routes', ['ui.router'])
-.config(function($stateProvider){
+.config(function($stateProvider, $urlRouterProvider){
+  $urlRouterProvider.otherwise("/login");
   $stateProvider
     .state('signup', {
       url: '/signup',
