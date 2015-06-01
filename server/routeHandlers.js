@@ -209,6 +209,7 @@ module.exports = {
 				});
 			}
 			else {
+				console.log('failed');
 				logger.info("User is not owner and cannot invite users to league");
 				res.status(400).send("You must be the league owner to invite players");
 			}
