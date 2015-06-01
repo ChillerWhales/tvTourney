@@ -96,6 +96,7 @@ describe('API', function() {
 	//schemas that will be used to execute queries
 	var User = schemas.User;
 	var League = schemas.League;
+	var LeagueEvent = schemas.LeagueEvent
 
 	//deletes inserted user from database after all tests are complete
 	after(function(done) {
@@ -230,4 +231,125 @@ describe('API', function() {
 	 		});
 		});
 	});
-});
+
+	describe("league events", function() {
+		var agent = utils.createAgent();
+
+		var testLeague = {
+			name: "leagueName",
+			show: "tvShow",
+			roster_limit: 10
+		}	
+
+		var testEvent = {
+			description: "testdescription",
+			score: 5,
+		}
+
+		var fakeUser = {
+			username: "fakeuser",
+			email: "fake@fake.com",
+			password: "fakepassword"
+		};
+
+		before(function(done) {
+			utils.signUpUser(utils.testUser);
+			utils.signUpUser(fakeUser);
+			utils.logInAgent(agent, utils.testUser, function() {
+				agent.post("/league")
+					.send(testLeague)
+					.expect(200)
+					.expect(function(res) {
+						testEvent.league_id = res.body.id;
+					})
+					.end(function (err, res) {
+						utils.errOrDone(err, res, done);
+					});
+			});
+		});
+
+		after(function(done) {
+			//find and destroy league
+			League.find({where: {name: testLeague.name}})
+				.then(function(foundLeague) {
+					foundLeague.destroy();
+				});
+			LeagueEvent.find({where: {description: testEvent.description}})
+				.then(function(foundEvent) {
+					foundEvent.destroy().then(function() {
+						done();
+					})
+			})
+		});
+
+		describe("League Event POST", function() {
+
+			it('should respond with event object when successful', function(done) {
+				agent.post("/league/" + testEvent.league_id + "/events")
+					.send(testEvent)
+					.expect(201)
+					.expect(function(res) {
+						res.body.id.should.exist;
+						res.body.description.should.equal(testEvent.description);
+						res.body.score_up.should.equal(testEvent.score);
+					})
+					.end(function (err, res) {
+						utils.errOrDone(err, res, done);
+					});
+			});
+
+			it('should respond with 400 if inputs are invalid', function(done) {
+				agent.post("/league/" + testEvent.league_id + "/events")
+					.send({
+						league_id: testEvent.league_id,
+						notdescription: "hehehehehhe",
+						notscore: "huehuehue"
+					})
+					.expect(400)
+					.end(function (err, res) {
+						utils.errOrDone(err, res, done);
+					});
+			});
+
+			it('should respond with 403 if league_id don"t match with user_id', function(done) {
+				var agent2 = utils.createAgent();
+				utils.logInAgent(agent2, fakeUser, function() {
+					agent2.post("/league/" + testEvent.league_id + "/events")
+						.send(testEvent)
+						.expect(403)
+						.end(function(err, res) {
+							utils.errOrDone(err, res, done);
+						});
+				});
+			}); 
+
+			it('should respond with 401 if user is not logged in', function(done) {
+				var agent3 = utils.createAgent();
+				//creates new agent but doesn't log it in
+				agent3.post("/league/" + testEvent.league_id + "/events")
+					.send(testEvent)
+					.expect(401)
+					.end(function(err, res) {
+						utils.errOrDone(err, res, done);
+					});			
+			});
+
+		});
+		xdescribe("League Event GET", function() {
+
+			it('should respond ', function(done) {
+				agent.get("/league/" + testEvent.league_id + "/events")
+					.expect(200)
+					.expect(function(data) {
+						console.log(data);
+					})
+					.end(function(err, res) {
+						utils.errOrDone(err, res, done);
+					})
+			});
+
+		});
+
+	}); //end of league events test
+
+}); //end test

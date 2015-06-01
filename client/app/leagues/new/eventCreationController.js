@@ -6,7 +6,7 @@ angular.module('new.event.create', [])
     //controller for making events
     $scope.makeEvent = function() {
       var event = {
-        id: $scope.league.id,
+        league_id: $scope.league.id,
         league_name: $scope.league.name,
         description : $scope.event.name,
         score: $scope.event.score,
