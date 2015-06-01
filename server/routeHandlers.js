@@ -164,13 +164,13 @@ module.exports = {
 		// Receive leagueId as leagueId from req params and character  (name) and creates one record
 		// create records for league id --> return 201 and obj containing created row
 		
-		if(!req.params('leagueId')) {
+		if(!req.params.leagueId) {
 			logger.info("leagueCharactersPOST attempted without leagueId");
 			res.status(403).send("yo - where's your league_id");
 		}
 		var params = req.body;
 		db.LeagueCharacter.create({
-			league_id: req.params('leagueId'),
+			league_id: req.params.leagueId,
 			name: params.name
 		})
 		.then(function(character) {
@@ -180,9 +180,10 @@ module.exports = {
 
 	leagueCharactersGET: function(req, res) {
 		// if leagueid present -- fetch list of characters for the given leagueId
+		console.log("leagueCharactersGET called");
 		db.LeagueCharacter.findAll({
 			where: {
-				league_id: req.params('leagueId')
+				league_id: req.params.leagueId
 			}
 		})
 		.then(function(characters){
