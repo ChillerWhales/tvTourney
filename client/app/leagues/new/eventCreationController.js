@@ -2,14 +2,19 @@ angular.module('new.event.create', [])
   .controller('eventCtrl', function ($scope, eventHandler, $stateParams) {
     //array in the scope for holding events
     $scope.events = [];
+
     //controller for making events
     $scope.makeEvent = function() {
       var event = {
         id: $scope.league.id,
+        league_name: $scope.league.name,
         description : $scope.event.name,
         score: $scope.event.score,
         url: "/league/" + $scope.league.id + "/events"
       }
+      $scope.event.name = "";
+      $scope.event.score = "";
+
       eventHandler.postEvent(event).success(function(data) {
         console.log("SUCCESS!!", data);
         $scope.events.push(event);

@@ -33,19 +33,24 @@
   Add Character:
   <input id="add_character" label="addCharacter" name="addCharacter" type="text" ng-model="characterName"/>
   <button>add</button>
-  <button id="previous">prev</button>
-  <button id="next">next</button>
+  <button ng-click="nextStep(1)" id="previous">prev</button>
+  <button ng-click="nextStep(3)" id="next">next</button>
 </div>
 
 <div class="createStepThree" ng-show="step == 3" ng-controller="eventCtrl">
+  <div ng-show="events.length > 0"> EVENTS for {{league.name}}</div>
+  <div ng-repeat="chosenEvent in events">
+    <span> {{chosenEvent.description}} </span>
+    <span> {{chosenEvent.score}} </span>
+  </div>
     Add Event:
     <input id="event_name" ng-model="event.name" type="text" max-length="105"/>
     Event Score:
     <input id="event_score" ng-model="event.score" type="text"/>
     <button ng-click="makeEvent()">Add</button>
   </form>
-  <button id="previous">prev</button>
-  <button id="next">next</button>
+  <button ng-click="nextStep(2)" id="previous">prev</button>
+  <button ng-click="nextStep(4)" id="next">next</button>
 </div>
 
 <div class="createStepFour" ng-show="step == 4" ng-controller="inviteFriendsCtrl">
