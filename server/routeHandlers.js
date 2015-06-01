@@ -75,7 +75,20 @@ module.exports = {
 				logger.info("New league successfully created");
 				res.status(200).json(newLeague);
 			});
-			
+			if (ownerId) {
+				db.League.create({
+					name: params.name,
+					show: params.show,
+					owner: ownerId,
+					roster_limit: params.roster_limit
+				}).then(function(newLeague) {
+					logger.info("New league successfully created");
+					res.status(200).json(newLeague);
+				});
+			} else if (ownerId === undefined) {
+				logger.info("League was not successfully created");
+				res.status(400).send("League was not created.");
+			}
 		});
 	},
 	/*this code expects that the req will have the id of the league event so it
@@ -85,7 +98,8 @@ module.exports = {
 		utils.findUserId(req.session.token, function(user) {
 			var ownerId = user.id;
 			if(ownerId) {
-				db.League.findOne({where: {id : params.id, owner: userId}}).then(function(result) {
+				//checks if user is the current owner of the league.
+				db.League.findOne({where: {id : params.id, owner: ownerId}}).then(function(result) {
 					//checks to see if the league under that id's owner is the same as our session user.
 					if(result) {
 						logger.info("User is the owner of the league. Create events!");
@@ -111,28 +125,38 @@ module.exports = {
 				res.status(401).send("No user token!");
 			}
 		});
-		//checks if user is the current owner of the league.
 	},
 	/*creates individual events that the user writes*/
 	eventPOST: function(req, res) {
 		//gets form data
 		var params = req.body;
+		utils.findUserId(req.session.token, function(user) {
+			var ownerId = user.id;
 			//expects league_id, description, score
-			if(!params.id || !params.description || params.score === undefined) {
-				logger.info("There are missing inputs from the form");
-				res.status(500).send("Wrong inputs please try again");
-			}
-			else {
-				db.LeagueEvent.create({
-				league_id : params.id,
-				description : params.description,
-				//doesnt account for the fact that score could be negative. all scores will be in score_up
-				score_up : params.score
-				}).then(function(newLeagueEvent) {
-					logger.info("Adds event successfully");
-					res.status(201).send("Event created successfully");
+			if(ownerId) {
+				db.League.findOne({where: {id: params.id, owner: ownerId}}).then(function(result) {
+					if(!params.id || !params.description || !params.score) {
+						logger.info("Invalid form inputs");
+						res.status(500).send("Invalid inputs");
+					}
+					else {
+						db.LeagueEvent.create({
+							league_id : params.id,
+							description : params.description,
+							//doesnt account for the fact that score could be negative. all scores will be in score_up
+							score_up : params.score
+						}).then(function(newLeagueEvent) {
+							logger.info("Added event successfully");
+							res.status(201).json(newLeagueEvent);
+						});
+					}
 				});
 			}
+			else {
+				logger.info("User not logged in!");
+				res.status(400).send("Not logged in!");
+			}
+		});
 	},
 	testAuthGET: function(req, res) {
 		//user should only make it here if they pass authentication
@@ -183,7 +207,5 @@ module.exports = {
 	triggerEventCharacterPOST: function(req, res) {
 		var params = req.body;
 	}
-
-
-
+		
 }; // end module

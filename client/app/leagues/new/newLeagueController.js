@@ -1,6 +1,5 @@
-angular.module('app.leagues.new', [])
+angular.module('app.leagues.new', ['new.event.create'])
 .factory('League', function($http){
-  
   return {
     postLeague: function(league, callback) {
       $http.post('/league', league)

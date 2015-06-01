@@ -22,7 +22,7 @@
   </form>
 </div>
 
-<div class="createStepTwo" ng-controller="setCharactersCtrl">
+<div class="createStepTwo" ng-show="step == 2" ng-controller="setCharactersCtrl">
   {{step}}
   Characters:
   {{league}}
@@ -37,12 +37,12 @@
   <button id="next">next</button>
 </div>
 
-<div class="createStepThree" ng-show="step == 2" ng-controller="scoreSettingCtrl">
+<div class="createStepThree" ng-show="step == 3" ng-controller="eventCtrl">
     Add Event:
-    <input id="event_name" name="eventName" type="text" max-length="105"/>
+    <input id="event_name" ng-model="event.name" type="text" max-length="105"/>
     Event Score:
-    <input id="event_score" name="eventScore" type="text"/>
-    <button>Add</button>
+    <input id="event_score" ng-model="event.score" type="text"/>
+    <button ng-click="makeEvent()">Add</button>
   </form>
   <button id="previous">prev</button>
   <button id="next">next</button>
