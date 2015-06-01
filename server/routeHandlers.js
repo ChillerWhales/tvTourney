@@ -89,6 +89,7 @@ module.exports = {
 	can confirm that the user is indeed the owner of the the league specified.*/
 	eventGET: function(req, res) {
 		var params = req.body;
+		console.log("is in here")
 		utils.findUserId(req.session.token, function(user) {
 			var ownerId = user.id;
 				//checks if user is the current owner of the league.

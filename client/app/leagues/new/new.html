@@ -22,7 +22,7 @@
   </form>
 </div>
 
-<div class="create-step-two" ng-show="step == 2" ng-controller="setCharactersCtrl">
+<div class="create-step-two" ng-show="step == 5" ng-controller="setCharactersCtrl">
 <!--   {{step}}
   League:
   {{league}}
@@ -40,21 +40,17 @@
   <button id="next" ng-click="checkIfCharacters()">next</button>
 </div>
 
-<div class="createStepThree" ng-show="step == 3" ng-controller="eventCtrl">
+<div class="createStepThree" ng-show="step == 2" ng-controller="eventCtrl">
   <div ng-show="events.length > 0"> EVENTS for {{league.name}}</div>
   <div ng-repeat="chosenEvent in events">
     <span> {{chosenEvent.description}} </span>
     <span> {{chosenEvent.score}} </span>
   </div>
-<!-- </div> -->
-
-<!-- <div class="creat-step-three" ng-show="step == 3" ng-controller="eventCtrl"> -->
     Add Event:
     <input id="event_name" ng-model="event.name" type="text" max-length="105"/>
     Event Score:
     <input id="event_score" ng-model="event.score" type="text"/>
-    <button ng-click="makeEvent()">Add</button>
-  <!-- </form> -->
+    <button ng-click="addEvent()">Add</button>
   <button ng-click="nextStep(2)" id="previous">prev</button>
   <button ng-click="nextStep(4)" id="next">next</button>
 </div>
