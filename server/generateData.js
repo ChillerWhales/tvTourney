@@ -5,32 +5,31 @@ var db = require('./db');
   * GENERATE USERS
 **/
 
-
 var users = [
   {
-    username: 'Mónica',
+    username: 'monica',
     email: 'monica@gmail.com',
-    password: '123456'
+    password: 'monica'
   },
   {
-    username: 'Kuldeep',
+    username: 'kuldeep',
     email: 'kuldeep@gmail.com',
-    password: '123456'
+    password: 'kuldeep'
   },
   {
-    username: 'Richi',
+    username: 'richi',
     email: 'richi@gmail.com',
-    password: '123456'
+    password: 'richi'
   },
   {
-    username: 'Jack',
+    username: 'jack',
     email: 'jack@gmail.com',
-    password: '123456'
+    password: 'jack'
   },
   {
-    username: 'Antonio',
+    username: 'antonio',
     email: 'antonio@gmail.com',
-    password: '123456'
+    password: 'antonio'
   },
   ];
 
@@ -56,7 +55,7 @@ for(var i = 0, size = users.length; i < size; i++) {
 
 db.User.find({
   where: {
-    username: 'Mónica'
+    username: 'monica'
   }
 })
 .then(function (user) {
@@ -73,6 +72,7 @@ db.User.find({
     /**
       * Create Characters
     **/
+    league = league[0];
     if (league) {
       console.log('League ' + league.name + 'created successfully');
       var id = league.id
@@ -111,22 +111,39 @@ db.User.find({
         var character = characters[i];
         (function (character) {
           db.LeagueCharacter.findOrCreate({
-            where: character
+            where: character,
           })
           .then(function (row) {
+            row = row[0];
             if (row) {
-              console.log('Character ' + row.name + 'created successfully')
+              console.log('Character ' + row.name + ' created successfully')
             }else{
               console.log('Error ' + character.name);
             }
           });
         })(character);
       }
+
+      /**
+        * Add League to User
+      **/
+      db.User.findOne({
+        where: {
+          username: 'antonio'
+        }
+      })
+      .then(function (user) {
+        user.addLeague(league).then(function (response){
+          console.log('Add ',league.name, + ' to user ', user.username);
+        });
+      });
+      
     }else {
       console.log('Error to create league');
     }
   });
 });
+
 
 
 

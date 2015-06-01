@@ -40,7 +40,8 @@ var createSchemas = function(dbConnection, construct) {
 	// associations - define relationships between tables here
 	LeagueCharacter.belongsTo(League)
 	League.hasMany(LeagueCharacter)
-
+	User.belongsToMany(League, { through: UserLeague })
+	League.belongsToMany(User, { through: UserLeague })
 	//Basically check if tables exists, if not, creates it
 	if (construct) {
 		User.sync();
