@@ -88,33 +88,26 @@ module.exports = {
 		var params = req.body;
 		utils.findUserId(req.session.token, function(user) {
 			var ownerId = user.id;
-			if(ownerId) {
 				//checks if user is the current owner of the league.
-				db.League.findOne({where: {id : params.id, owner: ownerId}}).then(function(result) {
-					//checks to see if the league under that id's owner is the same as our session user.
-					if(result) {
-						logger.info("User is the owner of the league. Create events!");
-						res.status(200).send("You have access for creating events on this league");
-						db.LeagueEvent.findAll({
-							where: {
-								league_id: params.id
-							}
-						}).then(function(result) {
-							res.write(result);
-							res.end();
-						});
-					}
-					else {
-						logger.info("User does not have access creating events on this league");
-						res.status(403).send("User doesn't have access to this page.");
+			db.League.findOne({where: {id : params.league_id, owner: ownerId}}).then(function(result) {
+				//checks to see if the league under that id's owner is the same as our session user.
+				if(result) {
+					logger.info("User is the owner of the league. Create events!");
+					db.LeagueEvent.findAll({
+						where: {
+							league_id: params.id
+						}
+					}).then(function(result) {
+						res.status(200).json(result);
 						res.end();
-					}
-				});
-			}
-			else {
-				logger.info("User not logged in!");
-				res.status(401).send("No user token!");
-			}
+					});
+				}
+				else {
+					logger.info("User does not have access creating events on this league");
+					res.status(403).send("User doesn't have access to this page.");
+					res.end();
+				}
+			});
 		});
 	},
 	/*creates individual events that the user writes*/
@@ -124,29 +117,27 @@ module.exports = {
 		utils.findUserId(req.session.token, function(user) {
 			var ownerId = user.id;
 			//expects league_id, description, score
-			if(ownerId) {
-				db.League.findOne({where: {id: params.id, owner: ownerId}}).then(function(result) {
-					if(!params.id || !params.description || !params.score) {
-						logger.info("Invalid form inputs");
-						res.status(500).send("Invalid inputs");
-					}
-					else {
-						db.LeagueEvent.create({
-							league_id : params.id,
-							description : params.description,
-							//doesnt account for the fact that score could be negative. all scores will be in score_up
-							score_up : params.score
-						}).then(function(newLeagueEvent) {
-							logger.info("Added event successfully");
-							res.status(201).json(newLeagueEvent);
-						});
-					}
-				});
-			}
-			else {
-				logger.info("User not logged in!");
-				res.status(400).send("Not logged in!");
-			}
+			db.League.findOne({where: {id: params.league_id, owner: ownerId}}).then(function(result) {
+				if(!result) {
+					logger.info("user is not the owner of the league");
+					res.status(403).send("User doesn't have access to this page")
+				}
+				else if(!params.league_id || !params.description || !params.score) {
+					logger.info("Invalid form inputs");
+					res.status(400).send("Invalid inputs");
+				}
+				else {
+					db.LeagueEvent.create({
+						league_id : params.id,
+						description : params.description,
+						//doesnt account for the fact that score could be negative. all scores will be in score_up
+						score_up : params.score
+					}).then(function(newLeagueEvent) {
+						logger.info("Added event successfully");
+						res.status(201).json(newLeagueEvent);
+					});
+				}
+			});
 		});
 	},
 	testAuthGET: function(req, res) {

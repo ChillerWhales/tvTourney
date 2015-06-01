@@ -13,6 +13,7 @@ function setup(app, routeHandlers) {
     .all(auth)
     .post(routeHandlers.leagueCreatePOST);
 	app.route('/league/:id/events')
+    .all(auth)
     .get(routeHandlers.eventGET)
     .post(routeHandlers.eventPOST);
   app.route('/league/:leagueId/characters')
