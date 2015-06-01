@@ -94,6 +94,7 @@ module.exports = {
 				//checks if user is the current owner of the league.
 			db.League.findOne({where: {id : params.league_id, owner: ownerId}}).then(function(result) {
 				//checks to see if the league under that id's owner is the same as our session user.
+				console.log(result);
 				if(result) {
 					logger.info("User is the owner of the league. Create events!");
 					db.LeagueEvent.findAll({
