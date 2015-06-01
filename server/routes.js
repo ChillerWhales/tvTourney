@@ -18,6 +18,8 @@ function setup(app, routeHandlers) {
   app.route('/league/:leagueId/characters')
   .get(routeHandlers.leagueCharactersGET)
   .post(routeHandlers.leagueCharactersPOST);
+  app.route('/user/leagues')
+    .get(routeHandlers.userLeaguesGET);
   /*adding auth here protects the route from unauthenticated users
   if user is authenticated, auth will call next and the next routehandler
   will catch the requeset and process it, otherwise the user will receive

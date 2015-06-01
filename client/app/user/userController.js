@@ -23,7 +23,7 @@ angular.module('app.user', [])
     };
     User.login(user, function(success){
       if (success) {
-        $state.go('leagues');
+        $state.go('leagues.list');
       }
     });
   };
