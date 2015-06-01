@@ -198,7 +198,28 @@ module.exports = {
 	},
 
 	leagueInvitePOST: function(req, res) {
-		
+
+		var params = req.body;
+		utils.findUserId(req.session.token, function(user) {
+			var ownerId = user.id;
+			//expects league_id, description, score
+			if(ownerId) {
+				db.League.findOne({where: {id: params.id, owner: ownerId}}).then(function(result) {
+					db.UserLeague.create({
+						league_id: params.id,
+						owner: ownerId,
+						email: req.params.email
+					}).then(function(newLeagueUsers) {
+						logger.info("Added event successfully");
+						res.status(201).json(newLeagueUsers);
+					});				
+				});
+			}
+			else {
+				logger.info("User is not owner");
+				res.status(400).send("User is not owner");
+			}
+		});
 	},
 
 	triggerEventCharacterPOST: function(req, res) {
