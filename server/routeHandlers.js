@@ -196,7 +196,6 @@ module.exports = {
 			var ownerId = user.id;
 			//expects league_id, owner, email?
 			if(ownerId) {
-				db.League.findOne({where: {id: params.id, owner: ownerId}}).then(function(result) {
 					db.UserLeague.create({
 						league_id: params.id,
 						owner: ownerId,
@@ -206,7 +205,6 @@ module.exports = {
 						logger.info("Added new users to league successfully");
 						res.status(201).json(newLeagueUsers);
 					});				
-				});
 			}
 			else {
 				console.log('failed');
