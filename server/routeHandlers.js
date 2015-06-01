@@ -67,11 +67,13 @@ module.exports = {
 
 			var ownerId = user.id;
 			if (ownerId) {
-				db.League.create({
-					name: params.name,
-					show: params.show,
-					owner: ownerId,
-					roster_limit: params.roster_limit
+				db.League.findOrCreate({
+					where: {
+						name: params.name,
+						show: params.show,
+						owner: ownerId,
+						roster_limit: params.roster_limit
+					}
 				}).then(function(newLeague) {
 					logger.info("New league successfully created");
 					res.status(200).json(newLeague);
