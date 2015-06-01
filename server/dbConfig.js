@@ -14,6 +14,8 @@ var connect = function(dbPath) {
 			idle: 10000
 		},
 
+		logging: false,
+
 		storage: dbPath
 	});
 

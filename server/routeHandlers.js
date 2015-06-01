@@ -65,24 +65,21 @@ module.exports = {
 		//Inputs: league name, show, roster limit
 		var params = req.body;
 		utils.findUserId(req.session.token, function(user) {
-			var ownerId = user.id;
-			if (ownerId) {
-				db.League.create({
-					name: params.name,
-					show: params.show,
-					owner: ownerId,
-					roster_limit: params.roster_limit
-				}).then(function(newLeague) {
-					logger.info("New league successfully created");
-					console.log('newLeague', newLeague);
-					res.status(200).json(newLeague);
-				});
-			} else if (ownerId === undefined) {
-				logger.info("League was not successfully created");
-				res.status(400).send("League was not created.");
-			}
-		});
 
+			var ownerId = user.id;
+			db.League.create({
+				name: params.name,
+				show: params.show,
+				owner: ownerId,
+				roster_limit: params.roster_limit
+			}).then(function(newLeague) {
+				logger.info("New league successfully created");
+				console.log('newLeague', newLeague);
+				res.status(200).json(newLeague);
+				console.log("sent 200");
+			});
+			
+		});
 	},
 	/*this code expects that the req will have the id of the league event so it
 	can confirm that the user is indeed the owner of the the league specified.*/
