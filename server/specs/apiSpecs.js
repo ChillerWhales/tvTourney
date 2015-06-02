@@ -340,11 +340,6 @@ describe('API', function() {
 	    		foundUser.destroy();
 	    });
 
-	    LeagueEvent.find({where: {notdescription: "hehehehehhe"}})
-	    	.then(function(foundEvent) {
-	    		foundEvent.destroy();
-	    });
-	    	
 	    LeagueEvent.find({where: {description: testEvent.description}})
 	      .then(function(foundEvent) {
 	      	foundEvent.destroy().then(function() {
@@ -408,18 +403,47 @@ describe('API', function() {
 
 		});
 
-		xdescribe("League Event GET", function() {
-			it('should respond ', function(done) {
+		describe("League Event GET", function() {
+			
+			it('should respond with an array of objects containing events', function(done) {
 				agent.get("/league/" + testEvent.league_id + "/events")
 					.expect(200)
-					.expect(function(data) {
-						console.log(data);
+					.expect(function(res) {
+						Array.isArray(res.body).should.equal(true);
 					})
 					.end(function(err, res) {
 						utils.errOrDone(err, res, done);
-					})
+					});
 			});
 
+			it('should return the events that belong to the league', function(done) {
+				agent.get("/league/" + testEvent.league_id + "/events")
+					.expect(200)
+					.expect(function(res) {
+						res.body[0].league_id.should.equal(testEvent.league_id);
+						res.body[0].description.should.equal(testEvent.description);
+						res.body[0].score_up.should.equal(testEvent.score);
+					})
+					.end(function(err, res) {
+						utils.errOrDone(err, res, done);
+					});
+			});
+			//the get function in routeHandler is checking that user is the owner! 
+			//not if user is part of the league! Need to refactor when the tables for
+			//league-users is done.
+			it('should return 403 if user not part of league', function(done) {
+				var agent2 = utils.createAgent();
+				utils.signUpUser(fakeUser, function() {
+					utils.logInAgent(agent2, fakeUser, function() {
+						agent2.get("/league/" + testEvent.league_id + "/events")
+							.expect(403)
+							.end(function(err, res) {
+								utils.errOrDone(err, res, done);
+							});
+					});
+				})
+			});
+		
 		});
 
 	}); //end of league events test

@@ -96,11 +96,13 @@ module.exports = {
 				//checks to see if the league under that id's owner is the same as our session user.
 				if(result) {
 					logger.info("User is the owner of the league. Create events!");
+					console.log(req.params.id)
 					db.LeagueEvent.findAll({
 						where: {
 							league_id: req.params.id
 						}
 					}).then(function(result) {
+						console.log(result);
 						res.status(200).json(result);
 						res.end();
 					});
@@ -131,12 +133,13 @@ module.exports = {
 				}
 				else {
 					db.LeagueEvent.create({
-						league_id : params.id,
+						league_id : params.league_id,
 						description : params.description,
 						//doesnt account for the fact that score could be negative. all scores will be in score_up
 						score_up : params.score
 					}).then(function(newLeagueEvent) {
 						logger.info("Added event successfully");
+						console.log(newLeagueEvent);
 						res.status(201).json(newLeagueEvent);
 					});
 				}
