@@ -38,12 +38,18 @@ var createSchemas = function(dbConnection, construct) {
 	var CharacterEvent = require('./db/models/CharacterEvent')(dbConnection, tableConfig);
 
 	// associations - define relationships between tables here
-	LeagueCharacter.belongsTo(League)
-	League.hasMany(LeagueCharacter)
+	LeagueCharacter.belongsTo(League);
+	League.hasMany(LeagueCharacter);
 
 	//user league associations
-	User.belongsToMany(League, { through: UserLeague })
-	League.belongsToMany(User, { through: UserLeague })
+	User.belongsToMany(League, { through: UserLeague });
+	League.belongsToMany(User, { through: UserLeague });
+	UserLeague.belongsTo(User);
+	UserLeague.belongsTo(League);
+
+	//owner league associations
+	User.hasMany(League, {as: 'OwnLeagues', foreignKey: 'owner'});
+	League.belongsTo(User, {as: 'Owner', foreignKey: 'owner'});
 
 	//league event associatoons
 	LeagueEvent.belongsTo(League);
