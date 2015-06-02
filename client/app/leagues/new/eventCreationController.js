@@ -6,7 +6,7 @@ angular.module('new.event.create', [])
     //controller for making events
     $scope.makeEvent = function() {
       var event = {
-        id: $scope.league.id,
+        league_id: $scope.league.id,
         league_name: $scope.league.name,
         description : $scope.event.name,
         score: $scope.event.score,
@@ -27,8 +27,8 @@ angular.module('new.event.create', [])
     }
     //controller for getting events that the league has
     $scope.grabEvents = function() {
-      eventHandler.getEvents().success(function(data) {
-        data.each(function(event) {
+      eventHandler.getEvents($scope.league.id).success(function(data) {
+        data.forEach(function(event) {
           $scope.events.push(event);
         })
       }).error(function(err) {
@@ -38,10 +38,10 @@ angular.module('new.event.create', [])
   })
   .factory('eventHandler', function($http) {
     //makes an ajax call to the server for the list of events
-    var getEvents = function() {
+    var getEvents = function(league_id) {
       return $http({
         method: 'GET',
-        url: '/league/:id/events',
+        url: '/league/' + league_id + '/events'
       }).success(function(resp) {
         return resp;
       }).error(function(err) {

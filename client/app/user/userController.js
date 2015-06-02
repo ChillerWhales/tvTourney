@@ -1,7 +1,7 @@
 angular.module('app.user', [])
 .controller('userController', function ($scope, $state, User) {
-  console.log("controller created");
   var user = {};
+
   $scope.signup = function () {
     console.log('test');
     user = {
@@ -23,7 +23,7 @@ angular.module('app.user', [])
     };
     User.login(user, function(success){
       if (success) {
-        $state.go('leagues');
+        $state.go('leagues.list');
       }
     });
   };
@@ -33,8 +33,10 @@ angular.module('app.user', [])
 
 })
 .factory('User', function($http) {
-
-  var currentUser = {};
+  //checks localstorage to see if user info exists
+  var isAuthenticated = function() {
+    return localStorage.getItem('user') ? true : false;
+  }
 
   var signup = function(user, callback) {
     $http({
@@ -57,8 +59,10 @@ angular.module('app.user', [])
       data: user,
     })
     .success(function (res) {
-      //store the current user on login so id and username can be used in http calls
-      currentUser = res;
+      localStorage.setItem('user', JSON.stringify({
+        id: res.id,
+        username: res.username
+      }));
       callback(true, res);
     })
     .error(function (err) {
@@ -73,8 +77,8 @@ angular.module('app.user', [])
       url: '/logout',
     })
     .success(function (res) {
-      //delete information about currentUser on logout
-      currentUser = {};
+      //delete user from localstorage
+      localStorage.removeItem('user');
       callback(true, res);
     })
     .error(function (err) {
@@ -87,6 +91,7 @@ angular.module('app.user', [])
   }
 
   return {
+    isAuthenticated: isAuthenticated,
     signup: signup,
     login: login,
     logout: logout,
