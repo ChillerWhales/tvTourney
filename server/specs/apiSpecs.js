@@ -780,49 +780,29 @@ describe('API', function() {
 						})
 				})
 		})
-	})
+	});
 
-	describe("User leagues", function() {
-		
-		var agent = utils.createAgent();
-		
-		var testLeague = {
-			name: "leagueName",
-			show: "tvShow",
-			roster_limit: 10
-		};
-
-		var fakeUser = {
-			username: "fakeuser",
-			email: "fake@fake.com",
-			password: "fakepassword"
-		}
-
-		var newLeague = {};
-
-		before(function(done) {
-			utils.signUpUser(utils.testUser);
-			utils.signUpUser(fakeUser);
-			utils.logInAgent(agent, utils.testUser, function() {
-				agent.post('/league')
-					.send(testLeague)
-					.expect(201)
-					.end(function(err, res) {
-						newLeague = res.body
-						done();
-					})
-			});
-		});
-
-		after(function(done) {
-			utils.destroyUser(User, fakeUser, function () {
-				utils.destroyObject(League, testLeague, function(){
-					done();
-				});
-			});
-		});
 
 		describe(" After invited to user", function() {
+			var agent = utils.createAgent();
+			
+			var testLeague = {
+				name: "leagueName",
+				show: "tvShow",
+				roster_limit: 10
+			};	
+			
+			var testInvitee = {
+				username: 'invitedUser'
+			};
+
+			var fakeUser = {
+				username: "fakeuser",
+				email: "fake@fake.com",
+				password: "fakepassword"
+			};
+
+		var newLeague = {};
 			it('Should return a leagues array empty', function(done) {
 
 				utils.logOutAgent(agent, function (){
@@ -870,6 +850,105 @@ describe('API', function() {
 
 
 		});
-	}); //end of league /league/:id
-})
- //end test
+		// });
+		// 	utils.destroyUser(User, fakeUser, function () {
+		// 		utils.destroyObject(League, testLeague, function(){
+		// 			done();
+		// 		});
+		// 	});
+		// });
+// })
+
+	describe("league invites", function() {
+		
+		var agent = utils.createAgent();
+		
+		var testLeague = {
+			name: "leagueName",
+			show: "tvShow",
+			roster_limit: 10
+		};	
+		
+		var fakeUser = {
+			username: "fakeUser",
+			email: "fakeUser@mail.com",
+			password: "fakeUser"
+		}
+		
+		var testInvitee = {
+			username: 'invitedUser'
+		}
+
+		var testInviter = {
+			username: "testInviter",
+			email: "testInviter@mail.com",
+			password: "testinvite"
+		}
+
+		var invitee1 = {
+			username: "invitee",
+		}
+
+		var invitee2 = {
+			username: "invitee",
+		}
+
+
+		before(function(done) {
+			utils.signUpUser(utils.testUser);
+			utils.logInAgent(agent, utils.testUser, function() {
+				agent.post('/league')
+					.send(testLeague)
+					.expect(201)
+					.end(function(err, res) {
+						testLeague.league_id = res.body.id;
+						done();
+					})
+			});
+		});
+
+		after(function(done) {
+				League.find({where: {name: testLeague.name}})
+					.then(function(foundLeague) {
+						foundLeague.destroy().then(function() {
+							done();
+						});
+					});
+			});
+
+
+	})
+
+
+		describe("League Invite POST", function() {
+			it('should respond with status 201 if username is sent', function(done) {
+				agent.post("/league/" + testLeague.league_id + "/invite")
+					.send(testInvitee)
+					.expect(201)
+					// .expect(function(res) {
+					// 	console.log('res.body', res.body);
+					// 	res.body.id.should.exist;
+					// 	res.body.username.should.equal(testInvitee.username);
+					// })
+					.end(function (err, res) {
+						utils.errOrDone(err, res, done);
+					});
+			});
+	
+			it('should respond with 403 if user is not league owner', function(done) {
+				var agent2 = utils.createAgent();
+				utils.signUpUser(fakeUser, function() {
+					utils.logInAgent(agent2, fakeUser, function() {
+						agent2.post("/league/" + testLeague.league_id + "/events")
+							.send(testInvitee)
+							.expect(403)
+							.end(function(err, res) {
+								utils.errOrDone(err, res, done);
+							});
+					});
+				})
+			}); 
+		});
+
+
+}); //end test

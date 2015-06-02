@@ -219,13 +219,14 @@ module.exports = {
 					db.User.findOne({where: {username: params.username}}).then(function(user){
 						if(user) {
 							user.addLeague(league);
+							console.log('returning user', user);
 							logger.info("Added new users to league successfully");
-							res.status(201).json(user);
+							res.status(201).json(params.username);
 						}
 					})
 				} else {
-					logger.info("League with that owner and id does not exist");
-					res.status(400).send("You must be the league owner to invite players");
+					logger.info("User is not owner of league");
+					res.status(403).send("You must be the league owner to invite players");
 				}
 			});
 		});
