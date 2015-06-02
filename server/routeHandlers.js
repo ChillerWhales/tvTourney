@@ -96,7 +96,6 @@ module.exports = {
 				//checks to see if the league under that id's owner is the same as our session user.
 				if(result) {
 					logger.info("User is the owner of the league. Create events!");
-					console.log(req.params.id)
 					db.LeagueEvent.findAll({
 						where: {
 							league_id: req.params.id
@@ -197,17 +196,16 @@ module.exports = {
 		var ownerId = user.id;
 
 			db.League.findOne({where: {id: req.params.leagueId, owner: ownerId}}).then(function(league){
+				console.log(req.params.leagueId);
+				console.log(ownerId);
 				if (league) {
 					db.User.findOne({where: {username: params.username}}).then(function(user){
 						if(user) {
 							user.addLeague(league);
+							logger.info("Added new users to league successfully");
+							res.status(201).json(user);
 						}
 					})
-					.then(function() {
-						logger.info("Added new users to league successfully");
-						//not sure what to send back
-						res.status(201).send("You have added this user to your league!");
-					});									
 				} else {
 					logger.info("League with that owner and id does not exist");
 					res.status(400).send("You must be the league owner to invite players");
@@ -229,32 +227,8 @@ module.exports = {
     	] 
 		}).then(function (user) {
 			if (user) {
-				console.log('ENTER USER LEAGUES');
 				res.status(200).json(user);
 			}else {
-				console.log('ERROR USER LEAGUES');
-				res.status(401);
-			}
-		});
-	},
-
-	userLeaguesGET: function(req, res) {
-		var username = req.session.token;
-		db.User.findOne({
-			where: {
-				username: username
-			},
-			include: [
-    		{ 
-    			model: db.League
-    		}
-    	] 
-		}).then(function (user) {
-			if (user) {
-				console.log('ENTER USER LEAGUES');
-				res.status(200).json(user);
-			}else {
-				console.log('ERROR USER LEAGUES');
 				res.status(401);
 			}
 		});
@@ -263,16 +237,15 @@ module.exports = {
 	//doesnt check if user is owner - fix that
 	triggerEventCharacterPOST: function(req, res) {
 		var params = req.body;
-
+		console.log("got here");
 		db.CharacterEvent.create({
-			// league_id: req.params('leagueId'),
-			league_id: params.league_id,
-			league_character_id: params.character_id,
-			league_event_id: params.event_id
+			league_id: parseInt(req.params.leagueId),
+			league_character_id: params.characterId,
+			league_event_id: params.eventId
 		}).then(function(triggeredEvent) {
 			if (triggeredEvent) {
-				logger.info("Triggered the following event:", triggeredEvent)
-				res.status(201).JSON(triggeredEvent);
+				logger.info("Triggered an event on a character");
+				res.status(201).json(triggeredEvent);
 			}
 			else {
 				logger.info("Event was not triggered");
@@ -283,7 +256,7 @@ module.exports = {
 
 	triggerEventCharacterGET: function(req, res) {
 		db.CharacterEvent.findAll(
-			{where: {league_id: req.params('leagueId')}}
+			{where: {league_id: req.params.leagueId}}
 		).then(function(triggeredEvents) {
 			if (triggeredEvents) {
 				logger.info("Retrieved the following events:", triggeredEvents);
