@@ -26,6 +26,8 @@ function setup(app, routeHandlers) {
   app.route('/league/:leagueId/triggerevent')
     .post(routeHandlers.triggerEventCharacterPOST)
     .get(routeHandlers.triggerEventCharacterGET);
+  //deletion routes
+  
   /*adding auth here protects the route from unauthenticated users
   if user is authenticated, auth will call next and the next routehandler
   will catch the requeset and process it, otherwise the user will receive
