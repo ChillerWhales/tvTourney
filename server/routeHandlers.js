@@ -2,6 +2,7 @@ var logger = require('bristol');
 var db = require('./db');
 var utils = require('./lib/utils');
 var url = require('url');
+var Sequelize = require("sequelize");
 
 module.exports = {
 	homeGET: function(req, res) {
@@ -76,6 +77,7 @@ module.exports = {
 						roster_limit: params.roster_limit
 					}
 				}).then(function(newLeague, created) {
+					user.addLeague(newLeague[0]);
 					logger.info("New league successfully created");
 					//have to send the 0 index because findOrCreate returns an array
 					res.status(201).json(newLeague[0]);
@@ -265,6 +267,33 @@ module.exports = {
 				res.status(500).send("Unable to retrieve triggered events");
 			}
 		})
+	},
+
+	leagueGET: function(req, res) {
+		var leagueId = req.params.id;
+		db.User.findOne({
+			where: {
+				username: req.session.token
+			}
+		})
+		.then(function (user) {
+			db.League.findOne({
+				where: { 
+					id: leagueId 
+				},
+				include: [
+					{ model: db.User, as: 'Owner' },
+					{ model: db.User, where: { id: user.id } }
+				]
+			})
+			.then(function (league){
+				if (league) {
+					res.status(200).json(league);
+				} else {
+					res.status(401);
+				}
+			});
+		});
 	}
 		
 }; // end module
