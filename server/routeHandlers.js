@@ -195,7 +195,7 @@ module.exports = {
 	leagueInvitePOST: function(req, res) {
 		var params = req.body;
 		
-		console.log(params);
+		console.log('params.username', params.body);
 		console.log(req.session.token);
 		utils.findUserId(req.session.token, function(user) {
 		var ownerId = user.id;
