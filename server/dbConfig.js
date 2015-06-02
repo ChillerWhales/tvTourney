@@ -45,6 +45,10 @@ var createSchemas = function(dbConnection, construct) {
 	User.belongsToMany(League, { through: UserLeague })
 	League.belongsToMany(User, { through: UserLeague })
 
+	//league event associatoons
+	LeagueEvent.belongsTo(League);
+	League.hasMany(LeagueEvent);
+
 	//associations for the CharacterEvent table
 	CharacterEvent.belongsTo(League);
 	CharacterEvent.belongsTo(LeagueCharacter);
