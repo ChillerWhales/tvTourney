@@ -232,10 +232,6 @@ describe('API', function() {
 		});
 	});
 
-
-// ----------------------------
-// - added by KD
-
 	describe("league characters", function() {
 		
 		var agent = utils.createAgent();
@@ -276,7 +272,6 @@ describe('API', function() {
 		});
 
 		describe("League Character POST", function() {
-			console.log('id is ', testCharacter.league_id);
 			it('should respond with character object when successful', function(done) {
 				agent.post("/league/" + testCharacter.league_id + "/characters")
 					.send(testCharacter)
@@ -291,10 +286,6 @@ describe('API', function() {
 			});
 		});
 	}); //end of league Characters test
-
-// ----------------------------
-
-
 
 	describe("league events", function() {
 		var agent = utils.createAgent();
