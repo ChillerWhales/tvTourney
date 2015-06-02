@@ -87,21 +87,21 @@ angular.module('app.leagues.new', ['new.event.create'])
   }
 })
 
-.factory('invite', function() {
+.factory('invite', function($http) {
   //should be an empty array once route works
   var invitedUsers = [{username:"richie"}, {username:"antonio"}];
 
   var inviteUser = function(leagueId, username) {
     //uncomment this when route is working
-    // $http({
-    //   method: 'POST',
-    //   url: '/league/'+leagueId+'/invite'
-    // })
-    //   .success(function(invitedUser) {
-    //     invitedUsers.push(invitedUser);
-    //   })
+    $http({
+      method: 'POST',
+      url: '/league/'+leagueId+'/invite'
+    })
+    .success(function(invitedUser) {
+      invitedUsers.push(invitedUser);
+    })
     //delete when route is working
-    invitedUsers.push({username: username});
+    // invitedUsers.push({username: username});
   }
 
   var getInvitedUsers = function() {
