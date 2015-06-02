@@ -55,6 +55,15 @@ var createSchemas = function(dbConnection, construct) {
 	LeagueEvent.belongsTo(League);
 	League.hasMany(LeagueEvent, {onDelete: 'cascade'});
 
+	//associations for the user roster table
+	UserRoster.belongsTo(League);
+	UserRoster.belongsTo(LeagueCharacter);
+	UserRoster.belongsTo(LeagueEvent);
+	League.hasMany(UserRoster);
+	LeagueCharacter.hasMany(UserRoster);
+	LeagueEvent.hasMany(UserRoster);
+
+
 	//associations for the CharacterEvent table
 	CharacterEvent.belongsTo(League);
 	CharacterEvent.belongsTo(LeagueCharacter);

@@ -210,7 +210,7 @@ module.exports = {
 		var params = req.body;
 
 		utils.findUserId(req.session.token, function(user) {
-		var ownerId = user.id;
+			var ownerId = user.id;
 
 			db.League.findOne({where: {id: req.params.leagueId, owner: ownerId}}).then(function(league){
 				console.log(req.params.leagueId);
@@ -229,6 +229,53 @@ module.exports = {
 				}
 			});
 		});
+	},
+
+	//need to limit it so that useres cant draft more players than the league roster_limit
+	rosterPOST: function(req, res) {
+		var params = req.body;
+		var leagueId = parseInt(req.params.leagueId);
+
+		utils.findUserId(req.session.token, function(user) {
+			//findOrCreate because there shouldn't be duplicates
+			db.UserRoster.findOrCreate({
+				user_id: user.id,
+				league_id: leagueId,
+				league_character_id: params.characterId
+			}).then(function(draftedCharacter, created) {
+				if (created) {
+					logger.info("User drafted character");
+					res.status(201).send(draftedCharacter);
+				}
+				else {
+					if (draftedCharacter) {
+						logger.info("User has already drafted that character");
+						res.status(200).send(draftedCharacter);		
+					}
+					else {
+						logger.info("User was unable to draft character");
+						res.status(400).send("User was unable to draft that character");
+					}
+				}
+			})
+		})
+	},
+
+	//should only be able to see someones roster if current user is in that league
+	rosterGET: function(req, res) {
+		var params = req.body;
+		var leagueId = parseInt(req.params.leagueId);
+		var userId = parseInt(req.params.userId);
+
+		db.UserRoster.findAll({where: {league_id: leagueId, user_id: userId}})
+			.then(function(userRoster) {
+				if (userRoster) {
+					res.status(200).json(userRoster);
+				} 
+				else {
+					res.status(400).send("Roster not found");
+				}
+			})
 	},
 
 	userLeaguesGET: function(req, res) {

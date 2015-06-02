@@ -357,6 +357,34 @@ describe('API', function() {
 		});
 	}); //end of league Characters test
 
+	describe("League draft / roster", function() {
+		var agent = utils.createAgent();
+
+		before(function(done) {
+			done();
+		})
+
+		after(function(done) {
+			done();
+		})
+
+		describe("roster POST - draft player", function() {
+			it("should return the drafted player object", function(done) {
+				done();
+			});
+		});
+
+		describe("roster GET - get users roster", function() {
+			it("should return the users roster", function(done) {
+				done();
+			});
+
+			it("should only allow users to view the rosters of players in the same league as them", function(done) {
+				done();
+			})
+		});
+	});
+
 	describe("league events", function() {
 			var agent = utils.createAgent();
 			var testLeague = {
