@@ -88,8 +88,24 @@ module.exports = {
 			}
 		});
 	},
-	/*this code expects that the req will have the id of the league so it
-	can confirm that the user is part of the the league specified.*/
+
+	// leagueGET: function(req, res) {
+	// 	var leagueId = req.params.leagueId;
+	// 	db.UserLeagues.find({where: {}})
+	// 	db.League.find({where: {id: leagueId}}).then(function(foundLeague) {
+	// 		if (foundLeague) {
+	// 			logger.info("Returned a league object");
+	// 			res.status(200).json(foundLeague);
+	// 		}
+	// 		else {
+	// 			logger.info("League not found.");
+	// 			res.status(400).send("League not found");
+	// 		}
+	// 	});
+	// },
+
+	/*this code expects that the req will have the id of the league event so it
+	can confirm that the user is indeed the owner of the the league specified.*/
 	eventGET: function(req, res) {
 		utils.findUserId(req.session.token, function(user) {
 				//checks if user is an current user in the league.
@@ -270,27 +286,35 @@ module.exports = {
 	},
 
 	leagueGET: function(req, res) {
-		var leagueId = req.params.id;
-		db.User.findOne({
-			where: {
-				username: req.session.token
-			}
-		})
-		.then(function (user) {
+		var leagueId = req.params.leagueId;
+		var userId;
+
+		utils.findUserId(req.session.token, function(user) {
+			userId = user.id;
 			db.League.findOne({
 				where: { 
 					id: leagueId 
 				},
 				include: [
-					{ model: db.User, as: 'Owner' },
-					{ model: db.User, where: { id: user.id } }
+					{ model: db.User, as: 'Owner', attributes: ['id', 'username', 'email'] },
 				]
 			})
 			.then(function (league){
 				if (league) {
-					res.status(200).json(league);
-				} else {
-					res.status(401);
+					//checks if user is part of the league
+					league.hasUser(userId).then(function(authorized) {
+						if (authorized) {
+							logger.info("Returned a league object");
+							res.status(200).json(league);
+						} else {
+							logger.info("User is not authorized to access league");
+							res.status(401).send("User is not authorized");
+						}
+					});
+				}
+				else {
+					logger.info("League not found");
+					res.status(400).send("League not found");
 				}
 			});
 		});

@@ -24,6 +24,7 @@ angular.module('app.leagues.list', [])
       url: '/user/leagues'
     })
     .success(function (response) {
+      console.log(response);
       callback(false, response);
     })
     .error(function (err) {
