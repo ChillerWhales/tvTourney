@@ -1,3 +1,4 @@
+
 <div class="create-step-one" ng-show="step == 1" ng-controller="createLeagueCtrl">
   <form>
     League Name:
@@ -46,15 +47,11 @@
     <span> {{chosenEvent.description}} </span>
     <span> {{chosenEvent.score}} </span>
   </div>
-<!-- </div> -->
-
-<!-- <div class="creat-step-three" ng-show="step == 3" ng-controller="eventCtrl"> -->
     Add Event:
     <input id="event_name" ng-model="event.name" type="text" max-length="105"/>
     Event Score:
     <input id="event_score" ng-model="event.score" type="text"/>
     <button ng-click="makeEvent()">Add</button>
-  <!-- </form> -->
   <button ng-click="nextStep(2)" id="previous">prev</button>
   <button ng-click="nextStep(4)" id="next">next</button>
 </div>

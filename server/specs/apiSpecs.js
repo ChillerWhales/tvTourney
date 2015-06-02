@@ -232,10 +232,6 @@ describe('API', function() {
 		});
 	});
 
-
-// ----------------------------
-// - added by KD
-
 	describe("league characters", function() {
 		
 		var agent = utils.createAgent();
@@ -276,7 +272,6 @@ describe('API', function() {
 		});
 
 		describe("League Character POST", function() {
-			console.log('id is ', testCharacter.league_id);
 			it('should respond with character object when successful', function(done) {
 				agent.post("/league/" + testCharacter.league_id + "/characters")
 					.send(testCharacter)
@@ -291,10 +286,6 @@ describe('API', function() {
 			});
 		});
 	}); //end of league Characters test
-
-// ----------------------------
-
-
 
 	describe("league events", function() {
 		var agent = utils.createAgent();
@@ -329,9 +320,24 @@ describe('API', function() {
 		});
 
 		after(function(done) {
-			//JACK FILL THIS OUT PLEASE
-			done();
-		});
+	     //find and destroy league
+	    League.find({where: {name: testLeague.name}})
+	    	.then(function(foundLeague) {
+	     		foundLeague.destroy();
+	    });
+
+	    User.find({where: {username: fakeUser.username}})
+	    	.then(function(foundUser) {
+	    		foundUser.destroy();
+	    });
+
+	    LeagueEvent.find({where: {description: testEvent.description}})
+	      .then(function(foundEvent) {
+	      	foundEvent.destroy().then(function() {
+	     		done();
+	    		});
+	    });
+	  });
 
 		describe("League Event POST", function() {
 			it('should respond with event object when successful', function(done) {
@@ -388,18 +394,47 @@ describe('API', function() {
 
 		});
 
-		xdescribe("League Event GET", function() {
-			it('should respond ', function(done) {
+		describe("League Event GET", function() {
+			
+			it('should respond with an array of objects containing events', function(done) {
 				agent.get("/league/" + testEvent.league_id + "/events")
 					.expect(200)
-					.expect(function(data) {
-						console.log(data);
+					.expect(function(res) {
+						Array.isArray(res.body).should.equal(true);
 					})
 					.end(function(err, res) {
 						utils.errOrDone(err, res, done);
-					})
+					});
 			});
 
+			it('should return the events that belong to the league', function(done) {
+				agent.get("/league/" + testEvent.league_id + "/events")
+					.expect(200)
+					.expect(function(res) {
+						res.body[0].league_id.should.equal(testEvent.league_id);
+						res.body[0].description.should.equal(testEvent.description);
+						res.body[0].score_up.should.equal(testEvent.score);
+					})
+					.end(function(err, res) {
+						utils.errOrDone(err, res, done);
+					});
+			});
+			//the get function in routeHandler is checking that user is the owner! 
+			//not if user is part of the league! Need to refactor when the tables for
+			//league-users is done.
+			it('should return 403 if user not part of league', function(done) {
+				var agent2 = utils.createAgent();
+				utils.signUpUser(fakeUser, function() {
+					utils.logInAgent(agent2, fakeUser, function() {
+						agent2.get("/league/" + testEvent.league_id + "/events")
+							.expect(403)
+							.end(function(err, res) {
+								utils.errOrDone(err, res, done);
+							});
+					});
+				})
+			});
+		
 		});
 
 	}); //end of league events test
