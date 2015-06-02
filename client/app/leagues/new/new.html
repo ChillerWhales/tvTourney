@@ -37,7 +37,7 @@
   <input id="add_character" label="addCharacter" name="addCharacter" type="text" ng-model="character.name"/>
   <button id ="add-character" ng-click="addCharacter()">add</button>
   <button id="previous">prev</button>
-  <button id="next" ng-click="checkIfChracters()">next</button>
+  <button id="next" ng-click="checkIfCharacters()">next</button>
 </div>
 
 <div class="createStepThree" ng-show="step == 3" ng-controller="eventCtrl">
@@ -61,11 +61,15 @@
 
 <div class="createStepFour" ng-show="step == 4" ng-controller="inviteFriendsCtrl">
   <form>
-    <input id="inviteFriends" name="inviteFriends" type="text"/>
-    <button>Add</button>
+    <input ng-model="username" id="inviteFriends" name="inviteFriends" type="text"/>
+    <button ng-click="inviteUser()">Add</button>
   </form>
-  <button id="previous">prev</button>
+  <button ng-click="nextStep(3)" id="previous">prev</button>
   <button id="next">save league &amp; invite</button>
+  Invited users:
+  <ul ng-repeat="user in invitedUsers">
+  <li>{{user.username}}</li>
+  </ul>
 
 </div>
 

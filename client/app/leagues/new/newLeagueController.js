@@ -37,7 +37,7 @@ angular.module('app.leagues.new', ['new.event.create'])
   $scope.appendCharacters = function(character){
     $scope.characters.push(character);
   };
-  $scope.checkIfChracters = function(){
+  $scope.checkIfCharacters = function(){
     if ($scope.characters.length) {
       $scope.nextStep(3);
     }
@@ -79,7 +79,40 @@ angular.module('app.leagues.new', ['new.event.create'])
 .controller('scoreSettingCtrl', function ($scope) {
 })
 
-.controller('inviteCtrl', function ($scope) {})
+.controller('inviteFriendsCtrl', function ($scope, invite) {
+  $scope.invitedUsers = invite.getInvitedUsers();
+  $scope.inviteUser = function() {
+    invite.inviteUser($scope.league.id, $scope.username);
+    $scope.username = "";
+  }
+})
+
+.factory('invite', function() {
+  //should be an empty array once route works
+  var invitedUsers = [{username:"richie"}, {username:"antonio"}];
+
+  var inviteUser = function(leagueId, username) {
+    //uncomment this when route is working
+    // $http({
+    //   method: 'POST',
+    //   url: '/league/'+leagueId+'/invite'
+    // })
+    //   .success(function(invitedUser) {
+    //     invitedUsers.push(invitedUser);
+    //   })
+    //delete when route is working
+    invitedUsers.push({username: username});
+  }
+
+  var getInvitedUsers = function() {
+    return invitedUsers;
+  }
+
+  return {
+    inviteUser: inviteUser,
+    getInvitedUsers: getInvitedUsers
+  }
+})
 
 .factory('Character', function($http) {
   var saveCharacter = function(leagueId, callback){
