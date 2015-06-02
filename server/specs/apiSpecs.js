@@ -98,6 +98,7 @@ describe('API', function() {
 	var League = schemas.League;
 	var LeagueEvent = schemas.LeagueEvent
 	var LeagueCharacter = schemas.LeagueCharacter;
+	var CharacterEvent = schemas.CharacterEvent;
 
 	//deletes inserted user from database after all tests are complete
 	after(function(done) {
@@ -444,7 +445,7 @@ describe('API', function() {
 		var leagueId;
 		var characterId;
 		var eventId;
-		var triggeredEventId;
+		var firstTriggeredEventId;
 
 		var testLeague = {
 			name: "leagueName",
@@ -506,14 +507,17 @@ describe('API', function() {
 			})
 		});	
 		after(function(done) {
-			//find and destroy league
+			/*I think a lot of this code is redundant, I think if the laegue is destroyed, then sequelize
+			will automatically destroy any rows in other tables that depend on it*/
 			League.find({where: {id: leagueId}}).then(function(foundLeague) {
 				foundLeague.destroy().then(function () {
 					LeagueEvent.find({where: {id: eventId}}).then(function(foundEvent) {
 						foundEvent.destroy().then(function () {
 							LeagueCharacter.find({where: {id: characterId}}).then(function(foundCharacter) {
 								foundCharacter.destroy().then(function() {
-									done();
+									CharacterEvent.findAll({where: {league_id: leagueId}}).then(function(foundTriggeredEvents) {
+										done();
+									})
 								});
 							})
 						})
@@ -521,19 +525,51 @@ describe('API', function() {
 				})
 			})
 		})
-		it('it should return the triggered event object' , function() {
+		it('should return the triggered event object' , function(done) {
 			agent.post("/league/" + leagueId + "/triggerevent")
+				.send({
+					characterId: characterId,
+					eventId: eventId
+				})
 				.expect(201)
 				.expect(function(res) {
 					res.body.id.should.exist;
 					res.body.league_id.should.equal(leagueId);
 					res.body.league_character_id.should.equal(characterId);
-					res.body.league_event_id.should.equal(event_id);
+					res.body.league_event_id.should.equal(eventId);
 				})
 				.end(function(err, res) {
-					utils.errOrDone;
+					firstTriggeredEventId = res.body.id;
+					utils.errOrDone(err, res, done);
 				})
 		});
+
+		it('should retrieve all triggered event objects', function(done) {
+			var secondTriggeredEventId;
+			agent.post("/league/" + leagueId + "/triggerevent")
+				.send({
+					characterId: characterId,
+					eventId: eventId
+				})
+				.end(function(err, res) {
+					triggeredEventId = res.body.id;
+					agent.get("/league/" + leagueId + "/triggerevent")
+						.expect(200)
+						.expect(function(res) {
+						})
+						.end(function(err, res) {
+							res.body[0].id.should.equal(firstTriggeredEventId);
+							res.body[0].league_id.should.equal(leagueId);
+							res.body[0].league_character_id.should.equal(characterId);
+							res.body[0].league_event_id.should.equal(eventId);
+							res.body[1].id.should.equal(triggeredEventId);
+							res.body[1].league_id.should.equal(leagueId);
+							res.body[1].league_character_id.should.equal(characterId);
+							res.body[1].league_event_id.should.equal(eventId);
+							utils.errOrDone(err, res, done);
+						})
+				})
+		})
 	})
 })
 // }); //end test

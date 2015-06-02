@@ -23,7 +23,7 @@ function setup(app, routeHandlers) {
     .post(routeHandlers.leagueInvitePOST);
   app.route('/user/leagues')
     .get(routeHandlers.userLeaguesGET);
-  app.route('league/:id/triggerEvent')
+  app.route('/league/:leagueId/triggerevent')
     .post(routeHandlers.triggerEventCharacterPOST)
     .get(routeHandlers.triggerEventCharacterGET);
   /*adding auth here protects the route from unauthenticated users
