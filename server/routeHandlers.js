@@ -241,11 +241,12 @@ module.exports = {
 		});
 	},
 
+	//doesnt check if user is owner - fix that
 	triggerEventCharacterPOST: function(req, res) {
 		var params = req.body;
 
 		db.CharacterEvent.create({
-			league_id: params.league_id,
+			league_id: req.params('leagueId'),
 			league_character_id: params.character_id,
 			league_event_id: params.event_id
 		}).then(function(triggeredEvent) {
