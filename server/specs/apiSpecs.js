@@ -232,6 +232,70 @@ describe('API', function() {
 		});
 	});
 
+
+// ----------------------------
+// - added by KD
+
+	describe("league characters", function() {
+		
+		var agent = utils.createAgent();
+		
+		var testLeague = {
+			name: "leagueName",
+			show: "tvShow",
+			roster_limit: 10
+		}	
+
+		var testCharacter = {
+			name: "testCharacterName",
+			league_id: 5
+		}
+
+		var fakeUser = {
+			username: "fakeuser",
+			email: "fake@fake.com",
+			password: "fakepassword"
+		}
+
+		before(function(done) {
+			utils.signUpUser(utils.testUser);
+			utils.logInAgent(agent, utils.testUser, function() {
+				agent.post('/league')
+					.send(testLeague)
+					.expect(201)
+					.end(function(err, res) {
+						testCharacter.league_id = res.body.id;
+						done();
+					})
+			});
+		});
+
+		after(function(done) {
+			// TBD 
+			done();
+		});
+
+		describe("League Character POST", function() {
+			console.log('id is ', testCharacter.league_id);
+			it('should respond with character object when successful', function(done) {
+				agent.post("/league/" + testCharacter.league_id + "/characters")
+					.send(testCharacter)
+					.expect(201)
+					.expect(function(res) {
+						res.body.id.should.exist;
+						res.body.name.should.equal(testCharacter.name);
+					})
+					.end(function (err, res) {
+						utils.errOrDone(err, res, done);
+					});
+			});
+		});
+	}); //end of league Characters test
+
+// ----------------------------
+
+
+
 	describe("league events", function() {
 		var agent = utils.createAgent();
 		var testLeague = {
