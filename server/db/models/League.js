@@ -1,5 +1,4 @@
 var Sequelize = require("sequelize");
-var db = require('../../db');
 module.exports = function(sequelize, tableConfig) {
   return sequelize.define('league', {
 	  name: Sequelize.STRING,

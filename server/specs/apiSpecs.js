@@ -234,6 +234,74 @@ describe('API', function() {
 		});
 	});
 
+	describe("/league/leagueId", function() {
+		var agent = utils.createAgent();
+		var leagueId;
+
+		var testLeague = {
+			name: "leagueName",
+			show: "tvShow",
+			roster_limit: 10
+		}	
+
+		before(function(done) {
+			utils.signUpUser(utils.testUser);
+			utils.logInAgent(agent, utils.testUser, function() {
+				agent.post("/league/")
+				.send(testLeague)
+				.expect(201)
+				.end(function(err, res) {
+					leagueId = res.body.id;
+					done();
+				})
+			});
+		})
+
+		after(function(done) {
+			//find and destroy league
+			League.find({where: {name: testLeague.name}})
+				.then(function(foundLeague) {
+					foundLeague.destroy().then(function() {
+						done();
+					});
+				});
+		});
+
+		it('get request should respond with league information', function(done) {
+			agent.get("/league/" + leagueId)
+					.expect(200)
+					.expect(function(res) {
+						res.body.id.should.equal(leagueId);
+						res.body.name.should.equal(testLeague.name);
+						res.body.show.should.equal(testLeague.show);
+						res.body.owner.should.exist;
+						res.body.roster_limit.should.equal(testLeague.roster_limit);
+					})
+					.end(function (err, res) {
+						utils.errOrDone(err, res, done);
+		 			});
+		})
+
+		it('should respond with 401 if user is not part of the league', function(done) {
+			var agent = utils.createAgent();
+
+			var otherTestUser = {
+				username: 'otherTestUser',
+				email: "testemail@gmail.com",
+				password: '123qwe'
+			}
+			utils.signUpUser(otherTestUser, function() {
+				utils.logInAgent(agent, otherTestUser, function() {
+					agent.get("/league/" + leagueId)
+					.expect(401)
+					.end(function (err, res) {
+						utils.errOrDone(err, res, done);
+		 			});
+				})
+			});
+		})
+	})
+
 	describe("league characters", function() {
 		
 		var agent = utils.createAgent();

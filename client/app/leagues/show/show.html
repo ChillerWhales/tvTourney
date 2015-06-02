@@ -1,3 +1,11 @@
+<div ng-if="isOwner()">
+  Owner panel
+  <div ng-repeat="event in league.events">
+  </div>
+  <div ng-repeat="character in league.characters">
+  </div>
+</div>
+
 <div>
   Name: {{league.name}}
 </div>
