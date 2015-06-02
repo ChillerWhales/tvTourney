@@ -288,7 +288,7 @@ describe('API', function() {
 		});
 	}); //end of league Characters test
 
-		describe("league events", function() {
+	describe("league events", function() {
 			var agent = utils.createAgent();
 			var testLeague = {
 				name: "leagueName",
@@ -446,8 +446,13 @@ describe('API', function() {
 		var eventId;
 		var triggeredEventId;
 
+		var testLeague = {
+			name: "leagueName",
+			show: "tvShow",
+			roster_limit: 10
+			}	
 		var testCharacter = {
-					name: "testCharacterName",
+			name: "testCharacterName",
 		}
 
 		var testEvent = {
@@ -455,18 +460,24 @@ describe('API', function() {
 			score: 5,
 		}
 
+		var fakeUser = {
+			username: "fakeuser",
+			email: "fake@fake.com",
+			password: "fakepassword"
+		}
+
+
 		before(function(done) {
 			utils.signUpUser(utils.testUser);
 			utils.signUpUser(fakeUser);
 			utils.logInAgent(agent, utils.testUser, function() {
 				agent.post("/league")
 					.send(testLeague)
-					.expect(200)
+					.expect(201)
 					.expect(function(res) {
 						testEvent.league_id = res.body.id;
 					})
 					.end(function (err, res) {
-						utils.errOrDone(err, res, done);
 						//use the returned leagues id to post a character
 						leagueId = res.body.id;
 						agent.post("/league/" + leagueId + "/characters")
@@ -475,13 +486,14 @@ describe('API', function() {
 						.expect(function(res) {
 							res.body.id.should.exist;
 							res.body.name.should.equal(testCharacter.name);
+							characterId = res.body.id;
 						})
 						.end(function (err, res) {
 							agent.post("/league/" + testEvent.league_id + "/events")
 								.send(testEvent)
 								.expect(201)
 								.expect(function(res) {
-									var eventId = res.body.id;
+									eventId = res.body.id;
 									res.body.id.should.exist;
 									res.body.description.should.equal(testEvent.description);
 									res.body.score_up.should.equal(testEvent.score);
@@ -495,20 +507,21 @@ describe('API', function() {
 		});	
 		after(function(done) {
 			//find and destroy league
-			League.find(leagueId).then(function(foundLeague) {
+			League.find({where: {id: leagueId}}).then(function(foundLeague) {
 				foundLeague.destroy().then(function () {
-					LeagueEvent.find(leagueEventId).then(function(foundEvent) {
+					LeagueEvent.find({where: {id: eventId}}).then(function(foundEvent) {
 						foundEvent.destroy().then(function () {
-							LeagueCharacter.find(characterId).then(function(foundCharacter) {
-								foundCharacter.destroy().then(done)
+							LeagueCharacter.find({where: {id: characterId}}).then(function(foundCharacter) {
+								foundCharacter.destroy().then(function() {
+									done();
+								});
 							})
 						})
 					})
 				})
 			})
 		})
-
-		describe("it should return the triggered event object", function() {
+		it('it should return the triggered event object' , function() {
 			agent.post("/league/" + leagueId + "/triggerevent")
 				.expect(201)
 				.expect(function(res) {
@@ -520,7 +533,7 @@ describe('API', function() {
 				.end(function(err, res) {
 					utils.errOrDone;
 				})
-		})
+		});
 	})
 })
 // }); //end test
