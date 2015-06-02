@@ -361,6 +361,11 @@ describe('API', function() {
 		var agent = utils.createAgent();
 
 		before(function(done) {
+			//signup/login user
+
+			//create league
+
+			//create character
 			done();
 		})
 
@@ -372,6 +377,10 @@ describe('API', function() {
 			it("should return the drafted player object", function(done) {
 				done();
 			});
+
+			it("should not allow a user to draft the same player twice", function(done) {
+				done();
+			})
 		});
 
 		describe("roster GET - get users roster", function() {
