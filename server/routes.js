@@ -1,6 +1,6 @@
 var auth = require('./authentication');
 
-function setup(app, routeHandlers) {
+function setup(app, routeHandlers, deleteHandlers) {
 	app.route('/')
 		.get(routeHandlers.homeGET);
 	app.route('/signup')
