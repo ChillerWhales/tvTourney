@@ -1,6 +1,7 @@
 var logger = require('bristol');
 var db = require('./db');
 var utils = require('./lib/utils');
+var url = require('url');
 
 module.exports = {
 	homeGET: function(req, res) {
@@ -88,19 +89,16 @@ module.exports = {
 	/*this code expects that the req will have the id of the league event so it
 	can confirm that the user is indeed the owner of the the league specified.*/
 	eventGET: function(req, res) {
-		var params = req.body;
-		console.log("is in here")
 		utils.findUserId(req.session.token, function(user) {
 			var ownerId = user.id;
 				//checks if user is the current owner of the league.
-			db.League.findOne({where: {id : params.league_id, owner: ownerId}}).then(function(result) {
+			db.League.findOne({where: {id : req.params.id, owner: ownerId}}).then(function(result) {
 				//checks to see if the league under that id's owner is the same as our session user.
-				console.log(result);
 				if(result) {
 					logger.info("User is the owner of the league. Create events!");
 					db.LeagueEvent.findAll({
 						where: {
-							league_id: params.id
+							league_id: req.params.id
 						}
 					}).then(function(result) {
 						res.status(200).json(result);

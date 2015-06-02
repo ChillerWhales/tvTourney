@@ -329,9 +329,29 @@ describe('API', function() {
 		});
 
 		after(function(done) {
-			//JACK FILL THIS OUT PLEASE
-			done();
-		});
+	     //find and destroy league
+	    League.find({where: {name: testLeague.name}})
+	    	.then(function(foundLeague) {
+	     		foundLeague.destroy();
+	    });
+
+	    User.find({where: {username: fakeUser.username}})
+	    	.then(function(foundUser) {
+	    		foundUser.destroy();
+	    });
+
+	    LeagueEvent.find({where: {notdescription: "hehehehehhe"}})
+	    	.then(function(foundEvent) {
+	    		foundEvent.destroy();
+	    });
+	    	
+	    LeagueEvent.find({where: {description: testEvent.description}})
+	      .then(function(foundEvent) {
+	      	foundEvent.destroy().then(function() {
+	     		done();
+	    		});
+	    });
+	  });
 
 		describe("League Event POST", function() {
 			it('should respond with event object when successful', function(done) {
