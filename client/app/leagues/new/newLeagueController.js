@@ -95,8 +95,6 @@ angular.module('app.leagues.new', ['new.event.create'])
 
   var inviteUser = function(leagueId, username) {
 
-
-
     $http.post('/league/' + leagueId + '/invite', {'username': username})
       .success(function(invitedUser){
         invitedUsers.push(invitedUser);
