@@ -196,17 +196,16 @@ module.exports = {
 		var ownerId = user.id;
 
 			db.League.findOne({where: {id: req.params.leagueId, owner: ownerId}}).then(function(league){
+				console.log(req.params.leagueId);
+				console.log(ownerId);
 				if (league) {
 					db.User.findOne({where: {username: params.username}}).then(function(user){
 						if(user) {
 							user.addLeague(league);
+							logger.info("Added new users to league successfully");
+							res.status(201).json(user);
 						}
 					})
-					.then(function() {
-						logger.info("Added new users to league successfully");
-						//not sure what to send back
-						res.status(201).send("You have added this user to your league!");
-					});									
 				} else {
 					logger.info("League with that owner and id does not exist");
 					res.status(400).send("You must be the league owner to invite players");

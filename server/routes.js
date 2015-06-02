@@ -19,7 +19,7 @@ function setup(app, routeHandlers) {
   app.route('/league/:leagueId/characters')
     .get(routeHandlers.leagueCharactersGET)
     .post(routeHandlers.leagueCharactersPOST);
-  app.route('/league/:id/invite')
+  app.route('/league/:leagueId/invite')
     .post(routeHandlers.leagueInvitePOST);
   app.route('/user/leagues')
     .get(routeHandlers.userLeaguesGET);
