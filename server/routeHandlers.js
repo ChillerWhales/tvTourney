@@ -190,27 +190,28 @@ module.exports = {
 	},
 
 	leagueInvitePOST: function(req, res) {
-
 		var params = req.body;
 		utils.findUserId(req.session.token, function(user) {
-			var ownerId = user.id;
-			//expects league_id, owner, email?
-			if(ownerId) {
-					db.UserLeague.create({
-						league_id: params.id,
-						owner: ownerId,
-						email: req.params.email,
-						username: req.params.username
-					}).then(function(newLeagueUsers) {
+		var ownerId = user.id;
+
+		console.log(params);
+		
+			db.League.findOne({where: {league_id: req.params('leagueId'), owner: ownerId}}).then(function(league){
+				if (league) {
+					User.findOne({where: {username: params.username}}).then(function(user){
+						user.addLeague(league);
+					})
+					.then(function() {
 						logger.info("Added new users to league successfully");
+						console.log('Sucess');
 						res.status(201).json(newLeagueUsers);
-					});				
-			}
-			else {
-				console.log('failed');
-				logger.info("User is not owner and cannot invite users to league");
-				res.status(400).send("You must be the league owner to invite players");
-			}
+					});									
+				} else {
+					console.log('failed');
+					logger.info("User is not league owner and cannot invite users to league");
+					res.status(400).send("You must be the league owner to invite players");
+				}
+			});
 		});
 	},
 
