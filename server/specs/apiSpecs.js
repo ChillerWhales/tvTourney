@@ -499,18 +499,18 @@ describe('API', function() {
 // 		// }
 // 	})
 // });
-describe("/league/:leagueId", function() {
-		var agent = utils.createAgent();
+// describe("/league/:leagueId", function() {
+// 		var agent = utils.createAgent();
 
-		var testLeague = {
-			name: "leagueName",
-			show: "tvShow",
-			roster_limit: 10
-		}	
+// 		var testLeague = {
+// 			name: "leagueName",
+// 			show: "tvShow",
+// 			roster_limit: 10
+// 		}	
 
-		var invitedUser = {
-			username: "someUser"
-		}
+// 		var invitedUser = {
+// 			username: "someUser"
+// 		}
 
 		// before(function(done) {
 		// 	utils.signUpUser(utils.testUser);
@@ -527,26 +527,26 @@ describe("/league/:leagueId", function() {
 		// 		});
 		// });
 
-		it("should respond with the invitedUser", function(done) {
-			agent.post("/league/:leagueId/invite")
-				.send(invitedUser)
-				.expect(201)
-				.expect(function(res) {
-					res.body.username.should.equal(invitedUser.username);
-				})
-				.end(function(err, res) {
-					utils.errOrDone(err, res, done);
-				})
-		});
+	// 	it("should respond with the invitedUser", function(done) {
+	// 		agent.post("/league/:leagueId/invite")
+	// 			.send(invitedUser)
+	// 			.expect(201)
+	// 			.expect(function(res) {
+	// 				res.body.username.should.equal(invitedUser.username);
+	// 			})
+	// 			.end(function(err, res) {
+	// 				utils.errOrDone(err, res, done);
+	// 			})
+	// 	});
 
-		it('should add invited user to user league table', function(done) {
-			utils.logOutAgent(agent, function() {
-				agent.post("/league/:leagueId/invite")
-					.send(testLeague)
-					.expect(401)
-					.end(function (err, res) {
-						utils.errOrDone(err, res, done);
-			 		});
-	 		});
-		});
-	});
+	// 	it('should add invited user to user league table', function(done) {
+	// 		utils.logOutAgent(agent, function() {
+	// 			agent.post("/league/:leagueId/invite")
+	// 				.send(testLeague)
+	// 				.expect(401)
+	// 				.end(function (err, res) {
+	// 					utils.errOrDone(err, res, done);
+	// 		 		});
+	//  		});
+	// 	});
+	// });
