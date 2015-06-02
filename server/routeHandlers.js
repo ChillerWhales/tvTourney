@@ -191,11 +191,12 @@ module.exports = {
 
 	leagueInvitePOST: function(req, res) {
 		var params = req.body;
+		
+		console.log(params);
+		console.log(req.session.token);
 		utils.findUserId(req.session.token, function(user) {
 		var ownerId = user.id;
 
-		console.log(params);
-		
 			db.League.findOne({where: {league_id: req.params('leagueId'), owner: ownerId}}).then(function(league){
 				if (league) {
 					User.findOne({where: {username: params.username}}).then(function(user){
@@ -203,12 +204,11 @@ module.exports = {
 					})
 					.then(function() {
 						logger.info("Added new users to league successfully");
-						console.log('Sucess');
+						console.log('Successfully added users to league');
 						res.status(201).json(newLeagueUsers);
 					});									
 				} else {
-					console.log('failed');
-					logger.info("User is not league owner and cannot invite users to league");
+					logger.info("League with that owner and id does not exist");
 					res.status(400).send("You must be the league owner to invite players");
 				}
 			});
