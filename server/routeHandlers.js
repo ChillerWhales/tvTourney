@@ -102,7 +102,6 @@ module.exports = {
 							league_id: req.params.id
 						}
 					}).then(function(result) {
-						console.log(result);
 						res.status(200).json(result);
 						res.end();
 					});
@@ -139,7 +138,6 @@ module.exports = {
 						score_up : params.score
 					}).then(function(newLeagueEvent) {
 						logger.info("Added event successfully");
-						console.log(newLeagueEvent);
 						res.status(201).json(newLeagueEvent);
 					});
 				}
@@ -193,28 +191,49 @@ module.exports = {
 	},
 
 	leagueInvitePOST: function(req, res) {
-
 		var params = req.body;
+
 		utils.findUserId(req.session.token, function(user) {
-			var ownerId = user.id;
-			//expects league_id, owner, email?
-			if(ownerId) {
-				db.League.findOne({where: {id: params.id, owner: ownerId}}).then(function(result) {
-					db.UserLeague.create({
-						league_id: params.id,
-						owner: ownerId,
-						email: req.params.email,
-						username: req.params.username
-					}).then(function(newLeagueUsers) {
+		var ownerId = user.id;
+
+			db.League.findOne({where: {id: req.params.leagueId, owner: ownerId}}).then(function(league){
+				if (league) {
+					db.User.findOne({where: {username: params.username}}).then(function(user){
+						if(user) {
+							user.addLeague(league);
+						}
+					})
+					.then(function() {
 						logger.info("Added new users to league successfully");
-						res.status(201).json(newLeagueUsers);
-					});				
-				});
-			}
-			else {
-				console.log('failed');
-				logger.info("User is not owner and cannot invite users to league");
-				res.status(400).send("You must be the league owner to invite players");
+						//not sure what to send back
+						res.status(201).send("You have added this user to your league!");
+					});									
+				} else {
+					logger.info("League with that owner and id does not exist");
+					res.status(400).send("You must be the league owner to invite players");
+				}
+			});
+		});
+	},
+
+	userLeaguesGET: function(req, res) {
+		var username = req.session.token;
+		db.User.findOne({
+			where: {
+				username: username
+			},
+			include: [
+    		{ 
+    			model: db.League
+    		}
+    	] 
+		}).then(function (user) {
+			if (user) {
+				console.log('ENTER USER LEAGUES');
+				res.status(200).json(user);
+			}else {
+				console.log('ERROR USER LEAGUES');
+				res.status(401);
 			}
 		});
 	},
@@ -246,7 +265,8 @@ module.exports = {
 		var params = req.body;
 
 		db.CharacterEvent.create({
-			league_id: req.params('leagueId'),
+			// league_id: req.params('leagueId'),
+			league_id: params.league_id,
 			league_character_id: params.character_id,
 			league_event_id: params.event_id
 		}).then(function(triggeredEvent) {
