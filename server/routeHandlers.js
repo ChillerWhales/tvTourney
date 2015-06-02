@@ -166,7 +166,7 @@ module.exports = {
 			name: params.name
 		})
 		.then(function(character) {
-			res.status(201).send(JSON.stringify(character));
+			res.status(201).json(character);
 		});
 	},
 
