@@ -9,7 +9,7 @@ var parser = require('body-parser');
 var routeHandlers = require('./routeHandlers');
 var session = require('express-session');
 var cors = require('cors');
-var deleteHandlers = require('./deleteHandler');
+var deleteHandlers = require('./deleteHandlers');
 
 // authentication and encryption middleware//
 var passport =  require('passport');
