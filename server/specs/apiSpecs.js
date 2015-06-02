@@ -572,4 +572,4 @@ describe('API', function() {
 		})
 	})
 })
-// }); //end test
+ //end test

@@ -86,14 +86,13 @@ module.exports = {
 			}
 		});
 	},
-	/*this code expects that the req will have the id of the league event so it
-	can confirm that the user is indeed the owner of the the league specified.*/
+	/*this code expects that the req will have the id of the league so it
+	can confirm that the user is part of the the league specified.*/
 	eventGET: function(req, res) {
 		utils.findUserId(req.session.token, function(user) {
-			var ownerId = user.id;
-				//checks if user is the current owner of the league.
-			db.League.findOne({where: {id : req.params.id, owner: ownerId}}).then(function(result) {
-				//checks to see if the league under that id's owner is the same as our session user.
+				//checks if user is an current user in the league.
+			db.UserLeague.findOne({where: {league_id : req.params.id, user_id: user.id}}).then(function(result) {
+				//checks to see if the league under the id is a user on the league
 				if(result) {
 					logger.info("User is the owner of the league. Create events!");
 					db.LeagueEvent.findAll({
@@ -237,7 +236,6 @@ module.exports = {
 	//doesnt check if user is owner - fix that
 	triggerEventCharacterPOST: function(req, res) {
 		var params = req.body;
-		console.log("got here");
 		db.CharacterEvent.create({
 			league_id: parseInt(req.params.leagueId),
 			league_character_id: params.characterId,
