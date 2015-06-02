@@ -39,29 +39,29 @@ var createSchemas = function(dbConnection, construct) {
 
 	// associations - define relationships between tables here
 	LeagueCharacter.belongsTo(League);
-	League.hasMany(LeagueCharacter);
+	League.hasMany(LeagueCharacter, {onDelete: 'cascade'});
 
 	//user league associations
-	User.belongsToMany(League, { through: UserLeague });
-	League.belongsToMany(User, { through: UserLeague });
+	User.belongsToMany(League, { through: UserLeague});
+	League.belongsToMany(User, { through: UserLeague});
 	UserLeague.belongsTo(User);
 	UserLeague.belongsTo(League);
 
 	//owner league associations
-	User.hasMany(League, {as: 'OwnLeagues', foreignKey: 'owner'});
+	User.hasMany(League, {as: 'OwnLeagues', foreignKey: 'owner', onDelete: 'cascade'});
 	League.belongsTo(User, {as: 'Owner', foreignKey: 'owner'});
 
 	//league event associatoons
 	LeagueEvent.belongsTo(League);
-	League.hasMany(LeagueEvent);
+	League.hasMany(LeagueEvent, {onDelete: 'cascade'});
 
 	//associations for the CharacterEvent table
 	CharacterEvent.belongsTo(League);
 	CharacterEvent.belongsTo(LeagueCharacter);
 	CharacterEvent.belongsTo(LeagueEvent);
-	League.hasMany(CharacterEvent);
-	LeagueCharacter.hasMany(CharacterEvent);
-	LeagueEvent.hasMany(CharacterEvent);
+	League.hasMany(CharacterEvent, {onDelete: 'cascade'});
+	LeagueCharacter.hasMany(CharacterEvent, {onDelete: 'cascade'});
+	LeagueEvent.hasMany(CharacterEvent, {onDelete: 'cascade'});
 
 	//Basically check if tables exists, if not, creates it
 	if (construct) {
