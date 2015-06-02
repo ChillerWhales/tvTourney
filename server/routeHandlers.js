@@ -138,11 +138,6 @@ module.exports = {
 						score_up : params.score
 					}).then(function(newLeagueEvent) {
 						logger.info("Added event successfully");
-<<<<<<< HEAD
-						console.log(newLeagueEvent);
-=======
-						// console.log(newLeagueEvent);
->>>>>>> [feature] routeHandlers.js refactored leagueInvitePOST
 						res.status(201).json(newLeagueEvent);
 					});
 				}
@@ -239,7 +234,6 @@ module.exports = {
 			}else {
 				console.log('ERROR USER LEAGUES');
 				res.status(401);
->>>>>>> [feature] routeHandlers.js refactored leagueInvitePOST
 			}
 		});
 	},
