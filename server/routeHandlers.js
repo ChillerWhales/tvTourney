@@ -257,7 +257,7 @@ module.exports = {
 						if(user) {
 							user.addLeague(league).then(function(){
 								logger.info("Added new users to league successfully");
-								res.status(201).json(params.username);
+								res.status(201).json(user);
 							});
 						}else {
 							res.status(500).send('Unable to retrieve the user');
