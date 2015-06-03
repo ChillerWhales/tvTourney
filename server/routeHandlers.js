@@ -318,6 +318,36 @@ module.exports = {
 				}
 			});
 		});
+	},
+
+	leagueUsersGET: function(req, res) {
+		var leagueId = req.params.leagueId;
+		utils.findUserId(req.session.token, function(user) {
+			if (user) {
+				user.hasLeague(leagueId).then(function (result) {
+					if (result) {
+						db.User.findAll({
+							where: {},
+							attributes: ['id', 'username'],
+							include: [
+								{ model: db.UserLeague, where: { league_id: leagueId}, attributes: ['current_score'] },
+							]
+						})
+						.then(function (users){
+							logger.info("Retrieved the following users ", users);
+							res.status(200).json(users);
+						});
+					}else {
+						logger.info("The user ", user.username, " does not have permission to retrieve the users in this league ", leagueId);
+						res.status(200).json(users);
+					}
+				});
+			}else{
+				logger.info("Unable to retrieve users league");
+				res.status(500).send("Unable to retrieve users league");
+			}
+		});
+
 	}
 		
 }; // end module

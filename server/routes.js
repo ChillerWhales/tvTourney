@@ -15,6 +15,9 @@ function setup(app, routeHandlers, deleteHandlers) {
   app.route('/league/:leagueId')
     .all(auth)
     .get(routeHandlers.leagueGET);
+  app.route('/league/:leagueId/users')
+    .all(auth)
+    .get(routeHandlers.leagueUsersGET);
 	app.route('/league/:id/events')
     .all(auth)
     .get(routeHandlers.eventGET)
