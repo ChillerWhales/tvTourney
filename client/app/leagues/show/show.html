@@ -10,9 +10,12 @@
   </div>
   <br><br>
 </div>
-
+<!-- {{rosterLength}}
+  {{league.roster_limit}} -->
+<button ng-show="rosterLength < league.roster_limit" ui-sref="leagues.draft({id:league.id})">DRAFT</button>
 <div>
   Name: {{league.name}}
+  {{test}}
 </div>
 <div>
   Show: {{league.show}}
@@ -41,13 +44,15 @@
       <br>
     </div>
   </div>
+</div>
 <div>
   Users
-<div ng-repeat='user in league.users'>
-  <span ng-click='selectUser($index)'>User: {{user.name}} Points: {{user.points}}</span>
-  <div ng-show='$index == indexUser'>
-    <div ng-repeat='character in user.roster'>
-      Character: {{character.name}}  Points: {{character.points}}
-    </div>
+</div>
+<div ng-repeat="user in users">
+  <span ng-click="showRoster($index, user.id)">{{user.username}}</span>
+  {{user.user_leagues[0].current_score}}
+  <div ng-show="$index == indexSelect">
+    Roster:
+    {{}}
   </div>
 </div>

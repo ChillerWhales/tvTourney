@@ -256,7 +256,7 @@ module.exports = {
 						if(user) {
 							user.addLeague(league).then(function(){
 								logger.info("Added new users to league successfully");
-								res.status(201).json(params.username);
+								res.status(201).json(user);
 							});
 						}else {
 							res.status(500).send('Unable to retrieve the user');
@@ -304,7 +304,7 @@ module.exports = {
 		var params = req.body;
 		var leagueId = parseInt(req.params.leagueId);
 		var userId = parseInt(req.params.userId);
-
+		console.log('gets to rosterGET route');
 		//checks if current user is in the same league as the user whos roster they want to see
 		utils.findUserId(req.session.token, function(user) {
 			user.hasLeague(leagueId).then(function(userInLeague) {
@@ -320,6 +320,7 @@ module.exports = {
 					})
 					.then(function(userRoster) {
 						if (userRoster) {
+							console.log('userRoster', userRoster);
 							res.status(200).json(userRoster);
 						} 
 						else {

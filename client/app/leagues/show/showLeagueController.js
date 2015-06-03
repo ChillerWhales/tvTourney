@@ -1,18 +1,21 @@
 angular.module('app.leagues.show', [])
-.controller('showLeagueController', function ($scope, $stateParams, ShowLeague) {
+.controller('showLeagueController', function ($scope, $stateParams, ShowLeague, $location, $window, $state) {
   $scope.league = {};
   $scope.events = [];
   $scope.characters = [];
   $scope.showEvents = false;
   $scope.showCharacters = false;
   $scope.indexUser;
+  $scope.indexSelect;
+
+  var currentUserId = JSON.parse(localStorage.getItem('user')).id;
 
   $scope.isOwner = function() {
-    // if(currentUserId === league.owner) {
-    //   return true;
-    // }
-    return true;
-    // return false;
+    if(currentUserId === $scope.league.owner) {
+      return true;
+    }
+    // return true;
+    return false;
   };
 
   $scope.toggleEvents = function() {
@@ -22,11 +25,33 @@ angular.module('app.leagues.show', [])
   $scope.toggleCharacters = function() {
     $scope.showCharacters = !$scope.showCharacters;
   };
+  // if roster exists
+    // $scope.drafted = true
+  // else 
+    //$scope.drafted = false;
+
+  $scope.showUserRoster = true;
+  $scope.showRoster = function(index, userId) {
+    $scope.indexSelect = index;
+
+  }
 
   $scope.getLeague = function (){
     ShowLeague.getLeague($stateParams.id, function (err, response) {
       if (!err) {
         $scope.league = response;
+        
+        ShowLeague.getUsers($scope.league.id, function (err, response){
+          $scope.users = response;
+        });
+
+        ShowLeague.getUserRoster($scope.league.id, currentUserId, function (err, response){
+          console.log('get user roster response:', response);
+          // console.log('character roster name', response[0].league_character.name)
+          console.log('character roster length', response.length)
+          $scope.rosterLength = response.length;
+        });
+
       }
       else {
         console.log(err)
@@ -108,10 +133,26 @@ angular.module('app.leagues.show', [])
     });
   }
 
+  var getUserRoster = function(leagueId, userId, callback) {
+    console.log('leagueId', leagueId);
+    console.log('userId', userId);
+    $http({
+      method: 'GET',
+      url: '/league/' + leagueId + '/user/' + userId + '/roster',
+    })
+    .success(function (res) {
+      callback(false, res);
+    })
+    .error(function (err) {
+      callback(true, err);
+    });
+  };
+
   return {
     getLeague: getLeague,
     getUsers: getUsers,
     getEvents: getEvents,
-    getCharacters: getCharacters
+    getCharacters: getCharacters,
+    getUserRoster: getUserRoster
   };
 });
