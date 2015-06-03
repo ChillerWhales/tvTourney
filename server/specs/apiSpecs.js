@@ -785,6 +785,12 @@ describe('API', function() {
 			show: "tvShow",
 			roster_limit: 10
 		}	
+
+		var fakeUser = {
+			username: "fakeUser",
+			email: "fakeUser@mail.com",
+			password: "fakeUser"
+		}
 		
 		var testInvitee = {
 			username: 'invitedUser'
