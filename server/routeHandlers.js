@@ -209,9 +209,8 @@ module.exports = {
 		})
 		.then(function(characters){
 			if(characters) {
-				// res.write(characters);
-				// res.end();
-				res.status(200).json(characters);
+				res.status(200).json(characters)
+				res.end();
 			} else {
 				logger.info("No characters exist for league : " + leagueId);
 				res.status(403).send("No characters exist for league : " + leagueId);
@@ -250,7 +249,6 @@ module.exports = {
 
 	leagueInvitePOST: function(req, res) {
 		var params = req.body;
-		console.log(req.body);
 		utils.findUserId(req.session.token, function(user) {
 			var ownerId = user.id;
 			db.League.findOne({where: {id: req.params.leagueId, owner: ownerId}}).then(function(league){

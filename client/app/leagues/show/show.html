@@ -1,9 +1,14 @@
 <div ng-if="isOwner()">
-  Owner panel
-  <div ng-repeat="event in league.events">
+  <div><h2>Owner panel</h2></div>
+  <h3> Characters </h3> </div>
+  <div ng-repeat="character in characters">
+    {{character.name}}
   </div>
-  <div ng-repeat="character in league.characters">
+  <div> <h3> Events </h3> </div>
+  <div ng-repeat="event in events">
+    {{event.description}}    {{event.score_up}}
   </div>
+  <br><br>
 </div>
 
 <div>
@@ -18,9 +23,26 @@
 <div>
   Roster limit: {{league.roster_limit}}
 </div>
+<div ng-if="!isOwner()">
+  <div>
+    <h3 ng-click="toggleCharacters()">Characters</h3>
+    <div ng-show="showCharacters">
+      <div ng-repeat="character in characters">
+        {{character.name}}
+      </div>
+    </div>
+  </div>
+  <div>
+    <h3 ng-click="toggleEvents()">Events</h3>
+    <div ng-show="showEvents"> 
+      <div ng-repeat="event in events">
+        {{event.description}}    {{event.score_up}}
+      </div>
+      <br>
+    </div>
+  </div>
 <div>
   Users
-</div>
 <div ng-repeat='user in league.users'>
   <span ng-click='selectUser($index)'>User: {{user.name}} Points: {{user.points}}</span>
   <div ng-show='$index == indexUser'>
