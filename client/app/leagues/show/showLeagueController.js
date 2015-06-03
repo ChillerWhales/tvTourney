@@ -1,5 +1,5 @@
 angular.module('app.leagues.show', [])
-.controller('showLeagueController', function ($scope, $stateParams, ShowLeague, $location, $window) {
+.controller('showLeagueController', function ($scope, $stateParams, ShowLeague, $location, $window, $state) {
   $scope.league = {};
   $scope.events = [];
   $scope.characters = [];
@@ -29,13 +29,6 @@ angular.module('app.leagues.show', [])
     // $scope.drafted = true
   // else 
     //$scope.drafted = false;
-  $scope.drafted = false;
-
-  $scope.goToDraft = function() {
-    $scope.leagueId = $scope.league.id;
-    $location.path('/league/' + $scope.leagueId + '/draft');
-    console.log($scope.leagueId);
-  }
 
   $scope.showUserRoster = true;
   $scope.showRoster = function(index, userId) {
@@ -54,6 +47,9 @@ angular.module('app.leagues.show', [])
 
         ShowLeague.getUserRoster($scope.league.id, currentUserId, function (err, response){
           console.log('get user roster response:', response);
+          // console.log('character roster name', response[0].league_character.name)
+          console.log('character roster length', response.length)
+          $scope.rosterLength = response.length;
         });
 
       }

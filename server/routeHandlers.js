@@ -322,7 +322,6 @@ module.exports = {
 						]
 					})
 					.then(function(userRoster) {
-						console.log('userRoster: ', userRoster);
 						if (userRoster) {
 							console.log('userRoster', userRoster);
 							res.status(200).json(userRoster);

@@ -10,7 +10,9 @@
   </div>
   <br><br>
 </div>
-<button ng-show="drafted == false" ng-click="goToDraft()">DRAFT</button>
+<!-- {{rosterLength}}
+  {{league.roster_limit}} -->
+<button ng-show="rosterLength < league.roster_limit" ui-sref="leagues.draft({id:league.id})">DRAFT</button>
 <div>
   Name: {{league.name}}
   {{test}}
