@@ -790,10 +790,18 @@ describe('API', function() {
 			username: 'invitedUser'
 		}
 
-		var fakeUser = {
-			username: "fakeuser",
-			email: "fake@fake.com",
-			password: "fakepassword"
+		var testInviter = {
+			username: "testInviter",
+			email: "testInviter@mail.com",
+			password: "testinvite"
+		}
+
+		var invitee1 = {
+			username: "invitee",
+		}
+
+		var invitee2 = {
+			username: "invitee",
 		}
 
 		before(function(done) {
@@ -819,9 +827,11 @@ describe('API', function() {
 		});
 
 		describe("League Invite POST", function() {
+			// invite two fake users
+			// count users in league
 			it('should respond with status 201 if username is sent', function(done) {
 				agent.post("/league/" + testLeague.league_id + "/invite")
-					.send(testInvitee)
+					.send(invitee1)
 					.expect(201)
 					// .expect(function(res) {
 					// 	console.log('res.body', res.body);
