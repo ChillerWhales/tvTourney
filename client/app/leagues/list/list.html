@@ -3,4 +3,5 @@
       <!-- ng-click doesn't direct to the right path yet. need to write it in later-->
       <div ui-sref='leagues.show({ id: league.id })' ng-repeat='league in leagues'>{{league.name}}</div>
     </div>
+    <button ng-click="go('/leagues/new')">Create New League</button>
 </div> 
