@@ -470,7 +470,6 @@ describe('API', function() {
 				agent.get("/league/" + leagueId + "/user/" + userId + "/roster")
 					.expect(200)
 					.expect(function(res) {
-						console.log(res.body);
 						res.body[0].id.should.equal(firstDraftId);
 						res.body[0].league_id.should.equal(leagueId);
 						res.body[0].user_id.should.equal(userId);
