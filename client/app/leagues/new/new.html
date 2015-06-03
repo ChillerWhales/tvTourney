@@ -1,5 +1,6 @@
 
 <div class="create-step-one" ng-show="step == 1" ng-controller="createLeagueCtrl">
+  <button ng-click="go('/leagues/list')">Back to Leagues</button>
   <form>
     League Name:
     <input id="name" label="leagueName" name="leagueName" type="text" ng-model="league.name" required/>
@@ -44,7 +45,7 @@
   Add Character:
   <input id="add_character" label="addCharacter" name="addCharacter" type="text" ng-model="character.name"/>
   <button id ="add-character" ng-click="addCharacter()">add</button>
-  <button id="previous">prev</button>
+  <button id="previous" ng-click="nextStep(1)">prev</button>
   <button id="next" ng-click="checkIfCharacters()">next</button>
 </div>
 

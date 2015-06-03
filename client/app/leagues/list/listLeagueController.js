@@ -1,5 +1,10 @@
 angular.module('app.leagues.list', [])
-.controller('listLeagueController', function ($scope, ListLeague) { 
+.controller('listLeagueController', function ($scope, ListLeague, $location) { 
+
+  $scope.go = function(path) {
+    $location.path(path);
+  };
+
   $scope.leagues = [];
   $scope.getLeagues = function() {
     console.log('CALL GET LEAGUES');

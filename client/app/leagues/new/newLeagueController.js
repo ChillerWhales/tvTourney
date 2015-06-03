@@ -19,11 +19,15 @@ angular.module('app.leagues.new', ['new.event.create'])
   };
 
 })
-.controller('newLeagueController', function ($scope) { // 
+.controller('newLeagueController', function ($scope, $location) { // 
   $scope.step = 1;
   $scope.league = {};
   $scope.character = {};
   $scope.characters = [];
+
+  $scope.go = function(path) {
+    $location.path(path);
+  };
 
   $scope.nextStep = function(step) {
     $scope.step = step;

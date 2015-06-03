@@ -233,17 +233,24 @@ console.log(' on server del: char id : ', req.params.characterId);
 			db.League.findOne({where: {id: req.params.leagueId, owner: ownerId}}).then(function(league){
 				console.log(req.params.leagueId);
 				console.log(ownerId);
+				console.log('username', params.username);
 				if (league) {
 					db.User.findOne({where: {username: params.username}}).then(function(user){
 						if(user) {
-							user.addLeague(league);
-							logger.info("Added new users to league successfully");
-							res.status(201).json(user);
+							user.addLeague(league).then(function(){
+								// console.log('returning user', user);
+								// console.log('league', league);
+								// console.log('db.userleague.modelManager.associations.models..', db.UserLeague.modelManager);
+								console.log('association added');
+								logger.info("Added new users to league successfully");
+								res.status(201).json(params.username);
+							});
 						}
 					})
 				} else {
-					logger.info("League with that owner and id does not exist");
-					res.status(400).send("You must be the league owner to invite players");
+					console.log('no league found');
+					logger.info("User is not owner of league");
+					res.status(403).send("You must be the league owner to invite players");
 				}
 			});
 		});
