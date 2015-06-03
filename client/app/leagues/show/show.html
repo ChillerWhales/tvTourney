@@ -1,14 +1,27 @@
 <div ng-if="isOwner()">
-  <div><h2>Owner panel</h2></div>
-  <h3> Characters </h3> </div>
-  <div ng-repeat="character in characters">
-    {{character.name}}
-  </div>
-  <div> <h3> Events </h3> </div>
-  <div ng-repeat="event in events">
-    {{event.description}}    {{event.score_up}}
-  </div>
+  <h2 ng-click="toggleTool()">Owner panel
+  </h2>
+  <div ng-show="showTool">
+  <form ng-submit="triggerEvent()">
+    <h3> Characters </h3> 
+    <select size="10" multiple>
+      <option ng-repeat="character in characters">
+        {{character.name}}
+      </option>
+    </select>
+    <div> 
+      <h3> Events 
+      </h3>
+    </div>
+    <select size="10" multiple>
+      <option ng-repeat="event in events">
+        {{event.description}}    {{event.score_up}}
+      </option>
+    </select>
+    <input type="submit" value="submit"/>
+  </form>
   <br><br>
+  </div>
 </div>
 <!-- {{rosterLength}}
   {{league.roster_limit}} -->
