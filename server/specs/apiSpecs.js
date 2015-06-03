@@ -782,6 +782,27 @@ describe('API', function() {
 		})
 	});
 
+	describe("User leagues", function() {
+		
+		var agent = utils.createAgent();
+		
+		var testLeague = {
+			name: "leagueName",
+			show: "tvShow",
+			roster_limit: 10
+		};
+
+		var fakeUser = {
+			username: "fakeuser",
+			email: "fake@fake.com",
+			password: "fakepassword"
+		};
+
+		var userNoLeagues = {
+			username: "noLeagues",
+			email: "no@leagues.com",
+			password: "noleagues"
+		};
 
 		describe(" After invited to user", function() {
 			var agent = utils.createAgent();
@@ -803,6 +824,32 @@ describe('API', function() {
 			};
 
 		var newLeague = {};
+		before(function(done) {
+			utils.signUpUser(utils.testUser);
+			utils.signUpUser(fakeUser);
+			utils.signUpUser(userNoLeagues);
+			utils.logInAgent(agent, utils.testUser, function() {
+				agent.post('/league')
+					.send(testLeague)
+					.expect(201)
+					.end(function(err, res) {
+						newLeague = res.body
+						done();
+					})
+			});
+		});
+
+		after(function(done) {
+			utils.destroyUser(User, fakeUser, function () {
+				utils.destroyUser(User, userNoLeagues, function () {
+					utils.destroyObject(League, testLeague, function(){
+						done();
+					});
+				});
+			});
+		});
+
+		describe("Check GET /user/leagues", function() {
 			it('Should return a leagues array empty', function(done) {
 
 				utils.logOutAgent(agent, function (){
@@ -848,6 +895,42 @@ describe('API', function() {
 				});
 			});
 
+		});
+
+		describe("Check GET /league/:id/users", function() {
+			it('Should return a users array', function(done) {
+				agent.get("/league/" + newLeague.id + "/users")
+				.expect(200)
+				.end(function (err, res) {
+					var users = res.body;
+					users.should.have.a.length(2);
+					users[0].should.have.property('username');
+					users[0].should.have.property('user_leagues');
+					users[0].user_leagues[0].should.have.property('current_score');
+					users[0].user_leagues[0].current_score.should.equal(0);
+					done();
+				});
+			});
+
+			it('Should return a 500 if there are not a session', function(done) {
+				utils.logOutAgent(agent,  function (){
+					agent.get("/league/" + newLeague.id + "/users")
+					.expect(500)
+					.end(function (err, res) {
+						done();
+					});
+				});
+			});
+
+			it('Should return a 401 if the user doesnt belong to league', function(done) {
+				utils.logInAgent(agent, userNoLeagues, function (){
+					agent.get("/league/" + newLeague.id + "/users")
+					.expect(401)
+					.end(function (err, res) {
+						done();
+					});
+				});
+			});
 
 		});
 		// });

@@ -44,7 +44,9 @@ var createSchemas = function(dbConnection, construct) {
 	//user league associations
 	User.belongsToMany(League, { through: UserLeague});
 	League.belongsToMany(User, { through: UserLeague});
+	User.hasMany(UserLeague);
 	UserLeague.belongsTo(User);
+	League.hasMany(UserLeague)
 	UserLeague.belongsTo(League);
 
 	//owner league associations
