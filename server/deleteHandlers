@@ -1,0 +1,10 @@
+var logger = require('bristol');
+var db = require('./db');
+var utils = require('./lib/utils');
+
+module.exports = {
+  //delete route function for events
+  eventDEL: function() {
+
+  }
+}
