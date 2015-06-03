@@ -19,11 +19,15 @@ angular.module('app.leagues.new', ['new.event.create'])
   };
 
 })
-.controller('newLeagueController', function ($scope) { // 
+.controller('newLeagueController', function ($scope, $location) { // 
   $scope.step = 1;
   $scope.league = {};
   $scope.character = {};
   $scope.characters = [];
+
+  $scope.go = function(path) {
+    $location.path(path);
+  };
 
   $scope.nextStep = function(step) {
     $scope.step = step;
@@ -81,27 +85,27 @@ angular.module('app.leagues.new', ['new.event.create'])
 
 .controller('inviteFriendsCtrl', function ($scope, invite) {
   $scope.invitedUsers = invite.getInvitedUsers();
+
   $scope.inviteUser = function() {
     invite.inviteUser($scope.league.id, $scope.username);
     $scope.username = "";
   }
 })
 
-.factory('invite', function() {
+
+.factory('invite', function($http) {
   //should be an empty array once route works
   var invitedUsers = [{username:"richie"}, {username:"antonio"}];
 
   var inviteUser = function(leagueId, username) {
-    //uncomment this when route is working
-    // $http({
-    //   method: 'POST',
-    //   url: '/league/'+leagueId+'/invite'
-    // })
-    //   .success(function(invitedUser) {
-    //     invitedUsers.push(invitedUser);
-    //   })
-    //delete when route is working
-    invitedUsers.push({username: username});
+
+    $http.post('/league/' + leagueId + '/invite', {'username': username})
+      .success(function(invitedUser){
+        invitedUsers.push(invitedUser);
+      })
+      .error(function(err){
+        console.log('error:', err);
+      });
   }
 
   var getInvitedUsers = function() {
