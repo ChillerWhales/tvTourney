@@ -102,6 +102,13 @@ var utils = {
 					callback();
 				}
 			});
+	},
+
+	destroyObject: function(schema, object, callback) {
+		schema.destroy({where: object})
+		.then(function(destroyed) {
+			callback();
+		});
 	}
 }
 
@@ -774,5 +781,95 @@ describe('API', function() {
 				})
 		})
 	})
+
+	describe("User leagues", function() {
+		
+		var agent = utils.createAgent();
+		
+		var testLeague = {
+			name: "leagueName",
+			show: "tvShow",
+			roster_limit: 10
+		};
+
+		var fakeUser = {
+			username: "fakeuser",
+			email: "fake@fake.com",
+			password: "fakepassword"
+		}
+
+		var newLeague = {};
+
+		before(function(done) {
+			utils.signUpUser(utils.testUser);
+			utils.signUpUser(fakeUser);
+			utils.logInAgent(agent, utils.testUser, function() {
+				agent.post('/league')
+					.send(testLeague)
+					.expect(201)
+					.end(function(err, res) {
+						newLeague = res.body
+						done();
+					})
+			});
+		});
+
+		after(function(done) {
+			utils.destroyUser(User, fakeUser, function () {
+				utils.destroyObject(League, testLeague, function(){
+					done();
+				});
+			});
+		});
+
+		describe(" After invited to user", function() {
+			it('Should return a leagues array empty', function(done) {
+
+				utils.logOutAgent(agent, function (){
+					//logout the fakeUser
+					utils.logInAgent(agent, fakeUser, function() {
+						agent.get("/user/leagues")
+						.expect(200)
+						.end(function (err, res) {
+							var user = res.body
+							user.should.have.property('leagues');
+							user.leagues.should.have.a.length(0);
+							done();
+						});
+					});
+				});
+			});
+
+
+			it('Should return a leagues array with length one', function(done) {
+				utils.logOutAgent(agent, function (){
+					//logout the fakeUser
+					utils.logInAgent(agent, utils.testUser, function() {
+						agent.post("/league/" + newLeague.id + "/invite")
+							.send({username: fakeUser.username})
+							.expect(201)
+							.end(function (err, res) {
+								//logout testUser
+								utils.logOutAgent(agent, function (){
+									//logout the fakeUser
+									utils.logInAgent(agent, fakeUser, function() {
+										agent.get("/user/leagues")
+										.expect(200)
+										.end(function (err, res) {
+											var user = res.body
+											user.should.have.property('leagues');
+											user.leagues.should.have.a.length(1);
+											done();
+										});
+									});
+								});
+							});
+						});
+				});
+			});
+
+
+		});
+	}); //end of league /league/:id
 })
  //end test
