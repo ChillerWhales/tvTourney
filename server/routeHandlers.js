@@ -226,25 +226,21 @@ console.log(' on server del: char id : ', req.params.characterId);
 
 	leagueInvitePOST: function(req, res) {
 		var params = req.body;
-
+		console.log(req.body);
 		utils.findUserId(req.session.token, function(user) {
 			var ownerId = user.id;
 
 			db.League.findOne({where: {id: req.params.leagueId, owner: ownerId}}).then(function(league){
-				console.log(req.params.leagueId);
-				console.log(ownerId);
-				console.log('username', params.username);
 				if (league) {
 					db.User.findOne({where: {username: params.username}}).then(function(user){
 						if(user) {
 							user.addLeague(league).then(function(){
-								// console.log('returning user', user);
-								// console.log('league', league);
-								// console.log('db.userleague.modelManager.associations.models..', db.UserLeague.modelManager);
-								console.log('association added');
+								console.log('association added ', params.username);
 								logger.info("Added new users to league successfully");
 								res.status(201).json(params.username);
 							});
+						}else {
+							res.status(500).send('Unable to retrieve the user');
 						}
 					})
 				} else {
@@ -420,7 +416,7 @@ console.log(' on server del: char id : ', req.params.characterId);
 						});
 					}else {
 						logger.info("The user ", user.username, " does not have permission to retrieve the users in this league ", leagueId);
-						res.status(200).json(users);
+						res.status(401).json("User doesnt not belong to this league");
 					}
 				});
 			}else{
