@@ -70,9 +70,9 @@
     <button ng-click="inviteUser()">Add</button>
   </form>
   <button ng-click="nextStep(3)" id="previous">prev</button>
-  <button id="next">save league &amp; invite</button>
+  <button id="next" ng-click="go('/leagues/list')">save league &amp; invite</button>
   Invited users:
-  <ul ng-repeat="user in invitedUsers">
+  <ul ng-repeat="user in invitedUsers>
   <li>{{user.username}}</li>
   </ul>
 
