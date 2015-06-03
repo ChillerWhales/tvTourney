@@ -711,7 +711,16 @@ describe('API', function() {
 									res.body.score_up.should.equal(testEvent.score);
 								})
 								.end(function (err, res) {
-									utils.errOrDone(err, res, done);
+									// utils.errOrDone(err, res, done);
+									agent.post("/league/" + leagueId + "/roster")
+										.send({
+											// userId: userId,
+											characterId: characterId
+										})
+										.end(function(err, res) {
+											// firstDraftId = res.body.id;
+											utils.errOrDone(err, res, done);
+										})
 								});
 						});
 					});

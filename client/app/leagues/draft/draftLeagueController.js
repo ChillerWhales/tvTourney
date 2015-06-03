@@ -40,10 +40,12 @@ angular.module('app.leagues.draft', [])
 
   var draftCharacter = function(characterToDraft) {
     // lastDraftedCharacter = characterToDraft.name;
+    console.log(characterToDraft);
     $http({
       method: "POST",
-      url: '/league/' + $stateParams.id + '/roster'
-    }, {characterId: characterToDraft.characterId})
+      url: '/league/' + $stateParams.id + '/roster',
+      data: {characterId: characterToDraft.characterId}
+    })
       .success(function(draftedCharacter) {
         draftedCharacter.name = characterToDraft.name;
         roster.push(draftedCharacter);
