@@ -10,10 +10,26 @@ var db = require('../dbConfig');
 
 var utils = {
 	testUser: {
-				username: 'testUser',
-				email: "testemail@gmail.com",
-				password: '123qwe'
+		username: 'testUser',
+		email: "testemail@gmail.com",
+		password: '123qwe'
 	},
+
+	otherTestUser: {
+		username: 'otherTestUser',
+		email: "othertestemail@gmail.com",
+		password: '123qwe'
+	},
+
+	testLeague: {
+		name: "leagueName",
+		show: "tvShow",
+		roster_limit: 10
+	},
+
+	testCharacter: {
+		name: "testCharacterName"
+	},	
 
 	errOrDone: function(err, res, done) {
 		if (err) {
@@ -53,7 +69,8 @@ var utils = {
 						callback(err);
 					}
 					else {
-						callback();
+						//user object can be accessed in callback
+						callback(res.body);
 					}
 				}
 			});
@@ -102,8 +119,10 @@ describe('API', function() {
 
 	//deletes inserted user from database after all tests are complete
 	after(function(done) {
-		utils.destroyUser(User,utils.testUser, done);
-	})
+		utils.destroyUser(User, utils.testUser, function() {
+			utils.destroyUser(User, utils.otherTestUser, done);
+		});
+	});
 
 	describe('user management', function() {
 
@@ -162,7 +181,9 @@ describe('API', function() {
 			var agent = utils.createAgent();
 			before(function(done) {
 				utils.signUpUser(utils.testUser);
-				utils.logInAgent(agent, utils.testUser, done);
+				utils.logInAgent(agent, utils.testUser, function(user) {
+					done();
+				});
 			});
 
 			it('should respond with a 401 if user attempts to access protected route while not logged in', function(done) {
@@ -193,7 +214,9 @@ describe('API', function() {
 
 		before(function(done) {
 			utils.signUpUser(utils.testUser);
-			utils.logInAgent(agent, utils.testUser, done);
+			utils.logInAgent(agent, utils.testUser, function(user) {
+				done();
+			});
 		})
 
 		after(function(done) {
@@ -356,6 +379,118 @@ describe('API', function() {
 			});
 		});
 	}); //end of league Characters test
+
+	describe("League draft / roster", function() {
+		var agent = utils.createAgent();
+		var leagueId;
+		var userId;
+		var characterId;
+		//used to make sure that trying to draft the same character twice doesnt create a new object in the database
+		var firstDraftId;
+
+		before(function(done) {
+			utils.signUpUser(utils.testUser, function() {
+				utils.logInAgent(agent, utils.testUser, function(user) {
+					userId = user.id;
+					agent.post('/league')
+					.send(utils.testLeague)
+					.expect(201)
+					.end(function(err, res) {
+						leagueId = res.body.id;
+						agent.post("/league/" + leagueId + "/characters")
+							.send(utils.testCharacter)
+							.expect(201)
+							.end(function (err, res) {
+								characterId = res.body.id;
+								done();
+							});
+					});
+				});
+			});
+		})
+
+		after(function(done) {
+			League.find({where: {id: leagueId}}).then(function(foundLeague) {
+				foundLeague.destroy().then(function() {
+					done();
+				})
+			})
+		});
+
+		describe("roster POST - draft player", function() {
+			it("should return the drafted player object", function(done) {
+				agent.post("/league/" + leagueId + "/roster")
+					.send({
+						userId: userId,
+						characterId: characterId
+					})
+					.expect(201)
+					.expect(function(res) {
+						res.body.id.should.exist;
+						res.body.league_id.should.equal(leagueId);
+						res.body.user_id.should.equal(userId);
+						res.body.league_character_id.should.equal(characterId);
+					})
+					.end(function(err, res) {
+						firstDraftId = res.body.id;
+						utils.errOrDone(err, res, done);
+					})
+			});
+
+			it("should not allow a user to draft the same player twice", function(done) {
+				agent.post("/league/" + leagueId + "/roster")
+					.send({
+						userId: userId,
+						characterId: characterId
+					})
+					.expect(200)
+					.expect(function(res) {
+						/*make sure its the same id as the first test - this creates a dependency between
+						tests that doesnt need to be there, but I think its ok for now*/
+						res.body.id.should.equal(firstDraftId);
+						res.body.league_id.should.equal(leagueId);
+						res.body.user_id.should.equal(userId);
+						res.body.league_character_id.should.equal(characterId);
+					})
+					.end(function(err, res) {
+						utils.errOrDone(err, res, done);
+					})
+			})
+		});
+
+		describe("roster GET - get users roster", function() {
+			it("should return the users roster as an array", function(done) {
+				agent.get("/league/" + leagueId + "/user/" + userId + "/roster")
+					.expect(200)
+					.expect(function(res) {
+						res.body[0].id.should.equal(firstDraftId);
+						res.body[0].league_id.should.equal(leagueId);
+						res.body[0].user_id.should.equal(userId);
+						res.body[0].league_character_id.should.equal(characterId);
+					})
+					.end(function(err, res) {
+						utils.errOrDone(err, res, done);
+					})
+			});
+
+			//not implemented in routehandler yet
+			it("should only allow users to view the rosters of players in the same league as them", function(done) {
+				var otherAgent = utils.createAgent();
+
+				utils.signUpUser(utils.otherTestUser, function() {
+					utils.logInAgent(agent, utils.otherTestUser, function(user) {
+						agent.get("/league/" + leagueId + "/user/" + userId + "/roster")
+							.expect(401)
+							.end(function(err, res) {
+								utils.errOrDone(err, res, done);
+							})
+						});
+					});
+				});
+
+			});
+		});
+	// });
 
 	describe("league events", function() {
 			var agent = utils.createAgent();

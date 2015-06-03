@@ -27,6 +27,12 @@ function setup(app, routeHandlers, deleteHandlers) {
     .post(routeHandlers.leagueCharactersPOST);
   app.route('/league/:leagueId/invite')
     .post(routeHandlers.leagueInvitePOST);
+  app.route('/league/:leagueId/roster')
+    .all(auth)
+    .post(routeHandlers.rosterPOST);
+  app.route('/league/:leagueId/user/:userId/roster')
+    .all(auth)
+    .get(routeHandlers.rosterGET);
   app.route('/user/leagues')
     .get(routeHandlers.userLeaguesGET);
   app.route('/league/:leagueId/triggerevent')
