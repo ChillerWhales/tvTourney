@@ -4,9 +4,13 @@
 
 <div id="wrap">
 	<div id="left_col">
-	yo
+		<ul ng-repeat="character in roster">
+			<li> {{character.name}}</li>
+		</ul>
 	</div>
-    <div id="right_col" ng-repeat="character in characters">
-       <span>{{character.id}}</span>
+    <div id="right_col">
+    	<ul ng-repeat="character in characters">
+       		<li ng-click="draftCharacter()">{{character.name}}</li>
+   		</ul>
     </div>
 </div>

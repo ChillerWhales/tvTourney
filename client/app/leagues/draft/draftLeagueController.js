@@ -1,17 +1,23 @@
 angular.module('app.leagues.draft', [])
 .controller('draftLeagueController', function ($scope, DraftLeague) { 
-  console.log("yo");
+  $scope.roster = DraftLeague.getRoster();
   DraftLeague.queryCharacters(function(response) {
     $scope.characters = response;
   });
-  // $scope.characters = DraftLeague.getCharacters();
-  // $scope.characters = DraftLeague.characters;
+
+  $scope.draftCharacter = function() {
+    DraftLeague.draftCharacter({
+      characterId: this.character.id,
+      name: this.character.name
+    })
+  }
 })
 
 .factory('DraftLeague', function($http, $stateParams) {
 
   var characters = [];
   var roster = [];
+  // var lastDraftedCharacter;
 
   var getCharacters = function() {
     return characters;
@@ -24,16 +30,25 @@ angular.module('app.leagues.draft', [])
       url: '/league/' + $stateParams.id + '/characters'
     })
     .success(function (response) {
-      // callback(false, response);
       console.log(response);
-      characters = response;
       callback(response);
-      return(response);
     })
     .error(function (err) {
-      // callback(true, err);
       console.log(err);
     });
+  }
+
+  var draftCharacter = function(characterToDraft) {
+    // lastDraftedCharacter = characterToDraft.name;
+    $http({
+      Method: "POST",
+      url: '/league/' + $stateParams.id + '/roster'
+    }, {characterId: characterToDraft.characterId})
+      .success(function(draftedCharacter) {
+        draftedCharacter.name = characterToDraft.name;
+        roster.push(draftedCharacter);
+        console.log(draftedCharacter);
+      })
   }
 
   var getRoster = function() {
@@ -41,10 +56,10 @@ angular.module('app.leagues.draft', [])
   }
 
   return {
-    characters: characters,
     getCharacters: getCharacters,
     queryCharacters: queryCharacters,
-    getRoster: getRoster
+    getRoster: getRoster,
+    draftCharacter: draftCharacter
   }
 
 });
