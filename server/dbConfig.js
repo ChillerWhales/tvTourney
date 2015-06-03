@@ -58,10 +58,10 @@ var createSchemas = function(dbConnection, construct) {
 	//associations for the user roster table
 	UserRoster.belongsTo(League);
 	UserRoster.belongsTo(LeagueCharacter);
-	UserRoster.belongsTo(LeagueEvent);
+	UserRoster.belongsTo(User);
 	League.hasMany(UserRoster);
 	LeagueCharacter.hasMany(UserRoster);
-	LeagueEvent.hasMany(UserRoster);
+	User.hasMany(UserRoster);
 
 
 	//associations for the CharacterEvent table
