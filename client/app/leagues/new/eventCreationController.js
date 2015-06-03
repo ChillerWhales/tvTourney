@@ -35,6 +35,9 @@ angular.module('new.event.create', [])
         return err;
       });
     }
+
+    grabEvents();
+
   })
   .factory('eventHandler', function($http) {
     //makes an ajax call to the server for the list of events
