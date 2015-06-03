@@ -229,13 +229,11 @@ console.log(' on server del: char id : ', req.params.characterId);
 		console.log(req.body);
 		utils.findUserId(req.session.token, function(user) {
 			var ownerId = user.id;
-
 			db.League.findOne({where: {id: req.params.leagueId, owner: ownerId}}).then(function(league){
 				if (league) {
-					db.User.findOne({where: {username: params.username}}).then(function(user){
+					db.User.findOne({where: {username: params.username}}).then(function (user){
 						if(user) {
 							user.addLeague(league).then(function(){
-								console.log('association added ', params.username);
 								logger.info("Added new users to league successfully");
 								res.status(201).json(params.username);
 							});
@@ -244,7 +242,6 @@ console.log(' on server del: char id : ', req.params.characterId);
 						}
 					})
 				} else {
-					console.log('no league found');
 					logger.info("User is not owner of league");
 					res.status(403).send("You must be the league owner to invite players");
 				}
