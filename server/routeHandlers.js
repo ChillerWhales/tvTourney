@@ -164,7 +164,7 @@ module.exports = {
 		//user should only make it here if they pass authentication
 		res.status(200).send("You're authenticated!");
 	},
-
+ 
 	/*
 	leaugesCharactersGET: This returns a JSON of characters for the requested league ID token
 	leaugesCharactersPOST: This will insert the array of characters in the table (for the league id)
@@ -178,6 +178,7 @@ module.exports = {
 			res.status(403).send("yo - where's your league_id");
 		}
 		var params = req.body;
+		console.log("in insert char on server" , params);
 		db.LeagueCharacter.create({
 			league_id: parseInt(req.params.leagueId),
 			name: params.name
@@ -203,6 +204,23 @@ module.exports = {
 				res.status(403).send("No characters exist for league : " + leagueId);
 				res.end();
 			}
+		});
+	},
+	
+	leagueCharactersDELETE: function(req, res) {
+console.log(' on server del: char id : ', req.params.characterId);
+		if(!req.params.characterId) {
+			logger.info("leagueCharactersDELETE attempted without charaIdcter");
+			res.status(403).send("yo - where's your character_id");
+		}
+		db.LeagueCharacter.destroy({
+			where: {
+				id: req.params.characterId
+			}
+		})
+		.then(function(result) {
+			// console.log('in delete success: ', result); 
+			res.status(201).json(result);
 		});
 	},
 

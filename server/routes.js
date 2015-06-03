@@ -25,6 +25,8 @@ function setup(app, routeHandlers, deleteHandlers) {
   app.route('/league/:leagueId/characters')
     .get(routeHandlers.leagueCharactersGET)
     .post(routeHandlers.leagueCharactersPOST);
+  app.route('/league/:leagueId/characters/:characterId')
+    .delete(routeHandlers.leagueCharactersDELETE);
   app.route('/league/:leagueId/invite')
     .post(routeHandlers.leagueInvitePOST);
   app.route('/league/:leagueId/roster')
