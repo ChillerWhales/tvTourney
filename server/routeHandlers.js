@@ -276,7 +276,9 @@ module.exports = {
 	//need to limit it so that useres cant draft more players than the league roster_limit
 	rosterPOST: function(req, res) {
 		var params = req.body;
+		console.log(params);
 		var leagueId = parseInt(req.params.leagueId);
+		console.log(params.characterId);
 
 		utils.findUserId(req.session.token, function(user) {
 			//findOrCreate because there shouldn't be duplicates
