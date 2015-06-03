@@ -79,6 +79,7 @@ angular.module('app.leagues.new', ['new.event.create'])
     Character.saveCharacter($scope.league.id, $scope.character.name, function(err, character){
       if(character) {
         $scope.setCharacter(character);
+        console.log(character);
         $scope.appendCharacters(character);
         $scope.character = {};
       }

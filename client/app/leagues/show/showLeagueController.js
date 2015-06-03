@@ -1,102 +1,62 @@
 angular.module('app.leagues.show', [])
 .controller('showLeagueController', function ($scope, $stateParams, ShowLeague) {
   $scope.league = {};
-
+  $scope.events = [];
+  $scope.characters = [];
+  $scope.showEvents = false;
+  $scope.showCharacters = false;
   $scope.indexUser;
 
-  $scope.getLeague = function() {
-    ShowLeague.getLeague($stateParams.id, function(err, response) {
-      if (!err) {
-        console.log("League not found!");
-      }
-      else {
-        console.log(response);
-      }
-    });
-  }
+  $scope.isOwner = function() {
+    // if(currentUserId === league.owner) {
+    //   return true;
+    // }
+    return true;
+    // return false;
+  };
+
+  $scope.toggleEvents = function() {
+    $scope.showEvents = !$scope.showEvents;
+  };
+
+  $scope.toggleCharacters = function() {
+    $scope.showCharacters = !$scope.showCharacters;
+  };
 
   $scope.getLeague = function (){
     ShowLeague.getLeague($stateParams.id, function (err, response) {
       if (!err) {
-        console.log(response);
         $scope.league = response;
       }
-    //   $scope.league = {
-    //       name: 'ChillerWhales',
-    //       show: 'Game of Thrones',
-    //       owner: 'Mónica',
-    //       roster_limit: 2
-    //     };
-    //     ShowLeague.getUsers($stateParams.id, function (err, response) {
-    //       if (!err) {
-
-    //       }
-    //       $scope.league.users = [
-    //         {
-    //           username: 'Jack',
-    //           points: '24',
-    //           roster: [
-    //             {
-    //               name: 'Character 1',
-    //               points: 24
-    //             }
-    //           ]
-    //         },
-    //         {
-    //           username: 'Richi',
-    //           points: '20',
-    //           roster: [
-    //             {
-    //               name: 'Character 3',
-    //               points: 20
-    //             },
-    //             {
-    //               name: 'Character 4',
-    //               points: 4
-    //             }
-    //           ]
-    //         },
-    //         {
-    //           username: 'Kuldeep',
-    //           points: '20',
-    //           roster: [
-    //             {
-    //               name: 'Character 2',
-    //               points: 20
-    //             }
-    //           ]
-    //         },
-    //         {
-    //           username: 'Mónica',
-    //           points: '19',
-    //           roster: [
-    //             {
-    //               name: 'Character 7',
-    //               points: 19
-    //             }
-    //           ]
-    //         },
-    //         {
-    //           username: 'Antonio',
-    //           points: '17',
-    //           roster: [
-    //             {
-    //               name: 'Character 6',
-    //               points: 17
-    //             }
-    //           ]
-    //         }
-    //       ];
-    //     });
+      else {
+        console.log(err)
+      }
     });
-  };
+  } ;
 
   $scope.selectUser = function (index) {
     $scope.indexUser = index;
   };
 
-  $scope.getLeague();
+  $scope.getEvents = function() {
+    ShowLeague.getEvents($stateParams.id).success(function(data) {
+      $scope.events = data;
+    }).error(function(err) {
+      console.log(err);
+    });
+  };
 
+  $scope.getCharacters = function() {
+    ShowLeague.getCharacters($stateParams.id).success(function(data) {
+      $scope.characters = data;
+    }).error(function(err) {
+      console.log(err);
+    });
+  };
+
+  $scope.getLeague();
+  $scope.getEvents();
+  $scope.getCharacters();
 })
 .factory('ShowLeague', function ($http) {
 
@@ -126,8 +86,32 @@ angular.module('app.leagues.show', [])
     });
   };
 
+  var getEvents = function(league_id) {
+    return $http({
+      method: 'GET',
+      url: '/league/' + league_id + '/events'
+    }).success(function(resp) {
+      return resp;
+    }).error(function(err) {
+      return err;
+    });
+  }
+
+  var getCharacters = function(league_id) {
+    return $http({
+      method: 'GET',
+      url: '/league/' + league_id + '/characters'
+    }).success(function(resp) {
+      return resp;
+    }).error(function(err) {
+      return err;
+    });
+  }
+
   return {
     getLeague: getLeague,
-    getUsers: getUsers
+    getUsers: getUsers,
+    getEvents: getEvents,
+    getCharacters: getCharacters
   };
 });
