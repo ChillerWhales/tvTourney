@@ -1,7 +1,7 @@
 angular.module('new.event.create', [])
   .controller('eventCtrl', function ($scope, eventHandler, $stateParams) {
     //array in the scope for holding events
-    $scope.events = [];
+    $scope.events = eventHandler.postedEvents;
 
     //controller for making events
     $scope.makeEvent = function() {
@@ -17,7 +17,6 @@ angular.module('new.event.create', [])
 
       eventHandler.postEvent(event).success(function(data) {
         console.log("SUCCESS!!", data);
-        $scope.events.push(event);
         return data;
       }).error(function(err) {
         //does something about the error --> can be added later
@@ -35,8 +34,10 @@ angular.module('new.event.create', [])
         return err;
       });
     }
+
   })
   .factory('eventHandler', function($http) {
+    var postedEvents = [];
     //makes an ajax call to the server for the list of events
     var getEvents = function(league_id) {
       return $http({
@@ -55,6 +56,7 @@ angular.module('new.event.create', [])
         url: data.url,
         data: data
       }).success(function(resp) {
+        postedEvents.push(resp);
         return resp;
       }).error(function(err) {
         return err;
@@ -63,6 +65,7 @@ angular.module('new.event.create', [])
 
     return {
       getEvents : getEvents,
-      postEvent : postEvent
+      postEvent : postEvent,
+      postedEvents : postedEvents
     }
   });

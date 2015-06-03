@@ -1,5 +1,10 @@
 angular.module('app.leagues.list', [])
-.controller('listLeagueController', function ($scope, ListLeague) { 
+.controller('listLeagueController', function ($scope, ListLeague, $location) { 
+
+  $scope.go = function(path) {
+    $location.path(path);
+  };
+
   $scope.leagues = [];
   $scope.getLeagues = function() {
     console.log('CALL GET LEAGUES');
@@ -24,6 +29,7 @@ angular.module('app.leagues.list', [])
       url: '/user/leagues'
     })
     .success(function (response) {
+      console.log(response);
       callback(false, response);
     })
     .error(function (err) {

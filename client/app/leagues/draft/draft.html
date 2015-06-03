@@ -1,0 +1,16 @@
+<head>
+	<link rel="stylesheet" type="text/css" href="app/leagues/draft/draft.css">
+</head>
+
+<div id="wrap">
+	<div id="left_col">
+		<ul ng-repeat="character in roster">
+			<li> {{character.name}}</li>
+		</ul>
+	</div>
+    <div id="right_col">
+    	<ul ng-repeat="character in characters">
+       		<li ng-click="draftCharacter()">{{character.name}}</li>
+   		</ul>
+    </div>
+</div>

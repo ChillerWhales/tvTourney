@@ -42,6 +42,12 @@ angular.module('app.routes', ['ui.router'])
         templateUrl: 'app/leagues/show/show.html',
         controller: 'showLeagueController',
         resolve: {authenticate: authenticate}
+      })
+      .state('leagues.draft', {
+        url: 'leagues/:id/draft',
+        templateUrl: 'app/leagues/draft/draft.html',
+        controller: 'draftLeagueController',
+        resolve: {authenticate: authenticate}
       });
       
       /*this is kind of complicated, if you want a more in-depth explanation
