@@ -209,8 +209,9 @@ module.exports = {
 		})
 		.then(function(characters){
 			if(characters) {
-				res.write(characters);
-				res.end();
+				// res.write(characters);
+				// res.end();
+				res.status(200).json(characters);
 			} else {
 				logger.info("No characters exist for league : " + leagueId);
 				res.status(403).send("No characters exist for league : " + leagueId);
