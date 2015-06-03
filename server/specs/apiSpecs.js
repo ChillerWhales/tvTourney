@@ -867,8 +867,9 @@ describe('API', function() {
 			name: "leagueName",
 			show: "tvShow",
 			roster_limit: 10
-		};	
-		
+		}	
+
+
 		var fakeUser = {
 			username: "fakeUser",
 			email: "fakeUser@mail.com",
