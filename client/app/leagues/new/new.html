@@ -32,7 +32,14 @@
 
   <ul class="character">
 
-    <li ng-repeat="character in characters">{{character}}</li>
+    <li ng-click="deleteCharacter($index)" ng-repeat="character in characters">
+      <!-- {{character}} -->
+ <!--    <span>{{character.id}}</span>
+    <span>{{character.league_id}}</span> -->
+    <span>{{character.name}}</span>
+    <span><button>delete</button></span>
+
+    </li>
   </ul>
   Add Character:
   <input id="add_character" label="addCharacter" name="addCharacter" type="text" ng-model="character.name"/>
