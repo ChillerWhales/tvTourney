@@ -169,23 +169,35 @@ module.exports = {
 	leaugesCharactersGET: This returns a JSON of characters for the requested league ID token
 	leaugesCharactersPOST: This will insert the array of characters in the table (for the league id)
 	 */
-	leagueCharactersPOST: function(req, res) {
+	leagueCharactersPOST: function(req, res, user) {
 		// Receive leagueId as leagueId from req params and character  (name) and creates one record
 		// create records for league id --> return 201 and obj containing created row
-		
+	
 		if(!req.params.leagueId) {
 			logger.info("leagueCharactersPOST attempted without leagueId");
 			res.status(403).send("yo - where's your league_id");
 		}
-		var params = req.body;
-		console.log("in insert char on server" , params);
-		db.LeagueCharacter.create({
-			league_id: parseInt(req.params.leagueId),
-			name: params.name
-		})
-		.then(function(character) {
-			res.status(201).json(character);
-		});
+		
+		utils.findUserId(req.session.token, function(user){
+			utils.findLeagueById(parseInt(req.params.leagueId), function(league){
+				if(user.id === league.owner) {
+					// current user is the owner of the league - proceed to insert
+
+					var params = req.body;
+					db.LeagueCharacter.create({
+						league_id: parseInt(req.params.leagueId),
+						name: params.name
+					})
+					.then(function(character) {
+						res.status(201).json(character);
+					});
+				} else {
+					// current user is not the owner of the league
+					logger.info("League owner and logged in user does not match");
+					res.status(400).send("You must be owner of the league to add characters");
+				} 
+			}); //  end findUserId
+		});//  end findLeagueById
 	},
 
 	leagueCharactersGET: function(req, res) {
@@ -208,20 +220,31 @@ module.exports = {
 	},
 	
 	leagueCharactersDELETE: function(req, res) {
-console.log(' on server del: char id : ', req.params.characterId);
 		if(!req.params.characterId) {
 			logger.info("leagueCharactersDELETE attempted without charaIdcter");
 			res.status(403).send("yo - where's your character_id");
 		}
-		db.LeagueCharacter.destroy({
-			where: {
-				id: req.params.characterId
-			}
-		})
-		.then(function(result) {
-			// console.log('in delete success: ', result); 
-			res.status(201).json(result);
-		});
+
+		utils.findUserId(req.session.token, function(user){
+			utils.findLeagueById(parseInt(req.params.leagueId), function(league){
+				if(user.id === league.owner) {
+		
+					db.LeagueCharacter.destroy({
+						where: {
+							id: req.params.characterId
+						}
+					})
+					.then(function(result) {
+						// console.log('in delete success: ', result); 
+						res.status(201).json(result);
+					});
+				} else {
+					// current user is not the owner of the league
+					logger.info("character Delete - League owner and logged in user does not match");
+					res.status(400).send("You must be owner of the league to add characters");
+				} 
+			}); //  end findUserId
+		});//  end findLeagueById
 	},
 
 	leagueInvitePOST: function(req, res) {
