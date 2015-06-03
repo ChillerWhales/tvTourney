@@ -45,7 +45,7 @@
   <div ng-show="events.length > 0"> EVENTS for {{league.name}}</div>
   <div ng-repeat="chosenEvent in events">
     <span> {{chosenEvent.description}} </span>
-    <span> {{chosenEvent.score}} </span>
+    <span> {{chosenEvent.score_up}} </span>
   </div>
     Add Event:
     <input id="event_name" ng-model="event.name" type="text" max-length="105"/>
