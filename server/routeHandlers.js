@@ -311,15 +311,23 @@ module.exports = {
 		utils.findUserId(req.session.token, function(user) {
 			user.hasLeague(leagueId).then(function(userInLeague) {
 				if (userInLeague) {
-					db.UserRoster.findAll({where: {league_id: leagueId, user_id: userId}})
-						.then(function(userRoster) {
-							if (userRoster) {
-								res.status(200).json(userRoster);
-							} 
-							else {
-								res.status(400).send("Roster not found");
-							}
-						})
+					db.UserRoster.findAll({
+					 	where: { 
+							league_id: leagueId, 
+							user_id: userId
+						},
+						include: [
+							{ model: db.LeagueCharacter }
+						]
+					})
+					.then(function(userRoster) {
+						if (userRoster) {
+							res.status(200).json(userRoster);
+						} 
+						else {
+							res.status(400).send("Roster not found");
+						}
+					})
 				}
 				else {
 					res.status(401).send("User is not authorized to view this roster");
