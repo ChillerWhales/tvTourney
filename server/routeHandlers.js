@@ -249,7 +249,6 @@ module.exports = {
 
 	leagueInvitePOST: function(req, res) {
 		var params = req.body;
-		console.log(req.body);
 		utils.findUserId(req.session.token, function(user) {
 			var ownerId = user.id;
 			db.League.findOne({where: {id: req.params.leagueId, owner: ownerId}}).then(function(league){
