@@ -4,8 +4,8 @@
   <div ng-show="showTool">
   <form ng-submit="triggerEvent()">
     <h3> Characters </h3> 
-    <select size="10" multiple>
-      <option ng-repeat="character in characters">
+    <select size="10" multiple ng-model="charSelection">
+      <option value="$index" ng-repeat="character in characters">
         {{character.name}}
       </option>
     </select>
@@ -13,7 +13,7 @@
       <h3> Events 
       </h3>
     </div>
-    <select size="10" multiple>
+    <select size="10" multiple ng-model="eventSelection">
       <option ng-repeat="event in events">
         {{event.description}}    {{event.score_up}}
       </option>

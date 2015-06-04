@@ -20,7 +20,7 @@ angular.module('app.leagues.show', [])
   };
 
   $scope.triggerEvent = function() {
-    
+    console.log($scope.charSelection);
   }
 
   $scope.toggleTool = function() {
@@ -41,7 +41,6 @@ angular.module('app.leagues.show', [])
 
   $scope.showRoster = function(index, userId) {
     $scope.indexSelect = index;
-
   }
 
   $scope.getLeague = function (){
@@ -156,11 +155,16 @@ angular.module('app.leagues.show', [])
     });
   };
 
+  var triggerEvent = function() {
+
+  };
+
   return {
     getLeague: getLeague,
     getUsers: getUsers,
     getEvents: getEvents,
     getCharacters: getCharacters,
-    getUserRoster: getUserRoster
+    getUserRoster: getUserRoster,
+    triggerEvent: triggerEvent
   };
 });
