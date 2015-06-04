@@ -22,12 +22,18 @@ angular.module('app.user', [])
     };
     User.login(user, function(success){
       if (success) {
+        $scope.$emit('setUserState', true);
         $state.go('leagues.list');
       }
     });
   };
 
-  $scope.logout = User.logout;
+  $scope.logout = function() {
+    User.logout(function (success) {
+      $scope.$emit('setUserState', false);
+      $state.go('login');
+    });
+  };
   $scope.getUserInfo = User.getUserInfo
 
 })

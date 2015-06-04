@@ -7,4 +7,11 @@ angular.module('app', [
   'app.routes',
   'app.user',
   'app.leagues'
-]);
+])
+.controller('appController', function($scope, User) {
+  $scope.userState = false;
+
+  $scope.$on('setUserState', function (event, value) {
+    $scope.userState = value;
+  });
+});
