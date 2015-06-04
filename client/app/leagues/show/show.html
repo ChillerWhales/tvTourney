@@ -5,7 +5,7 @@
   <form ng-submit="triggerEvent()">
     <h3> Characters </h3> 
     <select size="10" multiple ng-model="charSelection">
-      <option value="$index" ng-repeat="character in characters">
+      <option ng-click="setCharacter()" value="{{$index}}" ng-repeat="character in characters">
         {{character.name}}
       </option>
     </select>
@@ -14,7 +14,7 @@
       </h3>
     </div>
     <select size="10" multiple ng-model="eventSelection">
-      <option ng-repeat="event in events">
+      <option ng-click="setEvent()" ng-repeat="event in events">
         {{event.description}}    {{event.score_up}}
       </option>
     </select>

@@ -9,6 +9,15 @@ angular.module('app.leagues.show', [])
   $scope.indexSelect;
   $scope.showTool = false;
   $scope.showUserRoster = true;
+  $scope.charEventTrigger = {};
+
+  $scope.setCharacter = function() {
+    $scope.charEventTrigger.characterId = this.character.id;
+  }
+
+  $scope.setEvent = function() {
+    $scope.charEventTrigger.eventId = this.event.id;
+  }
 
   var currentUserId = JSON.parse(localStorage.getItem('user')).id;
 
@@ -20,7 +29,9 @@ angular.module('app.leagues.show', [])
   };
 
   $scope.triggerEvent = function() {
-    console.log($scope.charSelection);
+    ShowLeague.triggerEvent($scope.charEventTrigger, function() {
+
+    });
   }
 
   $scope.toggleTool = function() {
@@ -94,7 +105,9 @@ angular.module('app.leagues.show', [])
   $scope.getEvents();
   $scope.getCharacters();
 })
-.factory('ShowLeague', function ($http) {
+.factory('ShowLeague', function ($http, $stateParams) {
+
+  var triggeredEvents = [];
 
   var getLeague = function(id, callback) {
     $http({
@@ -159,8 +172,21 @@ angular.module('app.leagues.show', [])
     });
   };
 
-  var triggerEvent = function() {
-
+  var triggerEvent = function(charEvent, callback) {
+    $http({
+      method: 'POST',
+      url: '/league/' + $stateParams.id + '/triggerevent',
+      data: charEvent
+    })
+      .success(function(triggeredEvent) {
+        triggeredEvents.push(triggeredEvent);
+        console.log("Event triggered:", triggeredEvent);
+        callback(triggeredEvent);
+      })
+      .error(function(err) {
+        console.log("Error");
+        callback(err);
+      })
   };
 
   return {
