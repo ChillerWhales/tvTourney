@@ -9,6 +9,7 @@ var parser = require('body-parser');
 var routeHandlers = require('./routeHandlers');
 var session = require('express-session');
 var cors = require('cors');
+var deleteHandlers = require('./deleteHandlers');
 
 // authentication and encryption middleware//
 var passport =  require('passport');
@@ -51,7 +52,7 @@ app.use(cors());
 //start server functions and export
 var start = function() {
 	//attachs all the routes to the server
-	routes.setup(app, routeHandlers)
+	routes.setup(app, routeHandlers, deleteHandlers);
 	//if deployed to heroku will use heroku port, otherwise on local machine will use port 3000
 	var port = process.env.port || 3000;
 	app.listen(port);

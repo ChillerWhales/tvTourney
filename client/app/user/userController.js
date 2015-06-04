@@ -3,7 +3,6 @@ angular.module('app.user', [])
   var user = {};
 
   $scope.signup = function () {
-    console.log('test');
     user = {
       email: $scope.emailInput,
       username: $scope.usernameInput,

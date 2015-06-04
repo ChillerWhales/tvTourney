@@ -1,5 +1,6 @@
 
 <div class="create-step-one" ng-show="step == 1" ng-controller="createLeagueCtrl">
+  <button ng-click="go('/leagues/list')">Back to Leagues</button>
   <form>
     League Name:
     <input id="name" label="leagueName" name="leagueName" type="text" ng-model="league.name" required/>
@@ -32,12 +33,19 @@
 
   <ul class="character">
 
-    <li ng-repeat="character in characters">{{character}}</li>
+    <li ng-click="deleteCharacter($index)" ng-repeat="character in characters">
+      <!-- {{character}} -->
+ <!--    <span>{{character.id}}</span>
+    <span>{{character.league_id}}</span> -->
+    <span>{{character.name}}</span>
+    <span><button>delete</button></span>
+
+    </li>
   </ul>
   Add Character:
   <input id="add_character" label="addCharacter" name="addCharacter" type="text" ng-model="character.name"/>
   <button id ="add-character" ng-click="addCharacter()">add</button>
-  <button id="previous">prev</button>
+  <button id="previous" ng-click="nextStep(1)">prev</button>
   <button id="next" ng-click="checkIfCharacters()">next</button>
 </div>
 
@@ -45,7 +53,7 @@
   <div ng-show="events.length > 0"> EVENTS for {{league.name}}</div>
   <div ng-repeat="chosenEvent in events">
     <span> {{chosenEvent.description}} </span>
-    <span> {{chosenEvent.score}} </span>
+    <span> {{chosenEvent.score_up}} </span>
   </div>
     Add Event:
     <input id="event_name" ng-model="event.name" type="text" max-length="105"/>
@@ -62,7 +70,7 @@
     <button ng-click="inviteUser()">Add</button>
   </form>
   <button ng-click="nextStep(3)" id="previous">prev</button>
-  <button id="next">save league &amp; invite</button>
+  <button id="next" ng-click="go('/leagues/list')">save league &amp; invite</button>
   Invited users:
   <ul ng-repeat="user in invitedUsers">
   <li>{{user.username}}</li>

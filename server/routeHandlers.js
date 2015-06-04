@@ -2,6 +2,7 @@ var logger = require('bristol');
 var db = require('./db');
 var utils = require('./lib/utils');
 var url = require('url');
+var Sequelize = require("sequelize");
 
 module.exports = {
 	homeGET: function(req, res) {
@@ -76,6 +77,7 @@ module.exports = {
 						roster_limit: params.roster_limit
 					}
 				}).then(function(newLeague, created) {
+					user.addLeague(newLeague[0]);
 					logger.info("New league successfully created");
 					//have to send the 0 index because findOrCreate returns an array
 					res.status(201).json(newLeague[0]);
@@ -86,23 +88,36 @@ module.exports = {
 			}
 		});
 	},
+
+	// leagueGET: function(req, res) {
+	// 	var leagueId = req.params.leagueId;
+	// 	db.UserLeagues.find({where: {}})
+	// 	db.League.find({where: {id: leagueId}}).then(function(foundLeague) {
+	// 		if (foundLeague) {
+	// 			logger.info("Returned a league object");
+	// 			res.status(200).json(foundLeague);
+	// 		}
+	// 		else {
+	// 			logger.info("League not found.");
+	// 			res.status(400).send("League not found");
+	// 		}
+	// 	});
+	// },
+
 	/*this code expects that the req will have the id of the league event so it
 	can confirm that the user is indeed the owner of the the league specified.*/
 	eventGET: function(req, res) {
 		utils.findUserId(req.session.token, function(user) {
-			var ownerId = user.id;
-				//checks if user is the current owner of the league.
-			db.League.findOne({where: {id : req.params.id, owner: ownerId}}).then(function(result) {
-				//checks to see if the league under that id's owner is the same as our session user.
+				//checks if user is an current user in the league.
+			db.UserLeague.findOne({where: {league_id : req.params.id, user_id: user.id}}).then(function(result) {
+				//checks to see if the league under the id is a user on the league
 				if(result) {
 					logger.info("User is the owner of the league. Create events!");
-					console.log(req.params.id)
 					db.LeagueEvent.findAll({
 						where: {
 							league_id: req.params.id
 						}
 					}).then(function(result) {
-						console.log(result);
 						res.status(200).json(result);
 						res.end();
 					});
@@ -139,7 +154,6 @@ module.exports = {
 						score_up : params.score
 					}).then(function(newLeagueEvent) {
 						logger.info("Added event successfully");
-						console.log(newLeagueEvent);
 						res.status(201).json(newLeagueEvent);
 					});
 				}
@@ -150,27 +164,40 @@ module.exports = {
 		//user should only make it here if they pass authentication
 		res.status(200).send("You're authenticated!");
 	},
-
+ 
 	/*
 	leaugesCharactersGET: This returns a JSON of characters for the requested league ID token
 	leaugesCharactersPOST: This will insert the array of characters in the table (for the league id)
 	 */
-	leagueCharactersPOST: function(req, res) {
+	leagueCharactersPOST: function(req, res, user) {
 		// Receive leagueId as leagueId from req params and character  (name) and creates one record
 		// create records for league id --> return 201 and obj containing created row
-		
+	
 		if(!req.params.leagueId) {
 			logger.info("leagueCharactersPOST attempted without leagueId");
 			res.status(403).send("yo - where's your league_id");
 		}
-		var params = req.body;
-		db.LeagueCharacter.create({
-			league_id: req.params.leagueId,
-			name: params.name
-		})
-		.then(function(character) {
-			res.status(201).json(character);
-		});
+		
+		utils.findUserId(req.session.token, function(user){
+			utils.findLeagueById(parseInt(req.params.leagueId), function(league){
+				if(user.id === league.owner) {
+					// current user is the owner of the league - proceed to insert
+
+					var params = req.body;
+					db.LeagueCharacter.create({
+						league_id: parseInt(req.params.leagueId),
+						name: params.name
+					})
+					.then(function(character) {
+						res.status(201).json(character);
+					});
+				} else {
+					// current user is not the owner of the league
+					logger.info("League owner and logged in user does not match");
+					res.status(400).send("You must be owner of the league to add characters");
+				} 
+			}); //  end findUserId
+		});//  end findLeagueById
 	},
 
 	leagueCharactersGET: function(req, res) {
@@ -182,7 +209,7 @@ module.exports = {
 		})
 		.then(function(characters){
 			if(characters) {
-				res.write(characters);
+				res.status(200).json(characters)
 				res.end();
 			} else {
 				logger.info("No characters exist for league : " + leagueId);
@@ -191,31 +218,120 @@ module.exports = {
 			}
 		});
 	},
+	
+	leagueCharactersDELETE: function(req, res) {
+		if(!req.params.characterId) {
+			logger.info("leagueCharactersDELETE attempted without charaIdcter");
+			res.status(403).send("yo - where's your character_id");
+		}
+
+		utils.findUserId(req.session.token, function(user){
+			utils.findLeagueById(parseInt(req.params.leagueId), function(league){
+				if(user.id === league.owner) {
+		
+					db.LeagueCharacter.destroy({
+						where: {
+							id: req.params.characterId
+						}
+					})
+					.then(function(result) {
+						res.status(201).json(result);
+					});
+				} else {
+					// current user is not the owner of the league
+					logger.info("character Delete - League owner and logged in user does not match");
+					res.status(400).send("You must be owner of the league to add characters");
+				} 
+			}); //  end findUserId
+		});//  end findLeagueById
+	},
 
 	leagueInvitePOST: function(req, res) {
-
 		var params = req.body;
 		utils.findUserId(req.session.token, function(user) {
 			var ownerId = user.id;
-			//expects league_id, owner, email?
-			if(ownerId) {
-				db.League.findOne({where: {id: params.id, owner: ownerId}}).then(function(result) {
-					db.UserLeague.create({
-						league_id: params.id,
-						owner: ownerId,
-						email: req.params.email,
-						username: req.params.username
-					}).then(function(newLeagueUsers) {
-						logger.info("Added new users to league successfully");
-						res.status(201).json(newLeagueUsers);
-					});				
-				});
-			}
-			else {
-				console.log('failed');
-				logger.info("User is not owner and cannot invite users to league");
-				res.status(400).send("You must be the league owner to invite players");
-			}
+			db.League.findOne({where: {id: req.params.leagueId, owner: ownerId}}).then(function(league){
+				if (league) {
+					db.User.findOne({where: {username: params.username}}).then(function (user){
+						if(user) {
+							user.addLeague(league).then(function(){
+								logger.info("Added new users to league successfully");
+								res.status(201).json(user);
+							});
+						}else {
+							res.status(500).send('Unable to retrieve the user');
+						}
+					})
+				} else {
+					logger.info("User is not owner of league");
+					res.status(403).send("You must be the league owner to invite players");
+				}
+			});
+		});
+	},
+
+	//need to limit it so that useres cant draft more players than the league roster_limit
+	rosterPOST: function(req, res) {
+		var params = req.body;
+		var leagueId = parseInt(req.params.leagueId);
+
+		utils.findUserId(req.session.token, function(user) {
+			//findOrCreate because there shouldn't be duplicates
+			db.UserRoster.findOrCreate({where: {
+				user_id: user.id,
+				league_id: leagueId,
+				league_character_id: params.characterId
+			}}).spread(function(draftedCharacter, created) {
+				if (created) {
+					logger.info("User drafted character");
+					res.status(201).json(draftedCharacter);
+				}
+				else {
+					if (draftedCharacter) {
+						logger.info("User has already drafted that character");
+						res.status(200).json(draftedCharacter);		
+					}
+					else {
+						logger.info("User was unable to draft character");
+						res.status(400).send("User was unable to draft that character");
+					}
+				}
+			})
+		})
+	},
+
+	rosterGET: function(req, res) {
+		var params = req.body;
+		var leagueId = parseInt(req.params.leagueId);
+		var userId = parseInt(req.params.userId);
+		console.log('gets to rosterGET route');
+		//checks if current user is in the same league as the user whos roster they want to see
+		utils.findUserId(req.session.token, function(user) {
+			user.hasLeague(leagueId).then(function(userInLeague) {
+				if (userInLeague) {
+					db.UserRoster.findAll({
+					 	where: { 
+							league_id: leagueId, 
+							user_id: userId
+						},
+						include: [
+							{ model: db.LeagueCharacter }
+						]
+					})
+					.then(function(userRoster) {
+						if (userRoster) {
+							console.log('userRoster', userRoster);
+							res.status(200).json(userRoster);
+						} 
+						else {
+							res.status(400).send("Roster not found");
+						}
+					})
+				}
+				else {
+					res.status(401).send("User is not authorized to view this roster");
+				}
+			});
 		});
 	},
 
@@ -232,10 +348,8 @@ module.exports = {
     	] 
 		}).then(function (user) {
 			if (user) {
-				console.log('ENTER USER LEAGUES');
 				res.status(200).json(user);
 			}else {
-				console.log('ERROR USER LEAGUES');
 				res.status(401);
 			}
 		});
@@ -244,15 +358,14 @@ module.exports = {
 	//doesnt check if user is owner - fix that
 	triggerEventCharacterPOST: function(req, res) {
 		var params = req.body;
-
 		db.CharacterEvent.create({
-			league_id: req.params('leagueId'),
-			league_character_id: params.character_id,
-			league_event_id: params.event_id
+			league_id: parseInt(req.params.leagueId),
+			league_character_id: params.characterId,
+			league_event_id: params.eventId
 		}).then(function(triggeredEvent) {
 			if (triggeredEvent) {
-				logger.info("Triggered the following event:", triggeredEvent)
-				res.status(201).JSON(triggeredEvent);
+				logger.info("Triggered an event on a character");
+				res.status(201).json(triggeredEvent);
 			}
 			else {
 				logger.info("Event was not triggered");
@@ -263,7 +376,7 @@ module.exports = {
 
 	triggerEventCharacterGET: function(req, res) {
 		db.CharacterEvent.findAll(
-			{where: {league_id: req.params('leagueId')}}
+			{where: {league_id: req.params.leagueId}}
 		).then(function(triggeredEvents) {
 			if (triggeredEvents) {
 				logger.info("Retrieved the following events:", triggeredEvents);
@@ -274,6 +387,71 @@ module.exports = {
 				res.status(500).send("Unable to retrieve triggered events");
 			}
 		})
+	},
+
+	leagueGET: function(req, res) {
+		var leagueId = req.params.leagueId;
+		var userId;
+
+		utils.findUserId(req.session.token, function(user) {
+			userId = user.id;
+			db.League.findOne({
+				where: { 
+					id: leagueId 
+				},
+				include: [
+					{ model: db.User, as: 'Owner', attributes: ['id', 'username', 'email'] },
+				]
+			})
+			.then(function (league){
+				if (league) {
+					//checks if user is part of the league
+					league.hasUser(userId).then(function(authorized) {
+						if (authorized) {
+							logger.info("Returned a league object");
+							res.status(200).json(league);
+						} else {
+							logger.info("User is not authorized to access league");
+							res.status(401).send("User is not authorized");
+						}
+					});
+				}
+				else {
+					logger.info("League not found");
+					res.status(400).send("League not found");
+				}
+			});
+		});
+	},
+
+	leagueUsersGET: function(req, res) {
+		var leagueId = req.params.leagueId;
+		utils.findUserId(req.session.token, function(user) {
+			if (user) {
+				user.hasLeague(leagueId).then(function (result) {
+					if (result) {
+						db.User.findAll({
+							where: {},
+							attributes: ['id', 'username'],
+							include: [
+								{ model: db.UserLeague, where: { league_id: leagueId}, attributes: ['current_score'] },
+							]
+						})
+						.then(function (users){
+							logger.info("Retrieved the following users ", users);
+							res.status(200).json(users);
+						});
+					}else {
+						logger.info("The user ", user.username, " does not have permission to retrieve the users in this league ", leagueId);
+						res.status(401).json("User doesnt not belong to this league");
+					}
+				});
+			}else{
+				logger.info("Unable to retrieve users league");
+				res.status(500).send("Unable to retrieve users league");
+			}
+		});
+
 	}
 		
 }; // end module
