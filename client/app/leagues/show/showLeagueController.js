@@ -41,6 +41,10 @@ angular.module('app.leagues.show', [])
 
   $scope.showRoster = function(index, userId) {
     $scope.indexSelect = index;
+
+    ShowLeague.getUserRoster($scope.league.id, $scope.users[index].id, function (err, response){
+      $scope.users[index].roster = response;
+    });
   }
 
   $scope.getLeague = function (){
