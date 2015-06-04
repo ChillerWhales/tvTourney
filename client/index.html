@@ -8,9 +8,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>TV TOURNEY</title>
 </head>
-<body ng-app='app'>
+<body ng-app='app' ng-controller='appController'>
     <div class="nav">
-      <nav class="logOutNav"><button class="logOut" ng-click="logout()"><i class="fa fa-sign-out"></i></button></nav>
+      <nav class="logOutNav" ng-controller='userController'>
+        <button ng-show='userState' class="logOut" ng-click="logout()"><i class="fa fa-sign-out"></i></button>
+      </nav>
     </div>
   <div class="mainContainer">
     <h1>tvTOURNEY</h1>
