@@ -1,5 +1,5 @@
 angular.module('app.leagues.draft', [])
-.controller('draftLeagueController', function ($scope, DraftLeague) { 
+.controller('draftLeagueController', function ($scope, DraftLeague, $state) { 
   $scope.roster = DraftLeague.getRoster();
   DraftLeague.queryCharacters(function(response) {
     $scope.characters = response;
