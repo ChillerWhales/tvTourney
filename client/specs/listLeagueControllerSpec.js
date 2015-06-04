@@ -18,7 +18,8 @@ describe('LeagueController', function () {
         ListLeague: ListLeague
       });
     };
-
+    var leagues = [{}, {}];
+    $httpBackend.expect('GET', '/user/leagues').respond(leagues);
     createController();
   }));
 
@@ -28,19 +29,24 @@ describe('LeagueController', function () {
   });
 
   it('should have a getLeagues method', function() {
+    $httpBackend.expect('GET', 'app/user/login.html').respond(200);
     expect($scope.getLeagues).to.be.a('function');
+    $httpBackend.flush();
   });
 
   it('should have a leagues object', function() {
-    expect($scope.leagues).to.be.a('object');
+    $httpBackend.expect('GET', 'app/user/login.html').respond(200);
+    expect($scope.leagues).to.be.an('array');
+    $httpBackend.flush();
   });
 
   it('should GET request to /user/leagues when ListLeague factory is called through getLeagues scope function', function() {
     var leagues = [{}, {}];
     $httpBackend.expect('GET', '/user/leagues').respond(leagues);
-
-    ListLeague.getLeagues(function (response) {
-      expect(response).toBeArray();
+    $httpBackend.expect('GET', 'app/user/login.html').respond(200);
+    ListLeague.getLeagues(function (err, response) {
+      expect(err).to.be(false);
+      expect(response).to.be.an('array');
     });
 
     $httpBackend.flush();
