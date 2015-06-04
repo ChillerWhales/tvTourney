@@ -5,5 +5,6 @@ angular.module('app.leagues', [
   'app.leagues.list',
   'app.leagues.draft'
 ])
-.controller('leagueController', function () { 
+.controller('leagueController', function ($scope) { 
+  $scope.test = 1;
 });

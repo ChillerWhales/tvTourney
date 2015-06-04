@@ -1,18 +1,34 @@
 <div ng-if="isOwner()">
-  <div><h2>Owner panel</h2></div>
-  <h3> Characters </h3> </div>
-  <div ng-repeat="character in characters">
-    {{character.name}}
-  </div>
-  <div> <h3> Events </h3> </div>
-  <div ng-repeat="event in events">
-    {{event.description}}    {{event.score_up}}
-  </div>
+  <h2 ng-click="toggleTool()">Owner panel
+  </h2>
+  <div ng-show="showTool">
+  <form ng-submit="triggerEvent()">
+    <h3> Characters </h3> 
+    <select size="10" multiple ng-model="charSelection">
+      <option value="$index" ng-repeat="character in characters">
+        {{character.name}}
+      </option>
+    </select>
+    <div> 
+      <h3> Events 
+      </h3>
+    </div>
+    <select size="10" multiple ng-model="eventSelection">
+      <option ng-repeat="event in events">
+        {{event.description}}    {{event.score_up}}
+      </option>
+    </select>
+    <input type="submit" value="submit"/>
+  </form>
   <br><br>
+  </div>
 </div>
-
+<!-- {{rosterLength}}
+  {{league.roster_limit}} -->
+<button ng-show="rosterLength < league.roster_limit" ui-sref="leagues.draft({id:league.id})">DRAFT</button>
 <div>
   Name: {{league.name}}
+  {{test}}
 </div>
 <div>
   Show: {{league.show}}
@@ -41,13 +57,22 @@
       <br>
     </div>
   </div>
+</div>
 <div>
   Users
-<div ng-repeat='user in league.users'>
-  <span ng-click='selectUser($index)'>User: {{user.name}} Points: {{user.points}}</span>
-  <div ng-show='$index == indexUser'>
-    <div ng-repeat='character in user.roster'>
-      Character: {{character.name}}  Points: {{character.points}}
+</div>
+<div ng-repeat="user in users">
+  <span ng-click="showRoster($index, user.id)">{{user.username}}</span>
+  {{user.user_leagues[0].current_score}}
+  <div ng-show="$index == indexSelect">
+    Roster:
+    <div>
+      <div ng-show="user.roster.length == 0">
+        No roster drafted by this user
+      </div>
+      <div ng-repeat='roster in user.roster'>
+        {{roster.league_character.name}}  {{roster.current_score}}
+      </div>
     </div>
   </div>
 </div>
