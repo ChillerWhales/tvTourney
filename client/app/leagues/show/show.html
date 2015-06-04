@@ -23,8 +23,8 @@
   <br><br>
   </div>
 </div>
-<!-- {{rosterLength}}
-  {{league.roster_limit}} -->
+{{rosterLength}}
+{{league}}
 <button ng-show="rosterLength < league.roster_limit" ui-sref="leagues.draft({id:league.id})">DRAFT</button>
 <div>
   Name: {{league.name}}

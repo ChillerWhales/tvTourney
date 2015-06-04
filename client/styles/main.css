@@ -1,0 +1,44 @@
+body {
+  /*width:100%;*/
+  font-size: 16px;
+  font-family: helvetica, sans-serif;
+}
+
+nav {
+  width:100%;
+  min-height:20px;
+}
+
+.logOut {
+  float:right;
+  padding:2px 5px;
+}
+
+h1 {
+  font-family: 'Carter One', cursive;
+}
+
+.mainContainer {
+  margin:0 auto;
+  min-height:600px;
+  width:100%;
+  text-align: center;
+  background-color:lightBlue;
+  padding:10px;
+}
+
+.mainContainer h1 {
+  text-align:center;
+}
+
+form {
+  
+}
+
+.logIn input {
+  display:block;
+  margin:0 auto;
+  width: 70%;
+  padding:3px 2px;
+  text-align:left;
+}
