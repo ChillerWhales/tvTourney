@@ -7,6 +7,8 @@ angular.module('app.leagues.show', [])
   $scope.showCharacters = false;
   $scope.indexUser;
   $scope.indexSelect;
+  $scope.showTool = false;
+  $scope.showUserRoster = true;
 
   var currentUserId = JSON.parse(localStorage.getItem('user')).id;
 
@@ -14,8 +16,15 @@ angular.module('app.leagues.show', [])
     if(currentUserId === $scope.league.owner) {
       return true;
     }
-    // return true;
     return false;
+  };
+
+  $scope.triggerEvent = function() {
+    console.log($scope.charSelection);
+  }
+
+  $scope.toggleTool = function() {
+    $scope.showTool = !$scope.showTool;
   };
 
   $scope.toggleEvents = function() {
@@ -30,10 +39,8 @@ angular.module('app.leagues.show', [])
   // else 
     //$scope.drafted = false;
 
-  $scope.showUserRoster = true;
   $scope.showRoster = function(index, userId) {
     $scope.indexSelect = index;
-
   }
 
   $scope.getLeague = function (){
@@ -148,11 +155,16 @@ angular.module('app.leagues.show', [])
     });
   };
 
+  var triggerEvent = function() {
+
+  };
+
   return {
     getLeague: getLeague,
     getUsers: getUsers,
     getEvents: getEvents,
     getCharacters: getCharacters,
-    getUserRoster: getUserRoster
+    getUserRoster: getUserRoster,
+    triggerEvent: triggerEvent
   };
 });
