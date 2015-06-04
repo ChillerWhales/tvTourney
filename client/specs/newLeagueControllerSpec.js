@@ -1,4 +1,4 @@
-describe('LeagueController', function () {
+xdescribe('LeagueController', function () {
   var $scope, $rootScope, $location, $httpBackend, createController, NewLeague, $controller, $state;
 
   beforeEach(module('app'));
