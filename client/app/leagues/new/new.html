@@ -50,14 +50,15 @@
 </div>
 
 <div class="createStepThree createLeague" ng-show="step == 3" ng-controller="eventCtrl">
-  <div ng-show="events.length > 0"> EVENTS for {{league.name}}</div>
+  <h2>add league events</h2>
+  <!-- <div ng-show="events.length > 0"> EVENTS for {{league.name}}</div> -->
   <div ng-repeat="chosenEvent in events">
     <span> {{chosenEvent.description}} </span>
-    <span> {{chosenEvent.score_up}} </span>
+    <span> {{chosenEvent.score_up}} pts</span>
   </div>
-    Add Event:
+    <span class="formText">event</span>
     <input id="event_name" ng-model="event.name" type="text" max-length="105"/>
-    Event Score:
+    <span class="formText">score</span>
     <input id="event_score" ng-model="event.score" type="text"/>
     <button class="action" ng-click="makeEvent()">Add</button>
   <button ng-click="nextStep(2)" class="previous">prev</button>

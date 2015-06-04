@@ -102,7 +102,7 @@ input {
 .previous, .next, .options {
   padding:10px 15px;
   margin:30px 0;
-  font-size:1em;
+  font-size:1em ;
 }
 
 .previous {
