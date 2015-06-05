@@ -14,4 +14,10 @@ angular.module('app', [
   $scope.$on('setUserState', function (event, value) {
     $scope.userState = value;
   });
+
+  $scope.checkUser = function() {
+    $scope.userState = localStorage.getItem('user') ? true : false;
+  };
+
+  $scope.checkUser();
 });
