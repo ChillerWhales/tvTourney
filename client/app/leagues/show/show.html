@@ -1,17 +1,22 @@
 <div ng-if="isOwner()">
 <!-- <button class="backToLeagues textLink" ng-click="go('/leagues/list')"><i class="fa fa-arrow-left"></i> Back to Leagues</button> -->
-<div  class="leagueInfo">
-  <h2 class="leagueName">
-    {{league.name}}
-  </h2>
-  <div class="leagueShow">
-    {{league.show}}
+<div class="clearfix">
+  <div  class="leagueInfo left">
+    <h2 class="leagueName">
+      {{league.name}}
+    </h2>
+    <div class="leagueShow">
+     {{league.show}}
+    </div>
+    <div class="leagueOwner">
+      owner: {{league.Owner.username}}
+    </div>
+    <div class="leagueLimit">
+      roster limit: {{league.roster_limit}}
+    </div>
   </div>
-  <div class="leagueOwner">
-    owner: {{league.Owner.username}}
-  </div>
-  <div class="leagueLimit">
-    roster limit: {{league.roster_limit}}
+  <div class="draft right">
+    <button class="action" ng-show="rosterLength < league.roster_limit" ui-sref="leagues.draft({id:league.id})">DRAFT</button>
   </div>
 </div>
 <div ng-if="!isOwner()">
@@ -37,7 +42,7 @@
   users
 </div>
 <div ng-repeat="user in users" class="listView">
-  <span class="left" ng-click="showRoster($index, user.id)">{{user.username}}</span>
+  <span class="left" ng-click="showRoster($index, user.id)"><i class="fa fa-caret-right space"></i>  {{user.username}}</span>
   <span class="points right"> {{user.user_leagues[0].current_score}} pts</span>
   <div class="roster" ng-show="$index == indexSelect">
     roster:
@@ -52,30 +57,31 @@
   </div>
 </div>
 
-  <button class="options" ng-click="toggleTool()">Owner panel</button>
-  <div ng-show="showTool">
-  <form ng-submit="triggerEvent()">
-    <h3> Characters </h3> 
-    <select size="10" multiple ng-model="charSelection">
-      <option value="$index" ng-click="setCharacter()" value="{{$index}}" ng-repeat="character in characters">
-        {{character.name}}
-      </option>
-    </select>
-    <div> 
-      <h3> Events 
-      </h3>
-    </div>
-    <select size="10" multiple ng-model="eventSelection">
-      <option ng-repeat="event in events" ng-click="setEvent()" >
-        {{event.description}}    {{event.score_up}}
-      </option>
-    </select>
-    <input type="submit" value="submit"/>
-  </form>
-  <br><br>
+  <button class="options" ng-click="toggleTool()">Event Panel</button>
+  <div ng-show="showTool" class="clearfix">
+    <form ng-submit="triggerEvent()">
+      <span class="left twoCol">
+        <h3> Characters </h3> 
+        <select class="eventSelect " size="10" multiple ng-model="charSelection">
+          <option value="$index" ng-click="setCharacter()" value="{{$index}}" ng-repeat="character in characters">
+            {{character.name}}
+          </option>
+        </select>
+      </span>
+      <span class="left twoCol"> 
+        <h3>Events</h3>
+        <select class="eventSelect " size="10" multiple ng-model="eventSelection">
+          <option ng-repeat="event in events" ng-click="setEvent()" >
+            {{event.description}}    {{event.score_up}}
+          </option>
+        </select>
+      </span>
+      <button class="action" type="submit" value="submit">Submit Event</button>
+    </form>
+
   </div>
 </div>
-<button class="action" ng-show="rosterLength < league.roster_limit" ui-sref="leagues.draft({id:league.id})">DRAFT</button>
+
 
 
 
