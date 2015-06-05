@@ -119,7 +119,7 @@ angular.module('app.leagues.new', ['new.event.create'])
 
 .factory('invite', function($http) {
   //should be an empty array once route works
-  var invitedUsers = [{username:"richie"}, {username:"antonio"}];
+  var invitedUsers = [];
 
   var inviteUser = function(leagueId, username) {
 

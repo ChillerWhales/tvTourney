@@ -19,8 +19,10 @@
     </select>
      roster size limit:
     <input id="roster_limit" label="rosterLimit" name="rosterLimit" type="text" ng-model="league.roster_limit" required />
-    <button class="next" ng-click="saveLeagueInfo()">next</button>
   </form>
+  <div class="bottomNav">
+    <button class="next" ng-click="saveLeagueInfo()">next</button>
+  </div>
 </div>
 
 <div class="create-step-two createLeague" ng-show="step == 2" ng-controller="setCharactersCtrl">
@@ -30,53 +32,61 @@
   character:
   {{character}} -->
   <button class="backToLeagues textLink" ng-click="go('/leagues/list')"><i class="fa fa-arrow-left"></i> Back to Leagues</button>
-  <h2>league characters</h2>
-  <ul class="character">
+  <h2>League Characters</h2>
+  <ul class="character createLeagueElement">
 
     <li ng-click="deleteCharacter($index)" ng-repeat="character in characters">
-      <!-- {{character}} -->
- <!--    <span>{{character.id}}</span>
-    <span>{{character.league_id}}</span> -->
-    <span>{{character.name}}</span>
-    <span><button class="trashIcon"><i class="fa fa-trash"></i></button></span>
-
+      <span>{{character.name}}</span>
+      <span><button class="trashIcon"><i class="fa fa-trash"></i></button></span>
     </li>
   </ul>
   <span class="formText">character</form>
   <input id="add_character" label="addCharacter" name="addCharacter" type="text" ng-model="character.name"/>
   <button class="action" id="add-character" ng-click="addCharacter()">add</button>
-  <button class="previous" ng-click="nextStep(1)">prev</button>
-  <button class="next" ng-click="checkIfCharacters()">next</button>
+  <div class="bottomNav">
+    <button class="previous" ng-click="nextStep(1)">prev</button>
+    <button class="next" ng-click="checkIfCharacters()">next</button>
+  </div>
 </div>
 
 <div class="createStepThree createLeague" ng-show="step == 3" ng-controller="eventCtrl">
-  <h2>add league events</h2>
+  <button class="backToLeagues textLink" ng-click="go('/leagues/list')"><i class="fa fa-arrow-left"></i> Back to Leagues</button>
+  <h2>Add League Events</h2>
   <!-- <div ng-show="events.length > 0"> EVENTS for {{league.name}}</div> -->
-  <div ng-repeat="chosenEvent in events">
-    <span> {{chosenEvent.description}} </span>
-    <span> {{chosenEvent.score_up}} pts</span>
-  </div>
+  <ul class="character createLeagueElement">
+    <li ng-click="deleteCharacter($index)" ng-repeat="chosenEvent in events">
+      <span>{{chosenEvent.description}} <span class="bold space">{{chosenEvent.score_up}}</span><span class="smallText">pts</span></span>
+      <span><button class="trashIcon"><i class="fa fa-trash"></i></button></span>
+    </li>
+  </ul>
     <span class="formText">event</span>
     <input id="event_name" ng-model="event.name" type="text" max-length="105"/>
     <span class="formText">score</span>
     <input id="event_score" ng-model="event.score" type="text"/>
     <button class="action" ng-click="makeEvent()">Add</button>
-  <button ng-click="nextStep(2)" class="previous">prev</button>
-  <button ng-click="nextStep(4)" class="next">next</button>
+  <div class="bottomNav">
+    <button ng-click="nextStep(2)" class="previous">prev</button>
+    <button ng-click="nextStep(4)" class="next">next</button>
+  </div>
 </div>
 
 <div class="createStepFour createLeague" ng-show="step == 4" ng-controller="inviteFriendsCtrl">
+  <button class="backToLeagues textLink" ng-click="go('/leagues/list')"><i class="fa fa-arrow-left"></i> Back to Leagues</button>
+  <h2>Invite Friends</h2>
+  <ul class="character">
+    <li ng-repeat="user in invitedUsers">
+      {{user.username}}
+      <span><button class="trashIcon"><i class="fa fa-trash"></i></button></span>
+    </li>
+  </ul>
   <form>
     <input ng-model="username" id="inviteFriends" name="inviteFriends" type="text"/>
-    <button class="action" ng-click="inviteUser()">Invite</button>
+    <button class="action" ng-click="inviteUser()">add friend</button>
   </form>
-  <button ng-click="nextStep(3)" class="previous">prev</button>
-  <button class="next" ng-click="go('/leagues/list')">save league &amp; invite</button>
-  Invited users:
-  <ul ng-repeat="user in invitedUsers">
-  <li>{{user.username}}</li>
-  </ul>
-
+  <div class="bottomNav">
+    <button ng-click="nextStep(3)" class="previous">prev</button>
+    <button class="next" ng-click="go('/leagues/list')">save league &amp; invite</button>
+  </div>
 </div>
 
   

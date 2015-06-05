@@ -3,16 +3,18 @@
 </head>
 
 <div id="wrap">
-  <button class="backToLeagues textLink" ui-sref="leagues.show({id:leagueId})"><i class="fa fa-arrow-left"></i> Back to Leagues</button> 
-
+  <button class="backToLeagues textLink" ui-sref="leagues.show({id:leagueId})"><i class="fa fa-arrow-left"></i> Return to League</button> 
+  <h2>my roster</h2>
 	<div id="left_col">
-		<ul ng-repeat="character in roster">
-			<li> {{character.name}}</li>
+		<ul class="character" >
+			<li ng-repeat="character in roster"> <i class="fa fa-minus-square"></i> {{character.name}}</li>
 		</ul>
 	</div>
-    <div id="right_col">
-    	<ul ng-repeat="character in characters">
-       		<li ng-click="draftCharacter()">{{character.name}}</li>
-   		</ul>
-    </div>
+  <h2>draft your team</h2>
+  <div id="right_col">
+  	<ul class="character">
+     		<li ng-repeat="character in characters" ng-click="draftCharacter()"><i class="fa fa-plus-square"></i> {{character.name}}</li>
+ 		</ul>
+  </div>
+  <button ui-sref="leagues.show({id:leagueId})" class="action" ng-click="makeEvent()">Save Team</button>
 </div>
