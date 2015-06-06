@@ -53,7 +53,14 @@ angular.module('app.leagues.show', [])
     //$scope.drafted = false;
 
   $scope.showRoster = function(index, userId) {
-    $scope.indexSelect = index;
+    //if that roster is already being displayed, close it
+    if ($scope.indexSelect === index) {
+      $scope.indexSelect = null;
+    }
+    else {
+      //display roster of the user that was clicked
+      $scope.indexSelect = index;
+    }
   }
 
   $scope.getLeague = function (){
