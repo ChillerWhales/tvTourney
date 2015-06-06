@@ -43,7 +43,7 @@
 </div>
 <div ng-repeat="user in users" class="listView">
   <span class="left" ng-click="showRoster($index, user.id)"><i class="fa fa-caret-right space"></i>  {{user.username}}</span>
-  <span class="points right"> {{user.user_leagues[0].current_score}} pts</span>
+  <span class="points right"> {{returnUserRoster(user.id).totalScore}} pts</span>
   <div class="roster" ng-show="$index == indexSelect">
     roster:
     <div>

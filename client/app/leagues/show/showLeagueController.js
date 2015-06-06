@@ -11,6 +11,8 @@ angular.module('app.leagues.show', [])
   $scope.showUserRoster = true;
   $scope.charEventTrigger = {};
 
+  $scope.returnUserRoster = ShowLeague.returnUserRoster;
+
   $scope.setCharacter = function() {
     $scope.charEventTrigger.characterId = this.character.id;
   }
@@ -53,9 +55,7 @@ angular.module('app.leagues.show', [])
   $scope.showRoster = function(index, userId) {
     $scope.indexSelect = index;
 
-    ShowLeague.getUserRoster($scope.league.id, $scope.users[index].id, function (err, response){
-      $scope.users[index].roster = response;
-    });
+    $scope.users[index] = ShowLeague.returnUserRoster($scope.users[index].id);
   }
 
   $scope.getLeague = function (){
@@ -108,6 +108,7 @@ angular.module('app.leagues.show', [])
 .factory('ShowLeague', function ($http, $stateParams) {
 
   var triggeredEvents = [];
+  var userRosters = {};
 
   var getLeague = function(id, callback) {
     $http({
@@ -165,11 +166,24 @@ angular.module('app.leagues.show', [])
       url: '/league/' + leagueId + '/user/' + userId + '/roster',
     })
     .success(function (res) {
+      userRosters[userId] = {
+        roster: res
+      }
+
+      userRosters[userId].totalScore = 0;
+      for (var i = 0; i < userRosters[userId].roster.length; i++) {
+        userRosters[userId].totalScore += userRosters[userId].roster[i].current_score;
+      }
+
       callback(false, res);
     })
     .error(function (err) {
       callback(true, err);
     });
+  };
+
+  var returnUserRoster = function(userId) {
+    return userRosters[userId];
   };
 
   var triggerEvent = function(charEvent, callback) {
@@ -195,6 +209,7 @@ angular.module('app.leagues.show', [])
     getEvents: getEvents,
     getCharacters: getCharacters,
     getUserRoster: getUserRoster,
+    returnUserRoster: returnUserRoster,
     triggerEvent: triggerEvent
   };
 });
