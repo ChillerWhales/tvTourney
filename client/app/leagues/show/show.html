@@ -1,4 +1,5 @@
-<div ng-if="isOwner()">
+<!-- <div ng-if="isOwner()"> -->
+<div>
 <!-- <button class="backToLeagues textLink" ng-click="go('/leagues/list')"><i class="fa fa-arrow-left"></i> Back to Leagues</button> -->
 <div class="clearfix">
   <div  class="leagueInfo left">
@@ -43,15 +44,15 @@
 </div>
 <div ng-repeat="user in users" class="listView">
   <span class="left" ng-click="showRoster($index, user.id)"><i class="fa fa-caret-right space"></i>  {{user.username}}</span>
-  <span class="points right"> {{user.user_leagues[0].current_score}} pts</span>
+  <span class="points right"> {{userRosters[user.id].totalScore}} pts</span>
   <div class="roster" ng-show="$index == indexSelect">
     roster:
     <div>
       <div ng-show="user.roster.length == 0">
         No roster drafted by this user
       </div>
-      <div class="characInRosters" ng-repeat='roster in user.roster'>
-        {{roster.league_character.name}}  {{roster.current_score}}
+      <div class="characInRosters" ng-repeat='roster in userRosters[user.id]'>
+        {{roster.league_character.name}} - {{roster.current_score}} pts
       </div>
     </div>
   </div>
