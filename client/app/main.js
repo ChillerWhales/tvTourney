@@ -20,4 +20,8 @@ angular.module('app', [
   };
 
   $scope.checkUser();
+
+  $scope.returnUser = function() {
+    return JSON.parse(localStorage.getItem('user'));
+  }
 });
