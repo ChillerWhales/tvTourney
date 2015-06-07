@@ -84,6 +84,13 @@ nav .logout {
   background:none;
 }
 
+nav .navText {
+  font-weight:normal;
+  font-size:.7em;
+  position:relative;
+  bottom:2px;
+}
+
 button {
   cursor: pointer;
   border-radius:3px;
@@ -112,7 +119,7 @@ input {
 }
 
 .space{
-  margin:0 4px 0 7px;
+  margin:0 5px 0 7px;
 }
 .smallText {
   font-size:.8em;
@@ -325,7 +332,6 @@ ul.character li:hover {
   margin:5px 0;*/
   width:75%;
   margin:0 auto;
-  color:#444;
 }
 
 .leagueInfo > .leagueName{
@@ -351,11 +357,25 @@ ul.character li:hover {
   font-family: 'Carter One', cursive;
 }
 
+.eventButton {
+  margin-bottom:30px;
+}
+
 .roster{
   margin:25px 0 10px 0;
   padding:3px 15px;
   font-size:.8em;
   font-weight:bold;
+}
+
+.genList {
+  /*width:40%;*/
+  margin-right:10px;
+}
+
+.genList > li {
+  font-size:.8em;
+  padding:4px 0px 4px 10px;
 }
 
 .characInRosters {

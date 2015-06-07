@@ -11,7 +11,7 @@
 <body ng-app='app' ng-controller='appController'>
     <div class="nav">
       <nav class="logOutNav" ng-controller='userController'>
-        <button ng-show='userState' class="logOut" ng-click="logout()">{{returnUser().username}} <i class="fa fa-sign-out"></i></button>
+        <button ng-show='userState' class="logOut" ng-click="logout()"><span class="space navText">Hi, {{returnUser().username}} </span><i class="fa fa-sign-out"></i></button>
       </nav>
     </div>
   <div class="mainContainer">

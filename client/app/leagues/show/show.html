@@ -65,20 +65,23 @@
 </div>
 
   <div ng-if="!isOwner()">
-    <button class="options" ng-click="toggleEvents()">Events &amp; Characters</button>
+    <button class="options eventButton" ng-click="toggleEvents()">Events &amp; Characters</button>
     <div ng-show="showEvents"> 
-      <ul class="characAndScore">
-        <li class='character' ng-repeat="event in events">
-          <span class="">{{event.description}}</span>   <span class=""> {{event.score_up}}</span>
-        </li>
-      </ul>
-    </div>
-
-    <h3 ng-click="">Characters</h3>
-      <div ng-repeat="character in characters">
-        {{character.name}}
+      <div class="twoCol left clearfix">
+        <h3 ng-click="toggleCharacters()">Characters</h3>
+        <ul class="genList left">
+          <li ng-repeat="character in characters">{{character.name}}</li>
+        </ul>
       </div>
-
+      <div class="twoCol clearfix left">
+        <h3>Events</h3>
+        <ul class="genList">
+          <li class='character' ng-repeat="event in events">
+            <span class="">{{event.description}}</span>   <span class="points"> {{event.score_up}} </span>pts
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 
 
