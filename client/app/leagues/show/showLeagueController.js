@@ -11,6 +11,14 @@ angular.module('app.leagues.show', [])
   $scope.showUserRoster = true;
   $scope.charEventTrigger = {};
 
+  ///////////////////////////////////////
+  var socket = io.connect('http://localhost:3000/');
+  socket.on('success', function(data) {
+    alert(data);
+    socket.emit('joinLeague', {leagueId: $stateParams.id});
+  });
+  //////////////////////////////////////
+
   $scope.returnUserRoster = ShowLeague.returnUserRoster;
 
   $scope.setCharacter = function() {
