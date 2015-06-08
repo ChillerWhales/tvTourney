@@ -47,10 +47,6 @@ angular.module('app.leagues.show', [])
   $scope.toggleCharacters = function() {
     $scope.showCharacters = !$scope.showCharacters;
   };
-  // if roster exists
-    // $scope.drafted = true
-  // else 
-    //$scope.drafted = false;
 
   $scope.showRoster = function(index, userId) {
     //if that roster is already being displayed, close it

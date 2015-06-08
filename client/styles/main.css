@@ -63,19 +63,20 @@ body {
   font-size: 1em;
   font-family: helvetica, sans-serif;
   background-image: url(../img/bg.png);
+  background-color:#EEE;
   background-repeat: none;
   text-shadow: 0px 1px 1px #FFF;
 }
 
 div.nav {
   width:100%;
-  min-height:32px;
-  margin: 0 0 70px 0;
+  min-height:40px;
+  margin: 0 0 50px 0;
   background-color: #3B6670;
 }
 
 nav .logout, nav .home {
-  font-size:1.2em;
+  font-size:1.4em;
   border:none;
   color:#FFF;
   background:none;
@@ -83,8 +84,8 @@ nav .logout, nav .home {
 
 nav .home {
   position:relative;
-  top:5px;
-  padding-left:10px;
+  top:6px;
+  padding-left:15px;
 }
 
 nav .navText {
@@ -97,16 +98,23 @@ nav .navText {
 button {
   cursor: pointer;
   border-radius:3px;
+  text-shadow:none;
 }
 
 input {
-  padding:5px;
+  padding:8px 5px;
   border-radius:4px;
   border-top:1px solid #CCC;
   border-left:1px solid #CCC;
   border-right:1px solid #FFF;
   border-bottom:1px solid #FFF;
-  color: #444;
+  color: #3B6670;
+  font-size:.9em;
+
+}
+
+.accentColor{
+  color:;
 }
 
 .left {
@@ -154,7 +162,7 @@ input {
 
 .logOut {
   float:right;
-  padding:7px 10px;
+  padding:8px 15px;
 }
 
 .logOutNav {
@@ -162,15 +170,6 @@ input {
   margin:0 auto;
 }
 
-/*button > .fa-home {
-  color:#FFF;
-  font-size:1.3em;
-  position:relative;
-  top:5px;
-  text-shadow:none;
-  padding-left:10px;
-  cursor:pointer;
-}*/
 
 h1, h2, h3 {
   font-family: 'Carter One', cursive;
@@ -181,12 +180,12 @@ h1 {
   text-align: center;
   font-size:2.1em;
   text-shadow: 0px 1px 3px #FFF;
-  margin-bottom:45px;
+  margin-bottom:40px;
   cursor:pointer;
 }
 
 h2 {
-  margin-bottom:15px;
+  margin-bottom:20px;
   font-size:1.4em;
   text-shadow: 0px 1px 1px #FFF;
 }
@@ -200,7 +199,7 @@ h3 {
   min-height:600px;
   border-radius:3px;
   max-width:500px;
-  width:70%;
+  width:100%;
 }
 
 form, .formText {
@@ -215,7 +214,7 @@ form, .formText {
 }
 
 .formText {
-  margin:5px;
+  margin:5px 2px;
 }
 
 input {
@@ -277,15 +276,17 @@ button.action:hover {
   font-size:1em;
   border-top: 1px solid #fff;
   border-bottom:1px solid #DDD;
+  cursor:pointer;
 }
 
 .listView:hover {
   background-color:#F0E3C0;
 }
 
-.createLeague {
+.createLeague, .showPage {
   width:90%;
   margin:0 auto;
+  color:#444;
 }
 
 button.backToLeagues {
@@ -352,7 +353,7 @@ ul.character li:hover {
 .leagueInfo > div, .usersDivide {
 /*  color:#444;
   margin:5px 0;*/
-  width:75%;
+  /*width:75%;*/
   margin:0 auto;
 }
 
@@ -366,7 +367,7 @@ ul.character li:hover {
 
 .leagueInfo > .leagueShow, .leagueInfo > .leagueOwner, .leagueInfo > .leagueLimit {
   color:#444;
-  margin:3px 0;
+  margin:4px 0;
 }
 
 .leagueInfo > .leagueOwner, .leagueInfo > .leagueLimit {
@@ -384,10 +385,12 @@ ul.character li:hover {
 }
 
 .roster{
-  margin:25px 0 10px 0;
-  padding:3px 15px;
-  font-size:.8em;
+  margin:25px 15px 10px 15px;
+  padding:10px 15px;
+  border-top:1px solid #CCC;
+  font-size:.9em;
   font-weight:bold;
+  width:90%;
 }
 
 .genList {
