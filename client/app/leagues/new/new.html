@@ -26,7 +26,6 @@
 </div>
 
 <div class="create-step-two createLeague" ng-show="step == 2" ng-controller="setCharactersCtrl">
-  <button class="backToLeagues textLink" ng-click="go('/leagues/list')"><i class="fa fa-arrow-left"></i> Back to Leagues</button>
   <h2>{{league.name}} Characters</h2>
   <ul class="character createLeagueElement">
     <li ng-click="deleteCharacter($index)" ng-repeat="character in characters">
@@ -44,7 +43,6 @@
 </div>
 
 <div class="createStepThree createLeague" ng-show="step == 3" ng-controller="eventCtrl">
-  <button class="backToLeagues textLink" ng-click="go('/leagues/list')"><i class="fa fa-arrow-left"></i> Back to Leagues</button>
   <h2>{{league.name}} Events</h2>
   <!-- <div ng-show="events.length > 0"> EVENTS for {{league.name}}</div> -->
   <ul class="character createLeagueElement">
@@ -65,7 +63,6 @@
 </div>
 
 <div class="createStepFour createLeague" ng-show="step == 4" ng-controller="inviteFriendsCtrl">
-  <button class="backToLeagues textLink" ng-click="go('/leagues/list')"><i class="fa fa-arrow-left"></i> Back to Leagues</button>
   <h2>Invite to {{league.name}}</h2>
   <ul class="character">
     <li ng-repeat="user in invitedUsers">

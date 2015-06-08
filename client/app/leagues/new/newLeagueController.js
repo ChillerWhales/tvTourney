@@ -56,7 +56,6 @@ angular.module('app.leagues.new', ['new.event.create', 'new.character', 'new.inv
 .controller('createLeagueCtrl', function ($scope, League) { 
   $scope.league = {};
   $scope.saveLeagueInfo = function() {
-    console.log($scope.league);
       League.postLeague($scope.league, function(err, newLeague) {
         if (newLeague) {
           $scope.nextStep(2);
