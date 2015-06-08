@@ -1,5 +1,4 @@
 <!-- <div ng-if="isOwner()"> -->
-<div>
 <!-- <button class="backToLeagues textLink" ng-click="go('/leagues/list')"><i class="fa fa-arrow-left"></i> Back to Leagues</button> -->
 <div class="clearfix">
   <div  class="leagueInfo left">
@@ -20,25 +19,7 @@
     <button class="action" ng-show="rosterLength < league.roster_limit" ui-sref="leagues.draft({id:league.id})">DRAFT</button>
   </div>
 </div>
-<div ng-if="!isOwner()">
-  <div>
-    <h3 ng-click="toggleCharacters()">Characters</h3>
-    <div ng-show="showCharacters">
-      <div ng-repeat="character in characters">
-        {{character.name}}
-      </div>
-    </div>
-  </div>
-  <div>
-    <h3 ng-click="toggleEvents()">Events</h3>
-    <div ng-show="showEvents"> 
-      <div class="characAndScore" ng-repeat="event in events">
-        <span class="left">{{event.description}}</span>   <span class="right"> {{event.score_up}}</span>
-      </div>
-      <br>
-    </div>
-  </div>
-</div>
+
 <div class="usersDivide">
   users
 </div>
@@ -57,7 +38,7 @@
     </div>
   </div>
 </div>
-
+<div ng-if="isOwner()">
   <button class="options" ng-click="toggleTool()">Event Panel</button>
   <div ng-show="showTool" class="clearfix">
     <form ng-submit="triggerEvent()">
@@ -82,6 +63,26 @@
 
   </div>
 </div>
+
+  <div ng-if="!isOwner()">
+    <button class="options eventButton" ng-click="toggleEvents()">Events &amp; Characters</button>
+    <div ng-show="showEvents"> 
+      <div class="twoCol left clearfix">
+        <h3 ng-click="toggleCharacters()">Characters</h3>
+        <ul class="genList left">
+          <li ng-repeat="character in characters">{{character.name}}</li>
+        </ul>
+      </div>
+      <div class="twoCol clearfix left">
+        <h3>Events</h3>
+        <ul class="genList">
+          <li class='character' ng-repeat="event in events">
+            <span class="">{{event.description}}</span>   <span class="points"> {{event.score_up}} </span>pts
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
 
 
