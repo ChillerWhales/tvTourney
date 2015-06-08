@@ -89,21 +89,6 @@ module.exports = {
 		});
 	},
 
-	// leagueGET: function(req, res) {
-	// 	var leagueId = req.params.leagueId;
-	// 	db.UserLeagues.find({where: {}})
-	// 	db.League.find({where: {id: leagueId}}).then(function(foundLeague) {
-	// 		if (foundLeague) {
-	// 			logger.info("Returned a league object");
-	// 			res.status(200).json(foundLeague);
-	// 		}
-	// 		else {
-	// 			logger.info("League not found.");
-	// 			res.status(400).send("League not found");
-	// 		}
-	// 	});
-	// },
-
 	/*this code expects that the req will have the id of the league event so it
 	can confirm that the user is indeed the owner of the the league specified.*/
 	eventGET: function(req, res) {
@@ -166,8 +151,8 @@ module.exports = {
 	},
  
 	/*
-	leaugesCharactersGET: This returns a JSON of characters for the requested league ID token
-	leaugesCharactersPOST: This will insert the array of characters in the table (for the league id)
+	leaguesCharactersGET: This returns a JSON of characters for the requested league ID token
+	leaguesCharactersPOST: This will insert the array of characters in the table (for the league id)
 	 */
 	leagueCharactersPOST: function(req, res, user) {
 		// Receive leagueId as leagueId from req params and character  (name) and creates one record
