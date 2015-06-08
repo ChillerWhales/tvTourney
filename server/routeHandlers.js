@@ -270,33 +270,52 @@ module.exports = {
 		});
 	},
 
-	//need to limit it so that useres cant draft more players than the league roster_limit
 	rosterPOST: function(req, res) {
 		var params = req.body;
 		var leagueId = parseInt(req.params.leagueId);
 
 		utils.findUserId(req.session.token, function(user) {
-			//findOrCreate because there shouldn't be duplicates
-			db.UserRoster.findOrCreate({where: {
-				user_id: user.id,
-				league_id: leagueId,
-				league_character_id: params.characterId
-			}}).spread(function(draftedCharacter, created) {
-				if (created) {
-					logger.info("User drafted character");
-					res.status(201).json(draftedCharacter);
-				}
-				else {
-					if (draftedCharacter) {
-						logger.info("User has already drafted that character");
-						res.status(200).json(draftedCharacter);		
+			//search League and retrieve the roster_limit
+			db.League.findOne({
+				where: {
+					id: leagueId
+				},
+				attributes: ['roster_limit']
+			}).then(function (league){
+				db.UserRoster.count({
+					where: {
+						league_id: leagueId,
+						user_id: user.id
 					}
-					else {
-						logger.info("User was unable to draft character");
-						res.status(400).send("User was unable to draft that character");
+				}).then(function (count) {
+					if (count < league.roster_limit) {
+						//check the count of roster of the user is less than roster_limit
+						//findOrCreate because there shouldn't be duplicates
+						db.UserRoster.findOrCreate({where: {
+							user_id: user.id,
+							league_id: leagueId,
+							league_character_id: params.characterId
+						}}).spread(function(draftedCharacter, created) {
+							if (created) {
+								logger.info("User drafted character");
+								res.status(201).json(draftedCharacter);
+							}
+							else {
+								if (draftedCharacter) {
+									logger.info("User has already drafted that character");
+									res.status(403).json("User has already drafted that character");		
+								}
+								else {
+									logger.info("User was unable to draft character");
+									res.status(400).send("User was unable to draft that character");
+								}
+							}
+						})
+					}else{
+						res.status(403).json("User has already drafted the limit roster in that league");
 					}
-				}
-			})
+				});
+			});
 		})
 	},
 
@@ -304,7 +323,6 @@ module.exports = {
 		var params = req.body;
 		var leagueId = parseInt(req.params.leagueId);
 		var userId = parseInt(req.params.userId);
-		console.log('gets to rosterGET route');
 		//checks if current user is in the same league as the user whos roster they want to see
 		utils.findUserId(req.session.token, function(user) {
 			user.hasLeague(leagueId).then(function(userInLeague) {
@@ -320,7 +338,6 @@ module.exports = {
 					})
 					.then(function(userRoster) {
 						if (userRoster) {
-							console.log('userRoster', userRoster);
 							res.status(200).json(userRoster);
 						} 
 						else {

@@ -9,6 +9,17 @@ angular.module('app.leagues.show', [])
   $scope.indexSelect;
   $scope.showTool = false;
   $scope.showUserRoster = true;
+  $scope.charEventTrigger = {};
+
+  $scope.returnUserRoster = ShowLeague.returnUserRoster;
+
+  $scope.setCharacter = function() {
+    $scope.charEventTrigger.characterId = this.character.id;
+  }
+
+  $scope.setEvent = function() {
+    $scope.charEventTrigger.eventId = this.event.id;
+  }
 
   var currentUserId = JSON.parse(localStorage.getItem('user')).id;
 
@@ -20,7 +31,9 @@ angular.module('app.leagues.show', [])
   };
 
   $scope.triggerEvent = function() {
-    console.log($scope.charSelection);
+    ShowLeague.triggerEvent($scope.charEventTrigger, function() {
+
+    });
   }
 
   $scope.toggleTool = function() {
@@ -40,11 +53,14 @@ angular.module('app.leagues.show', [])
     //$scope.drafted = false;
 
   $scope.showRoster = function(index, userId) {
-    $scope.indexSelect = index;
-
-    ShowLeague.getUserRoster($scope.league.id, $scope.users[index].id, function (err, response){
-      $scope.users[index].roster = response;
-    });
+    //if that roster is already being displayed, close it
+    if ($scope.indexSelect === index) {
+      $scope.indexSelect = null;
+    }
+    else {
+      //display roster of the user that was clicked
+      $scope.indexSelect = index;
+    }
   }
 
   $scope.getLeague = function (){
@@ -52,15 +68,25 @@ angular.module('app.leagues.show', [])
       if (!err) {
         $scope.league = response;
         
-        ShowLeague.getUsers($scope.league.id, function (err, response){
-          $scope.users = response;
-        });
-
-        ShowLeague.getUserRoster($scope.league.id, currentUserId, function (err, response){
-          console.log('get user roster response:', response);
-          // console.log('character roster name', response[0].league_character.name)
-          console.log('character roster length', response.length)
-          $scope.rosterLength = response.length;
+        //get all users, then make independet http calls for each of their rosters
+        ShowLeague.getUsers($scope.league.id, function (err, getUsersResponse){
+          $scope.users = getUsersResponse;
+          $scope.userRosters = {};
+          for (var i = 0; i < $scope.users.length; i++) {
+            //wrapper creates closure over currentUserIndex, required due to nature of asynch call
+            var getUserWrapper = function () {
+              var currentUserIndex = i;
+              ShowLeague.getUserRoster($scope.league.id, $scope.users[i].id, function(err, getRosterResponse) {
+                $scope.userRosters[$scope.users[currentUserIndex].id] = getRosterResponse;
+                //gets current users roster size - used to determine if the draft button should be displayed
+                if($scope.users[currentUserIndex].id === currentUserId) {
+                  $scope.rosterLength = getRosterResponse.length;
+                }
+              });
+            }
+            //immediately invoke wrapper function
+            getUserWrapper();
+          }
         });
 
       }
@@ -94,7 +120,11 @@ angular.module('app.leagues.show', [])
   $scope.getEvents();
   $scope.getCharacters();
 })
-.factory('ShowLeague', function ($http) {
+
+.factory('ShowLeague', function ($http, $stateParams) {
+
+  var triggeredEvents = [];
+  var userRosters = {};
 
   var getLeague = function(id, callback) {
     $http({
@@ -145,13 +175,21 @@ angular.module('app.leagues.show', [])
   }
 
   var getUserRoster = function(leagueId, userId, callback) {
-    console.log('leagueId', leagueId);
-    console.log('userId', userId);
     $http({
       method: 'GET',
       url: '/league/' + leagueId + '/user/' + userId + '/roster',
     })
     .success(function (res) {
+      userRosters[userId] = {
+        roster: res
+      }
+
+      //calculates users total score from individual characters in roster before passing response along
+      res.totalScore = 0;
+      for (var i = 0; i < res.length; i++) {
+        res.totalScore += res[i].current_score;
+      }
+
       callback(false, res);
     })
     .error(function (err) {
@@ -159,8 +197,20 @@ angular.module('app.leagues.show', [])
     });
   };
 
-  var triggerEvent = function() {
-
+  var triggerEvent = function(charEvent, callback) {
+    $http({
+      method: 'POST',
+      url: '/league/' + $stateParams.id + '/triggerevent',
+      data: charEvent
+    })
+      .success(function(triggeredEvent) {
+        triggeredEvents.push(triggeredEvent);
+        callback(triggeredEvent);
+      })
+      .error(function(err) {
+        console.log("Error");
+        callback(err);
+      })
   };
 
   return {

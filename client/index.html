@@ -2,11 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="utf8"/>
+  <link href='http://fonts.googleapis.com/css?family=Carter+One' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="styles/main.css" media="screen" />  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>TV TOURNEY</title>
 </head>
-<body ng-app='app'>
-  <h1>TV TOURNEY</h1>
-  <div ui-view></div>
+<body ng-app='app' ng-controller='appController'>
+    <div class="nav">
+      <nav class="logOutNav" ng-controller='userController'>
+        <button ng-show='userState' class="logOut" ng-click="logout()"><span class="space navText">Hi, {{returnUser().username}} </span><i class="fa fa-sign-out"></i></button>
+      </nav>
+    </div>
+  <div class="mainContainer">
+    <h1>tvTOURNEY</h1>
+    <div ui-view></div>
+  </div>
   
   <script src='lib/angular/angular.js'></script>
   <script src='lib/angular-ui-router/release/angular-ui-router.js'></script>
@@ -15,6 +26,8 @@
   <script src='app/leagues/new/eventCreationController.js'></script>
   <script src='app/leagues/show/showLeagueController.js'></script>
   <script src='app/leagues/list/listLeagueController.js'></script>
+  <script src='app/leagues/new/setCharacterController.js'></script>
+  <script src='app/leagues/new/inviteController.js'></script>
   <script src='app/leagues/new/newLeagueController.js'></script>
   <script src='app/leagues/draft/draftLeagueController.js'></script>
   <script src='app/leagues/leagueController.js'></script>

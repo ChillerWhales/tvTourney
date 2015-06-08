@@ -14,7 +14,6 @@ describe('UserController', function () {
     createController = function () {
       return $controller('userController', {
         $scope: $scope,
-        $location: $location,
         User: User
       });
     };
@@ -29,45 +28,38 @@ describe('UserController', function () {
   });
 
   it('should have a singup method', function () {
+    $httpBackend.expect('GET', 'app/user/login.html').respond(200);
     expect($scope.signup).to.be.a('function');
+    $httpBackend.flush();
   });
 
-  it('should have a singup method', function () {
-    expect($scope.user).to.be.a('object');
-  });
-
-  it('should have call to POST /signup when user signs up and redirect to login angular route', function() {
+  it('should have call to POST /signup with signup factory method', function() {
     var newUser = {
       username: 'testing123',
       email: 'testing123@gmail.com',
       password: '123456'
     };
 
-    $scope.user = newUser;
-    
-    $httpBackend.expect('POST', '/signup', $scope.user).respond(201);
-
+    $httpBackend.expect('POST', '/signup', newUser).respond(201, newUser);
     $httpBackend.expect('GET', 'app/user/login.html').respond(200);
-
-    $scope.signup();
-
+    User.signup(newUser, function(created){
+      expect(created).to.be(true);
+    })
     $httpBackend.flush();
 
   });
 
-  it('should have call to POST /login when user logs in and redirect to leagues angular route', function() {
+  it('should have call to POST /login and return true when user is correct', function() {
     var user = {
       username: 'testing123',
       password: '123456'
     };
 
-    $scope.user = user;
-
-    $httpBackend.expect('POST', '/login', user).respond(200);
-
-    $httpBackend.expect('GET', 'app/leagues/leagues.html').respond(200);
-
-    $scope.login();
+    $httpBackend.expect('POST', '/login', user).respond(200, true);
+    $httpBackend.expect('GET', 'app/user/login.html').respond(200);
+    User.login(user, function (success) {
+      expect(success).to.be(true);
+    });
 
     $httpBackend.flush();
   });

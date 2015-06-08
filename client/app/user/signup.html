@@ -1,8 +1,11 @@
-<form ng-submit="signup()">
-	Username: <br>
-	<input type="text" ng-model="usernameInput">
-	<br>
-	Password: <br>
-	<input type="text" ng-model="passwordInput">
-	<input ng-click="signup()" type="submit" name="Signup"/>
-</form>
+<div class="logIn">
+  <form ng-submit="signup()">
+  	username: <br>
+  	<input type="text" ng-model="usernameInput">
+  	<br>
+  	password: <br>
+  	<input type="text" ng-model="passwordInput">
+  	<button class="action" ng-click="signup()" type="submit" name="Signup">sign up</button>
+    <a class="signUp textLink" ui-sref="login">Have an account? Login.</a>
+  </form>
+</div>
