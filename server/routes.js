@@ -26,7 +26,7 @@ function setup(app, routeHandlers, deleteHandlers) {
     .get(routeHandlers.leagueCharactersGET)
     .post(auth,routeHandlers.leagueCharactersPOST);
   app.route('/league/:leagueId/characters/:characterId')
-    .delete(routeHandlers.leagueCharactersDELETE)
+    .delete(deleteHandlers.leagueCharactersDELETE)
     .all(auth);
   app.route('/league/:leagueId/invite')
     .post(routeHandlers.leagueInvitePOST);
@@ -41,7 +41,6 @@ function setup(app, routeHandlers, deleteHandlers) {
   app.route('/league/:leagueId/triggerevent')
     .post(routeHandlers.triggerEventCharacterPOST)
     .get(routeHandlers.triggerEventCharacterGET);
-  //deletion routes
   
   /*adding auth here protects the route from unauthenticated users
   if user is authenticated, auth will call next and the next routehandler
