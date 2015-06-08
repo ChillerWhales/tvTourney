@@ -35,6 +35,15 @@ angular.module('new.event.create', [])
       });
     }
 
+    $scope.nextPage = function(step) {
+      console.log('step', $scope.step);
+      if ($scope.events.length) {
+        $scope.nextStep(step);
+        console.log('step', $scope.step);
+      }
+      console.log('$scope.events ', $scope.events);
+    }
+
   })
   .factory('eventHandler', function($http) {
     var postedEvents = [];
