@@ -11,42 +11,47 @@ angular.module('app.leagues.show', [])
   $scope.showUserRoster = true;
   $scope.charEventTrigger = {};
 
-  /* connect to websocket server - socket.io is magical and if the client is being served by the server, then you dont
-  need to specify an address to connect to */
-  var socket = io.connect();
+ 
+  $scope.updateScores = function() {
+    /* connect to websocket server - socket.io is magical and if the client is being served by the server, then you dont
+    need to specify an address to connect to */
+    var socket = io.connect();
+    console.log(socket);
 
-  //Once the websocket connection has been made, notify the server which league is being viewed
-  socket.on('success', function(data) {
+    //Once the websocket connection has been made, notify the server which league is being viewed
     socket.emit('joinLeague', {leagueId: $stateParams.id});
-  });
 
-  //When the client is notified that an event has been triggered, this code updates the views
-  socket.on('triggerEvent', function(data) {
-    //find the point value of the event that was triggered
-    for (var i = 0; i < $scope.events.length; i++) {
-      if ($scope.events[i].id === data.eventId) {
-        data.score_up = $scope.events[i].score_up;
-      }
-    }
-    //loop through user rosters and increase total score as well as score for specific character
-    for (var user in $scope.userRosters) {
-      var userHasCharacter;
-      for (var i = 0; i < $scope.userRosters[user].length; i++ ) {
-        if ($scope.userRosters[user][i].league_character_id === data.characterId) {
-          $scope.userRosters[user][i].current_score += data.score_up;
-          userHasCharacter = true;
+    //When the client is notified that an event has been triggered, this code updates the views
+    socket.on('triggerEvent', function(data) {
+      //find the point value of the event that was triggered
+      for (var i = 0; i < $scope.events.length; i++) {
+        if ($scope.events[i].id === data.eventId) {
+          data.score_up = $scope.events[i].score_up;
         }
       }
-      if (userHasCharacter) {
-        $scope.userRosters[user].totalScore += data.score_up;
+      //loop through user rosters and increase total score as well as score for specific character
+      for (var user in $scope.userRosters) {
+        var userHasCharacter;
+        for (var i = 0; i < $scope.userRosters[user].length; i++ ) {
+          if ($scope.userRosters[user][i].league_character_id === data.characterId) {
+            $scope.userRosters[user][i].current_score += data.score_up;
+            userHasCharacter = true;
+          }
+        }
+        if (userHasCharacter) {
+          $scope.userRosters[user].totalScore += data.score_up;
+        }
+        userHasCharacters = false;
       }
-      userHasCharacters = false;
-    }
-    /* force angular to update views - could alternatively wrap all the previous socket code inside a function and pass
-    it to apply as an argument, this would allow angular to catch any errors that our code throws, but for our purposes
-    this is sufficient. */
-    $scope.$apply();
-  });
+      /* force angular to update views - could alternatively wrap all the previous socket code inside a function and pass
+      it to apply as an argument, this would allow angular to catch any errors that our code throws, but for our purposes
+      this is sufficient. */
+      $scope.$apply();
+    });
+
+    return socket;
+  }
+
 
   $scope.returnUserRoster = ShowLeague.returnUserRoster;
 
@@ -158,6 +163,7 @@ angular.module('app.leagues.show', [])
   $scope.getLeague();
   $scope.getEvents();
   $scope.getCharacters();
+  var socket = $scope.updateScores();
 })
 
 .factory('ShowLeague', function ($http, $stateParams) {
