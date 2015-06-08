@@ -10,6 +10,8 @@ var routeHandlers = require('./routeHandlers');
 var session = require('express-session');
 var cors = require('cors');
 var deleteHandlers = require('./deleteHandlers');
+//contains a setup function that adds web sockets to the server
+var socketSetup = require('./socketSetup')
 
 // authentication and encryption middleware//
 var passport =  require('passport');
@@ -55,7 +57,9 @@ var start = function() {
 	routes.setup(app, routeHandlers, deleteHandlers);
 	//if deployed to heroku will use heroku port, otherwise on local machine will use port 3000
 	var port = process.env.port || 3000;
-	app.listen(port);
+	var server = app.listen(port);
+	//layers socket.io ontop of the express server
+	socketSetup(server);
 	console.log("Express server listening on %d in %s mode", port, app.settings.env)
 }
 
