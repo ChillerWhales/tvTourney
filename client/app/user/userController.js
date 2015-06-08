@@ -34,6 +34,11 @@ angular.module('app.user', [])
       $state.go('login');
     });
   };
+
+  $scope.home = function() {
+    $state.go('leagues.list');
+  };
+
   $scope.getUserInfo = User.getUserInfo
 
 })

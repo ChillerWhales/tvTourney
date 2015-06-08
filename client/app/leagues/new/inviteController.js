@@ -1,10 +1,15 @@
 angular.module('new.invite', [])
-.controller('inviteFriendsCtrl', function ($scope, invite) {
+.controller('inviteFriendsCtrl', function ($scope, invite, $location) {
   $scope.invitedUsers = invite.getInvitedUsers();
 
   $scope.inviteUser = function() {
     invite.inviteUser($scope.league.id, $scope.username);
     $scope.username = "";
+  }
+  $scope.saveInvite = function() {
+    if ($scope.invitedUsers.length){
+      $location.path('/leagues/list');
+    }
   }
 })
 

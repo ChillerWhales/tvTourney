@@ -9,13 +9,14 @@
   <title>TV TOURNEY</title>
 </head>
 <body ng-app='app' ng-controller='appController'>
-    <div class="nav">
-      <nav class="logOutNav" ng-controller='userController'>
-        <button ng-show='userState' class="logOut" ng-click="logout()"><span class="space navText">Hi, {{returnUser().username}} </span><i class="fa fa-sign-out"></i></button>
-      </nav>
-    </div>
-  <div class="mainContainer">
-    <h1>tvTOURNEY</h1>
+  <div class="nav">
+    <nav class="logOutNav" ng-controller='userController'>
+      <button ng-click="home()" class="home left"><i class="fa fa-home left"></i></button>
+      <button ng-show='userState' class="logOut" ng-click="logout()"><span class="space navText">Hi, {{returnUser().username}} </span><i class="fa fa-sign-out"></i></button>
+    </nav>
+  </div>
+  <div class="mainContainer" ng-controller='userController'>
+    <h1 ng-click="home()">tvTOURNEY</h1>
     <div ui-view></div>
   </div>
   

@@ -2,11 +2,11 @@
 <div class="create-step-one createLeague" ng-show="step == 1" ng-controller="createLeagueCtrl">
   <button class="backToLeagues textLink" ng-click="go('/leagues/list')"><i class="fa fa-arrow-left"></i> back to leagues</button>
   <h2>Create Your League</h2>
-  <form>
+  <div ng-form="createForm">
     league name:
     <input id="name" label="leagueName" name="leagueName" type="text" ng-model="league.name" required/>
     tv show:
-    <input id="show" label="tvShow" name="tvShow" type="text" ng-model="league.show" required/>
+    <input id="show" label="tvShow" name="tvShow" type="text" ng-model="league.show" required />
     week day:
     <select label="weekDay" name="weekDay" ng-model="league.day">
       <option value="monday" selected>Monday</option>
@@ -19,28 +19,22 @@
     </select>
      roster size limit:
     <input id="roster_limit" label="rosterLimit" name="rosterLimit" type="text" ng-model="league.roster_limit" required />
-  </form>
-  <div class="bottomNav">
-    <button class="next" ng-click="saveLeagueInfo()">next</button>
+    <div class="bottomNav">
+      <button class="next" ng-click="saveLeagueInfo()" ng-disabled="createForm.$invalid">next</button>
+    </div>
   </div>
 </div>
 
 <div class="create-step-two createLeague" ng-show="step == 2" ng-controller="setCharactersCtrl">
-<!--   {{step}}
-  League:
-  {{league}}
-  character:
-  {{character}} -->
   <button class="backToLeagues textLink" ng-click="go('/leagues/list')"><i class="fa fa-arrow-left"></i> Back to Leagues</button>
   <h2>League Characters</h2>
   <ul class="character createLeagueElement">
-
     <li ng-click="deleteCharacter($index)" ng-repeat="character in characters">
       <span>{{character.name}}</span>
       <span><button class="trashIcon"><i class="fa fa-trash"></i></button></span>
     </li>
   </ul>
-  <span class="formText">character</form>
+  <span class="formText">character:</form>
   <input id="add_character" label="addCharacter" name="addCharacter" type="text" ng-model="character.name"/>
   <button class="action" id="add-character" ng-click="addCharacter()">add</button>
   <div class="bottomNav">
@@ -59,14 +53,14 @@
       <span><button class="trashIcon"><i class="fa fa-trash"></i></button></span>
     </li>
   </ul>
-    <span class="formText">event</span>
-    <input id="event_name" ng-model="event.name" type="text" max-length="105"/>
-    <span class="formText">score</span>
-    <input id="event_score" ng-model="event.score" type="text"/>
-    <button class="action" ng-click="makeEvent()">Add</button>
+    <span class="formText">event:</span>
+    <input id="event_name" ng-model="event.name" type="text" max-length="105" required/>
+    <span class="formText">score:</span>
+    <input id="event_score" ng-model="event.score" type="text" required/>
+    <button class="action" ng-click="makeEvent()" ng-disabled="eventForm.$invalid">Add</button>
   <div class="bottomNav">
     <button ng-click="nextStep(2)" class="previous">prev</button>
-    <button ng-click="nextStep(4)" class="next">next</button>
+    <button ng-click="nextPage(4)" class="next">next</button>
   </div>
 </div>
 
@@ -80,12 +74,13 @@
     </li>
   </ul>
   <form>
+
     <input ng-model="username" id="inviteFriends" name="inviteFriends" type="text"/>
     <button class="action" ng-click="inviteUser()">add friend</button>
   </form>
   <div class="bottomNav">
     <button ng-click="nextStep(3)" class="previous">prev</button>
-    <button class="next" ng-click="go('/leagues/list')">save league &amp; invite</button>
+    <button class="next" ng-click="saveInvite()">save league &amp; invite</button>
   </div>
 </div>
 

@@ -5,7 +5,6 @@ angular.module('app.leagues.new', ['new.event.create', 'new.character', 'new.inv
       $http.post('/league', league)
         .success(function(league){
           console.log('successfully posted new league');
-          // get league id from league
           callback(false, league);
         })
         .error(function(err){
@@ -54,17 +53,16 @@ angular.module('app.leagues.new', ['new.event.create', 'new.character', 'new.inv
   };
 })
 
-.controller('createLeagueCtrl', function ($scope, League) {
-  
+.controller('createLeagueCtrl', function ($scope, League) { 
   $scope.league = {};
   $scope.saveLeagueInfo = function() {
-
-    League.postLeague($scope.league, function(err, newLeague) {
-      if (newLeague) {
-        $scope.nextStep(2);
-        $scope.setLeague(newLeague);
-      }
-    });
+    console.log($scope.league);
+      League.postLeague($scope.league, function(err, newLeague) {
+        if (newLeague) {
+          $scope.nextStep(2);
+          $scope.setLeague(newLeague);
+        }
+      });
   };
 });
 
