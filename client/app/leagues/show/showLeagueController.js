@@ -11,8 +11,10 @@ angular.module('app.leagues.show', [])
   $scope.showUserRoster = true;
   $scope.charEventTrigger = {};
 
-  /* connect to websocket server - socket.io is magical and if the client is being served by the server, then you dont
-  need to specify an address to connect to */
+  /**
+   * connect to websocket server - socket.io is magical and if the client is being served by the server, then you dont
+   * need to specify an address to connect to 
+   */
   var socket = io.connect();
 
   //Once the websocket connection has been made, notify the server which league is being viewed

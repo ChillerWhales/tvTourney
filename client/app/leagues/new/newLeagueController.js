@@ -18,7 +18,7 @@ angular.module('app.leagues.new', ['new.event.create', 'new.character', 'new.inv
   };
 
 })
-.controller('newLeagueController', function ($scope, $location) { // 
+.controller('newLeagueController', function ($scope, $location) { 
   $scope.step = 1;
   $scope.league = {};
   $scope.character = {};
@@ -27,7 +27,6 @@ angular.module('app.leagues.new', ['new.event.create', 'new.character', 'new.inv
   $scope.go = function(path) {
     $location.path(path);
   };
-
   $scope.nextStep = function(step) {
     $scope.step = step;
   };

@@ -4,18 +4,19 @@ angular.module('new.invite', [])
 
   $scope.inviteUser = function() {
     invite.inviteUser($scope.league.id, $scope.username);
-    $scope.username = "";
-  }
+    $scope.username = '';
+  };
+
   $scope.saveInvite = function() {
     if ($scope.invitedUsers.length){
       $location.path('/leagues/list');
     }
-  }
+  };
 })
 
 
 .factory('invite', function($http) {
-  //should be an empty array once route works
+  // should be an empty array once route works
   var invitedUsers = [];
 
   var inviteUser = function(leagueId, username) {
@@ -27,11 +28,11 @@ angular.module('new.invite', [])
       .error(function(err){
         console.log('error:', err);
       });
-  }
+  };
 
   var getInvitedUsers = function() {
     return invitedUsers;
-  }
+  };
 
   return {
     inviteUser: inviteUser,
