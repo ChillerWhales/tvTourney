@@ -11,23 +11,23 @@ angular.module('app.leagues.show', [])
   $scope.showUserRoster = true;
   $scope.charEventTrigger = {};
 
-  ///////////////////////////////////////
+  /* connect to websocket server - socket.io is magical and if the client is being served by the server, then you dont
+  need to specify an address to connect to */
   var socket = io.connect();
+
+  //Once the websocket connection has been made, notify the server which league is being viewed
   socket.on('success', function(data) {
-    alert(data);
     socket.emit('joinLeague', {leagueId: $stateParams.id});
   });
 
+  //When the client is notified that an event has been triggered, this code updates the views
   socket.on('triggerEvent', function(data) {
-    console.log(data);
-    //find value of event
+    //find the point value of the event that was triggered
     for (var i = 0; i < $scope.events.length; i++) {
       if ($scope.events[i].id === data.eventId) {
         data.score_up = $scope.events[i].score_up;
       }
     }
-    console.log(data);
-    console.log("user rosters: ", $scope.userRosters);
     //loop through user rosters and increase total score as well as score for specific character
     for (var user in $scope.userRosters) {
       var userHasCharacter;
@@ -42,21 +42,20 @@ angular.module('app.leagues.show', [])
       }
       userHasCharacters = false;
     }
+    /* force angular to update views - could alternatively wrap all the previous socket code inside a function and pass
+    it to apply as an argument, this would allow angular to catch any errors that our code throws, but for our purposes
+    this is sufficient. */
     $scope.$apply();
-  })
-  //////////////////////////////////////
+  });
 
   $scope.returnUserRoster = ShowLeague.returnUserRoster;
 
   $scope.setCharacter = function(characterId) {
     $scope.charEventTrigger.characterId = characterId;
-    console.log($scope.charSelection);
-    console.log(this);
   }
 
   $scope.setEvent = function(eventId) {
     $scope.charEventTrigger.eventId = eventId;
-    console.log($scope.eventSelection);
   }
 
   var currentUserId = JSON.parse(localStorage.getItem('user')).id;
@@ -75,6 +74,7 @@ angular.module('app.leagues.show', [])
         characterId: triggeredEvent.league_character_id,
         eventId: triggeredEvent.league_event_id
       }
+      //notify websocket server that an event was triggered
       socket.emit('triggerEvent', triggeredEventEmit);
     });
   }
@@ -237,8 +237,6 @@ angular.module('app.leagues.show', [])
   };
 
   var triggerEvent = function(charEvent, callback) {
-    // console.log(charEvent);
-    alert(charEvent.eventId);
     $http({
       method: 'POST',
       url: '/league/' + $stateParams.id + '/triggerevent',
