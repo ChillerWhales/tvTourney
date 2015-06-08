@@ -44,16 +44,16 @@
     <form ng-submit="triggerEvent()">
       <span class="left twoCol">
         <h3> Characters </h3> 
-        <select class="eventSelect " size="10" multiple ng-model="charSelection">
-          <option value="$index" ng-click="setCharacter()" value="{{$index}}" ng-repeat="character in characters">
+        <select class="eventSelect " size="10" ng-model="charSelection">
+          <option value="$index" ng-click="setCharacter(character.id)" value="{{$index}}" ng-repeat="character in characters">
             {{character.name}}
           </option>
         </select>
       </span>
       <span class="left twoCol"> 
         <h3>Events</h3>
-        <select class="eventSelect " size="10" multiple ng-model="eventSelection">
-          <option ng-repeat="event in events" ng-click="setEvent()" >
+        <select class="eventSelect " size="10" ng-model="eventSelection">
+          <option ng-repeat="event in events" ng-click="setEvent(event.id)" >
             {{event.description}}    {{event.score_up}}
           </option>
         </select>

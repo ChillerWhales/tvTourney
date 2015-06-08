@@ -12,21 +12,51 @@ angular.module('app.leagues.show', [])
   $scope.charEventTrigger = {};
 
   ///////////////////////////////////////
-  var socket = io.connect('http://localhost:3000/');
+  var socket = io.connect();
   socket.on('success', function(data) {
     alert(data);
     socket.emit('joinLeague', {leagueId: $stateParams.id});
   });
+
+  socket.on('triggerEvent', function(data) {
+    console.log(data);
+    //find value of event
+    for (var i = 0; i < $scope.events.length; i++) {
+      if ($scope.events[i].id === data.eventId) {
+        data.score_up = $scope.events[i].score_up;
+      }
+    }
+    console.log(data);
+    console.log("user rosters: ", $scope.userRosters);
+    //loop through user rosters and increase total score as well as score for specific character
+    for (var user in $scope.userRosters) {
+      var userHasCharacter;
+      for (var i = 0; i < $scope.userRosters[user].length; i++ ) {
+        if ($scope.userRosters[user][i].league_character_id === data.characterId) {
+          $scope.userRosters[user][i].current_score += data.score_up;
+          userHasCharacter = true;
+        }
+      }
+      if (userHasCharacter) {
+        $scope.userRosters[user].totalScore += data.score_up;
+      }
+      userHasCharacters = false;
+    }
+    $scope.$apply();
+  })
   //////////////////////////////////////
 
   $scope.returnUserRoster = ShowLeague.returnUserRoster;
 
-  $scope.setCharacter = function() {
-    $scope.charEventTrigger.characterId = this.character.id;
+  $scope.setCharacter = function(characterId) {
+    $scope.charEventTrigger.characterId = characterId;
+    console.log($scope.charSelection);
+    console.log(this);
   }
 
-  $scope.setEvent = function() {
-    $scope.charEventTrigger.eventId = this.event.id;
+  $scope.setEvent = function(eventId) {
+    $scope.charEventTrigger.eventId = eventId;
+    console.log($scope.eventSelection);
   }
 
   var currentUserId = JSON.parse(localStorage.getItem('user')).id;
@@ -39,8 +69,13 @@ angular.module('app.leagues.show', [])
   };
 
   $scope.triggerEvent = function() {
-    ShowLeague.triggerEvent($scope.charEventTrigger, function() {
-
+    ShowLeague.triggerEvent($scope.charEventTrigger, function(triggeredEvent) {
+      var triggeredEventEmit = {
+        leagueId: triggeredEvent.league_id,
+        characterId: triggeredEvent.league_character_id,
+        eventId: triggeredEvent.league_event_id
+      }
+      socket.emit('triggerEvent', triggeredEventEmit);
     });
   }
 
@@ -206,6 +241,8 @@ angular.module('app.leagues.show', [])
   };
 
   var triggerEvent = function(charEvent, callback) {
+    // console.log(charEvent);
+    alert(charEvent.eventId);
     $http({
       method: 'POST',
       url: '/league/' + $stateParams.id + '/triggerevent',
