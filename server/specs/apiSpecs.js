@@ -24,11 +24,15 @@ var utils = {
 	testLeague: {
 		name: "leagueName",
 		show: "tvShow",
-		roster_limit: 10
+		roster_limit: 1
 	},
 
 	testCharacter: {
 		name: "testCharacterName"
+	},
+
+	testCharacter2: {
+		name: "testCharacter2"
 	},	
 
 	errOrDone: function(err, res, done) {
@@ -339,12 +343,15 @@ describe('API', function() {
 		var testLeague = {
 			name: "leagueName",
 			show: "tvShow",
-			roster_limit: 10
+			roster_limit: 1
 		}	
 
 		var testCharacter = {
 			name: "testCharacterName",
-			league_id: 5
+		}
+
+		var testCharacter2 = {
+			name: "testCharacterName2"
 		}
 
 		var fakeUser = {
@@ -361,6 +368,7 @@ describe('API', function() {
 					.expect(201)
 					.end(function(err, res) {
 						testCharacter.league_id = res.body.id;
+						testCharacter2.league_id = res.body.id;
 						done();
 					})
 			});
@@ -394,6 +402,8 @@ describe('API', function() {
 		var characterId;
 		//used to make sure that trying to draft the same character twice doesnt create a new object in the database
 		var firstDraftId;
+		//used to check the roster_limit
+		var characterId2;
 
 		before(function(done) {
 			utils.signUpUser(utils.testUser, function() {
@@ -409,7 +419,13 @@ describe('API', function() {
 							.expect(201)
 							.end(function (err, res) {
 								characterId = res.body.id;
-								done();
+								agent.post("/league/" + leagueId + "/characters")
+									.send(utils.testCharacter2)
+									.expect(201)
+									.end(function (err, res) {
+										characterId2 = res.body.id;
+										done();
+									});
 							});
 					});
 				});
@@ -429,7 +445,7 @@ describe('API', function() {
 				agent.post("/league/" + leagueId + "/roster")
 					.send({
 						userId: userId,
-						characterId: characterId
+						characterId: characterId,
 					})
 					.expect(201)
 					.expect(function(res) {
@@ -444,25 +460,31 @@ describe('API', function() {
 					})
 			});
 
+
 			it("should not allow a user to draft the same player twice", function(done) {
 				agent.post("/league/" + leagueId + "/roster")
 					.send({
 						userId: userId,
 						characterId: characterId
 					})
-					.expect(200)
-					.expect(function(res) {
-						/*make sure its the same id as the first test - this creates a dependency between
-						tests that doesnt need to be there, but I think its ok for now*/
-						res.body.id.should.equal(firstDraftId);
-						res.body.league_id.should.equal(leagueId);
-						res.body.user_id.should.equal(userId);
-						res.body.league_character_id.should.equal(characterId);
-					})
+					.expect(403)
 					.end(function(err, res) {
 						utils.errOrDone(err, res, done);
 					})
 			})
+			
+			it("should return 403 when the user draft more character than roster limit ", function(done) {
+				agent.post("/league/" + leagueId + "/roster")
+					.send({
+						userId: userId,
+						characterId: characterId2,
+					})
+					.expect(403)
+					.end(function(err, res) {
+						utils.errOrDone(err, res, done);
+					})
+			});
+
 		});
 
 		describe("roster GET - get users roster", function() {

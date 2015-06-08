@@ -1,7 +1,8 @@
 <div>
-    <div>
+    <div class="myLeagues">
       <!-- ng-click doesn't direct to the right path yet. need to write it in later-->
-      <div ui-sref='leagues.show({ id: league.id })' ng-repeat='league in leagues'>{{league.name}}</div>
+      <h2>myLeagues</h2>
+      <div class="leagueName listView" ui-sref='leagues.show({ id: league.id })' ng-repeat='league in leagues'><span class="textLink">{{league.name}}</span></div>
+      <button class="action" ng-click="go('/leagues/new')">Create New League</button>
     </div>
-    <button ng-click="go('/leagues/new')">Create New League</button>
 </div> 
