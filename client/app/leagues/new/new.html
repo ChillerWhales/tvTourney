@@ -46,7 +46,7 @@
   <h2>{{league.name}} Events</h2>
   <!-- <div ng-show="events.length > 0"> EVENTS for {{league.name}}</div> -->
   <ul class="character createLeagueElement">
-    <li ng-click="deleteCharacter($index)" ng-repeat="chosenEvent in events">
+    <li ng-click="deleteEvent($index)" ng-repeat="chosenEvent in events">
       <span>{{chosenEvent.description}} <span class="bold space">{{chosenEvent.score_up}}</span><span class="smallText">pts</span></span>
       <span><button class="trashIcon"><i class="fa fa-trash"></i></button></span>
     </li>
