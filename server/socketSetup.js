@@ -14,6 +14,15 @@ module.exports = function(server) {
 		
 		socket.on('joinLeague', function(joinRequest) {
 			console.log(joinRequest.leagueId);
+			console.log("User joined socket room for league: ", joinRequest.leagueId)
+			logger.info("User joined socket room for league: ", joinRequest.leagueId)
+			socket.join(joinRequest.leagueId);
+		});
+
+		socket.on('triggerEvent', function(triggeredEvent) {
+			console.log(triggeredEvent, "was emitted to league: ", triggeredEvent.leagueId);
+			logger.info(triggeredEvent, "was emitted to league: ", triggeredEvent.leagueId);
+			io.to(triggeredEvent.leagueId).emit('triggerEvent', triggeredEvent);
 		})
 	});
 

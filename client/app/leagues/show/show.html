@@ -39,32 +39,28 @@
       </div>
     </div>
   </div>
-  <div ng-if="isOwner()">
-    <button class="options" ng-click="toggleTool()">Event Panel</button>
-    <div ng-show="showTool" class="clearfix">
-      <form ng-submit="triggerEvent()">
-        <span class="left twoCol">
-          <h3> Characters </h3> 
-          <select class="eventSelect " size="10" multiple ng-model="charSelection">
-            <option value="$index" ng-click="setCharacter()" value="{{$index}}" ng-repeat="character in characters">
-              {{character.name}}
-            </option>
-          </select>
-        </span>
-        <span class="left twoCol"> 
-          <h3>Events</h3>
-          <select class="eventSelect " size="10" multiple ng-model="eventSelection">
-            <option ng-repeat="event in events" ng-click="setEvent()" >
-              {{event.description}}    {{event.score_up}}
-            </option>
-          </select>
-        </span>
-        <button class="action" type="submit" value="submit">Submit Event</button>
-      </form>
-
-    </div>
+<div ng-if="isOwner()">
+  <button class="options" ng-click="toggleTool()">Event Panel</button>
+  <div ng-show="showTool" class="clearfix">
+    <form ng-submit="triggerEvent()">
+      <span class="left twoCol">
+        <h3> Characters </h3> 
+        <select class="eventSelect " size="10" ng-change="setCharacter(charSelection.id)" ng-model="charSelection" ng-options="character.name for character in characters track by character.id">
+        <!-- required to prevent angular from displaying an empty value - has to do with how ng-options is implemented, the associated
+        model needs to have a "default" value -->
+        <option style="display:none" value="">select a character</option>
+        </select>
+      </span>
+      <span class="left twoCol"> 
+        <h3>Events</h3>
+        <select class="eventSelect " ng-change="setEvent(eventSelection.id)" size="10" ng-model="eventSelection" ng-options="event.description for event in events track by event.id">
+        <option style="display:none" value="">select an event</option>
+        </select>
+      </span>
+      <button class="action" type="submit" value="submit">Submit Event</button>
+    </form>
   </div>
-
+</div>
   <div ng-if="!isOwner()">
     <button class="options eventButton" ng-click="toggleEvents()">Events &amp; Characters</button>
     <div ng-show="showEvents"> 
