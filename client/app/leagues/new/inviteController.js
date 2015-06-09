@@ -5,14 +5,15 @@ angular.module('new.invite', [])
   $scope.inviteUser = function() {
     invite.inviteUser($scope.league.id, $scope.username, function(invitedUser) {
       $scope.invitedUsers.push(invitedUser);
-      $scope.username = "";
+      $scope.username = '';
     });
-  }
+  };
+
   $scope.saveInvite = function() {
     if ($scope.invitedUsers.length){
       $location.path('/leagues/list');
     }
-  }
+  };
 })
 
 
@@ -25,11 +26,11 @@ angular.module('new.invite', [])
       .error(function(err){
         console.log('error:', err);
       });
-  }
+  };
 
   var getInvitedUsers = function() {
     return $scope.invitedUsers;
-  }
+  };
 
   return {
     inviteUser: inviteUser

@@ -15,23 +15,25 @@ angular.module('app.leagues.show', [])
 
  
   $scope.updateScores = function() {
-    /* connect to websocket server - socket.io is magical and if the client is being served by the server, then you dont
-    need to specify an address to connect to */
+    /**
+     * connect to websocket server - socket.io is magical and if the client is being served by the server, then you dont
+     * need to specify an address to connect to 
+     */
     var socket = io.connect();
     console.log(socket);
 
-    //Once the websocket connection has been made, notify the server which league is being viewed
+    // Once the websocket connection has been made, notify the server which league is being viewed
     socket.emit('joinLeague', {leagueId: $stateParams.id});
 
-    //When the client is notified that an event has been triggered, this code updates the views
+    // When the client is notified that an event has been triggered, this code updates the views
     socket.on('triggerEvent', function(data) {
-      //find the point value of the event that was triggered
+      // find the point value of the event that was triggered
       for (var i = 0; i < $scope.events.length; i++) {
         if ($scope.events[i].id === data.eventId) {
           data.score_up = $scope.events[i].score_up;
         }
       }
-      //loop through user rosters and increase total score as well as score for specific character
+      // loop through user rosters and increase total score as well as score for specific character
       for (var user in $scope.userRosters) {
         var userHasCharacter;
         for (var i = 0; i < $scope.userRosters[user].length; i++ ) {
@@ -45,14 +47,16 @@ angular.module('app.leagues.show', [])
         }
         userHasCharacter = false;
       }
-      /* force angular to update views - could alternatively wrap all the previous socket code inside a function and pass
-      it to apply as an argument, this would allow angular to catch any errors that our code throws, but for our purposes
-      this is sufficient. */
+      /** 
+       * force angular to update views - could alternatively wrap all the previous socket code inside a function and pass
+       * it to apply as an argument, this would allow angular to catch any errors that our code throws, but for our purposes
+       * this is sufficient. 
+       */
       $scope.$apply();
     });
 
     return socket;
-  }
+  };
 
 
   $scope.returnUserRoster = ShowLeague.returnUserRoster;
@@ -99,42 +103,42 @@ angular.module('app.leagues.show', [])
   };
 
   $scope.showRoster = function(index, userId) {
-    //if that roster is already being displayed, close it
+    // if that roster is already being displayed, close it
 
     if ($scope.indexSelect === index) {
       $scope.indexSelect = null;
       $scope.openIndex = null;
     }
     else {
-      //display roster of the user that was clicked
+      // display roster of the user that was clicked
       $scope.indexSelect = index;
       $scope.openIndex = index;
 
     }
-  }
+  };
 
   $scope.getLeague = function (){
     ShowLeague.getLeague($stateParams.id, function (err, response) {
       if (!err) {
         $scope.league = response;
         
-        //get all users, then make independet http calls for each of their rosters
+        // get all users, then make independet http calls for each of their rosters
         ShowLeague.getUsers($scope.league.id, function (err, getUsersResponse){
           $scope.users = getUsersResponse;
           $scope.userRosters = {};
           for (var i = 0; i < $scope.users.length; i++) {
-            //wrapper creates closure over currentUserIndex, required due to nature of asynch call
+            // wrapper creates closure over currentUserIndex, required due to nature of asynch call
             var getUserWrapper = function () {
               var currentUserIndex = i;
               ShowLeague.getUserRoster($scope.league.id, $scope.users[i].id, function(err, getRosterResponse) {
                 $scope.userRosters[$scope.users[currentUserIndex].id] = getRosterResponse;
-                //gets current users roster size - used to determine if the draft button should be displayed
+                // gets current users roster size - used to determine if the draft button should be displayed
                 if($scope.users[currentUserIndex].id === currentUserId) {
                   $scope.rosterLength = getRosterResponse.length;
                 }
               });
             }
-            //immediately invoke wrapper function
+            // immediately invoke wrapper function
             getUserWrapper();
           }
         });
@@ -144,7 +148,7 @@ angular.module('app.leagues.show', [])
         console.log(err)
       }
     });
-  } ;
+  };
 
   $scope.selectUser = function (index) {
     $scope.indexUser = index;
@@ -235,7 +239,7 @@ angular.module('app.leagues.show', [])
         roster: res
       }
 
-      //calculates users total score from individual characters in roster before passing response along
+      // calculates users total score from individual characters in roster before passing response along
       res.totalScore = 0;
       for (var i = 0; i < res.length; i++) {
         res.totalScore += res[i].current_score;
