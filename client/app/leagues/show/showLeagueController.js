@@ -10,15 +10,59 @@ angular.module('app.leagues.show', [])
   $scope.showTool = false;
   $scope.showUserRoster = true;
   $scope.charEventTrigger = {};
+  $scope.all = true;
+  $scope.closed = true;
+
+ 
+  $scope.updateScores = function() {
+    /* connect to websocket server - socket.io is magical and if the client is being served by the server, then you dont
+    need to specify an address to connect to */
+    var socket = io.connect();
+    console.log(socket);
+
+    //Once the websocket connection has been made, notify the server which league is being viewed
+    socket.emit('joinLeague', {leagueId: $stateParams.id});
+
+    //When the client is notified that an event has been triggered, this code updates the views
+    socket.on('triggerEvent', function(data) {
+      //find the point value of the event that was triggered
+      for (var i = 0; i < $scope.events.length; i++) {
+        if ($scope.events[i].id === data.eventId) {
+          data.score_up = $scope.events[i].score_up;
+        }
+      }
+      //loop through user rosters and increase total score as well as score for specific character
+      for (var user in $scope.userRosters) {
+        var userHasCharacter;
+        for (var i = 0; i < $scope.userRosters[user].length; i++ ) {
+          if ($scope.userRosters[user][i].league_character_id === data.characterId) {
+            $scope.userRosters[user][i].current_score += data.score_up;
+            userHasCharacter = true;
+          }
+        }
+        if (userHasCharacter) {
+          $scope.userRosters[user].totalScore += data.score_up;
+        }
+        userHasCharacter = false;
+      }
+      /* force angular to update views - could alternatively wrap all the previous socket code inside a function and pass
+      it to apply as an argument, this would allow angular to catch any errors that our code throws, but for our purposes
+      this is sufficient. */
+      $scope.$apply();
+    });
+
+    return socket;
+  }
+
 
   $scope.returnUserRoster = ShowLeague.returnUserRoster;
 
-  $scope.setCharacter = function() {
-    $scope.charEventTrigger.characterId = this.character.id;
+  $scope.setCharacter = function(characterId) {
+    $scope.charEventTrigger.characterId = characterId;
   }
 
-  $scope.setEvent = function() {
-    $scope.charEventTrigger.eventId = this.event.id;
+  $scope.setEvent = function(eventId) {
+    $scope.charEventTrigger.eventId = eventId;
   }
 
   var currentUserId = JSON.parse(localStorage.getItem('user')).id;
@@ -31,8 +75,14 @@ angular.module('app.leagues.show', [])
   };
 
   $scope.triggerEvent = function() {
-    ShowLeague.triggerEvent($scope.charEventTrigger, function() {
-
+    ShowLeague.triggerEvent($scope.charEventTrigger, function(triggeredEvent) {
+      var triggeredEventEmit = {
+        leagueId: triggeredEvent.league_id,
+        characterId: triggeredEvent.league_character_id,
+        eventId: triggeredEvent.league_event_id
+      }
+      //notify websocket server that an event was triggered
+      socket.emit('triggerEvent', triggeredEventEmit);
     });
   }
 
@@ -47,19 +97,19 @@ angular.module('app.leagues.show', [])
   $scope.toggleCharacters = function() {
     $scope.showCharacters = !$scope.showCharacters;
   };
-  // if roster exists
-    // $scope.drafted = true
-  // else 
-    //$scope.drafted = false;
 
   $scope.showRoster = function(index, userId) {
     //if that roster is already being displayed, close it
+
     if ($scope.indexSelect === index) {
       $scope.indexSelect = null;
+      $scope.openIndex = null;
     }
     else {
       //display roster of the user that was clicked
       $scope.indexSelect = index;
+      $scope.openIndex = index;
+
     }
   }
 
@@ -119,6 +169,7 @@ angular.module('app.leagues.show', [])
   $scope.getLeague();
   $scope.getEvents();
   $scope.getCharacters();
+  var socket = $scope.updateScores();
 })
 
 .factory('ShowLeague', function ($http, $stateParams) {

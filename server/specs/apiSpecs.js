@@ -289,7 +289,7 @@ describe('API', function() {
 					done();
 				})
 			});
-		})
+		});
 
 		after(function(done) {
 			//find and destroy league
@@ -314,7 +314,7 @@ describe('API', function() {
 					.end(function (err, res) {
 						utils.errOrDone(err, res, done);
 		 			});
-		})
+		});
 
 		it('should respond with 401 if user is not part of the league', function(done) {
 			var agent = utils.createAgent();
@@ -333,8 +333,67 @@ describe('API', function() {
 		 			});
 				})
 			});
-		})
-	})
+		});
+	});
+
+	describe("League Deletion", function() {
+		var agent = utils.createAgent();
+		var agent2 = utils.createAgent();
+		var leagueId;
+
+		var testLeague = {
+			name: "leagueName",
+			show: "tvShow",
+			roster_limit: 10
+		}	
+
+		var fakeUser = {
+			username: "fakeuser",
+			email: "fake@fake.com",
+			password: "fakepassword"
+		}
+
+		before(function(done) {
+			utils.signUpUser(utils.testUser);
+			utils.logInAgent(agent, utils.testUser, function() {
+				agent.post("/league/")
+				.send(testLeague)
+				.expect(201)
+				.end(function(err, res) {
+					leagueId = res.body.id;
+					utils.signUpUser(fakeUser, function() {
+						utils.logInAgent(agent2, fakeUser, function() {
+							utils.errOrDone(err, res, done);
+						});
+					});
+				})
+			});
+		});
+
+		it('should respond with 400 if leagueID is invalid', function(done) {
+			agent.delete("/league/" + (leagueId + 1))
+				.expect(400)
+				.end(function(err, res) {
+					utils.errOrDone(err, res, done);
+				});
+		});
+
+		it('should respond with 401 when you user is not authorized', function(done) {
+			agent2.delete("/league/" + leagueId)
+				.expect(401)
+				.end(function(err, res) {
+					utils.errOrDone(err, res, done);
+				});
+		});
+
+		it('should delete league', function(done) {
+			agent.delete("/league/" + leagueId)
+				.expect(201)
+				.end(function(err, res) {
+					utils.errOrDone(err, res, done);
+				});
+		});
+	});
 
 	describe("league characters", function() {
 		
@@ -524,6 +583,10 @@ describe('API', function() {
 
 	describe("league events", function() {
 			var agent = utils.createAgent();
+			var agent2;
+			var agent3;
+			var eventId;
+
 			var testLeague = {
 				name: "leagueName",
 				show: "tvShow",
@@ -564,14 +627,15 @@ describe('API', function() {
 		    User.find({where: {username: fakeUser.username}})
 		    	.then(function(foundUser) {
 		    		foundUser.destroy();
+		    		done();
 		    });
 
-		    LeagueEvent.find({where: {description: testEvent.description}})
-		      .then(function(foundEvent) {
-		      	foundEvent.destroy().then(function() {
-		     		done();
-		    		});
-		    });
+		    // LeagueEvent.find({where: {description: testEvent.description}})
+		    //   .then(function(foundEvent) {
+		    //   	foundEvent.destroy().then(function() {
+		    //  		done();
+		    // 		});
+		    // });
 		  });
 
 			describe("League Event POST", function () {
@@ -603,7 +667,7 @@ describe('API', function() {
 				});
 
 				it('should respond with 403 if league_id don"t match with user_id', function(done) {
-					var agent2 = utils.createAgent();
+					agent2 = utils.createAgent();
 					utils.signUpUser(fakeUser, function() {
 						utils.logInAgent(agent2, fakeUser, function() {
 							agent2.post("/league/" + testEvent.league_id + "/events")
@@ -617,7 +681,7 @@ describe('API', function() {
 				}); 
 
 				it('should respond with 401 if user is not logged in', function(done) {
-					var agent3 = utils.createAgent();
+					agent3 = utils.createAgent();
 					//creates new agent but doesn't log it in
 					agent3.post("/league/" + testEvent.league_id + "/events")
 						.send(testEvent)
@@ -649,6 +713,7 @@ describe('API', function() {
 							res.body[0].league_id.should.equal(testEvent.league_id);
 							res.body[0].description.should.equal(testEvent.description);
 							res.body[0].score_up.should.equal(testEvent.score);
+							eventId = res.body[0].id;
 						})
 						.end(function(err, res) {
 							utils.errOrDone(err, res, done);
@@ -658,7 +723,7 @@ describe('API', function() {
 				//not if user is part of the league! Need to refactor when the tables for
 				//league-users is done.
 				it('should return 403 if user not part of league', function(done) {
-					var agent2 = utils.createAgent();
+					agent2 = utils.createAgent();
 					utils.signUpUser(fakeUser, function() {
 						utils.logInAgent(agent2, fakeUser, function() {
 							agent2.get("/league/" + testEvent.league_id + "/events")
@@ -670,6 +735,43 @@ describe('API', function() {
 					})
 				});
 			});
+			
+			describe("League Event DELETE", function() {
+
+				it('should respond with 400 if league doesnt exist', function(done) {
+					agent.delete("/league/" + (testEvent.league_id + 1) + "/events/" + eventId)
+						.expect(400)
+						.end(function(err, res) {
+							utils.errOrDone(err, res, done);
+						})
+				}); 
+
+				it('should respond with 403 if user is not the owner', function(done) {
+					agent2.delete("/league/" + testEvent.league_id + "/events/" + eventId)
+						.expect(403)
+						.end(function(err, res) {
+							utils.errOrDone(err, res, done);
+						});
+				});
+
+				it('should respond 400 if leagueEvent ID is invalid', function(done) {
+					agent.delete("/league/" + testEvent.league_id + "/events/" + (eventId + 1))
+						.expect(400)
+						.end(function(err, res) {
+							utils.errOrDone(err, res, done);
+						});
+				});
+
+				it('should delete event', function(done) {
+					agent.delete("/league/" + testEvent.league_id + "/events/" + eventId)
+						.expect(201)
+						.end(function(err, res) {
+							utils.errOrDone(err, res, done);
+						});
+				});
+
+			});
+
 	}); //end of league events test
 
 	describe('triggering events on characters', function() {
@@ -1059,4 +1161,5 @@ describe('API', function() {
 
 		});
 	}); 
+	
 });//end test

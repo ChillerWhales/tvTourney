@@ -1,69 +1,66 @@
 <!-- <div ng-if="isOwner()"> -->
 <!-- <button class="backToLeagues textLink" ng-click="go('/leagues/list')"><i class="fa fa-arrow-left"></i> Back to Leagues</button> -->
-<div class="clearfix">
-  <div  class="leagueInfo left">
-    <h2 class="leagueName">
-      {{league.name}}
-    </h2>
-    <div class="leagueShow">
-     {{league.show}}
+<div class="showPage">
+  <div class="clearfix">
+    <div  class="leagueInfo left">
+      <h2 class="leagueName">
+        {{league.name}}
+      </h2>
+      <div class="leagueShow">
+       {{league.show}}
+      </div>
+      <div class="leagueOwner">
+        owner: {{league.Owner.username}}
+      </div>
+      <div class="leagueLimit">
+        roster limit: {{league.roster_limit}}
+      </div>
     </div>
-    <div class="leagueOwner">
-      owner: {{league.Owner.username}}
-    </div>
-    <div class="leagueLimit">
-      roster limit: {{league.roster_limit}}
+    <div class="draft right">
+      <button class="action" ng-show="rosterLength < league.roster_limit" ui-sref="leagues.draft({id:league.id})">DRAFT</button>
     </div>
   </div>
-  <div class="draft right">
-    <button class="action" ng-show="rosterLength < league.roster_limit" ui-sref="leagues.draft({id:league.id})">DRAFT</button>
-  </div>
-</div>
 
-<div class="usersDivide">
-  users
-</div>
-<div ng-repeat="user in users" class="listView">
-  <span class="left" ng-click="showRoster($index, user.id)"><i class="fa fa-caret-right space"></i>  {{user.username}}</span>
-  <span class="points right"> {{userRosters[user.id].totalScore}} pts</span>
-  <div class="roster" ng-show="$index == indexSelect">
-    roster:
-    <div>
-      <div ng-show="user.roster.length == 0">
-        No roster drafted by this user
-      </div>
-      <div class="characInRosters" ng-repeat='roster in userRosters[user.id]'>
-        {{roster.league_character.name}} - {{roster.current_score}} pts
+  <div class="usersDivide">
+    users
+  </div>
+  <div ng-repeat="user in users" class="listView">
+    <span class="left" ng-click="showRoster($index, user.id)"><i ng-class="{'fa' : all, 'fa-caret-down': openIndex == $index, 'fa-caret-right': openIndex != $index, 'space': all}"></i>  {{user.username}}</span>
+    <span class="points right"> {{userRosters[user.id].totalScore}} pts</span>
+    <div class="roster" ng-show="$index == indexSelect">
+      roster:
+      <div>
+        <div ng-show="user.roster.length == 0">
+          No roster drafted by this user
+        </div>
+        <div class="characInRosters" ng-repeat='roster in userRosters[user.id]'>
+          {{roster.league_character.name}}: {{roster.current_score}} pts
+        </div>
       </div>
     </div>
   </div>
-</div>
 <div ng-if="isOwner()">
   <button class="options" ng-click="toggleTool()">Event Panel</button>
   <div ng-show="showTool" class="clearfix">
     <form ng-submit="triggerEvent()">
       <span class="left twoCol">
         <h3> Characters </h3> 
-        <select class="eventSelect " size="10" multiple ng-model="charSelection">
-          <option value="$index" ng-click="setCharacter()" value="{{$index}}" ng-repeat="character in characters">
-            {{character.name}}
-          </option>
+        <select class="eventSelect " size="10" ng-change="setCharacter(charSelection.id)" ng-model="charSelection" ng-options="character.name for character in characters track by character.id">
+        <!-- required to prevent angular from displaying an empty value - has to do with how ng-options is implemented, the associated
+        model needs to have a "default" value -->
+        <option style="display:none" value="">select a character</option>
         </select>
       </span>
       <span class="left twoCol"> 
         <h3>Events</h3>
-        <select class="eventSelect " size="10" multiple ng-model="eventSelection">
-          <option ng-repeat="event in events" ng-click="setEvent()" >
-            {{event.description}}    {{event.score_up}}
-          </option>
+        <select class="eventSelect " ng-change="setEvent(eventSelection.id)" size="10" ng-model="eventSelection" ng-options="event.description for event in events track by event.id">
+        <option style="display:none" value="">select an event</option>
         </select>
       </span>
       <button class="action" type="submit" value="submit">Submit Event</button>
     </form>
-
   </div>
 </div>
-
   <div ng-if="!isOwner()">
     <button class="options eventButton" ng-click="toggleEvents()">Events &amp; Characters</button>
     <div ng-show="showEvents"> 
@@ -83,7 +80,7 @@
       </div>
     </div>
   </div>
-
+</div>
 
 
 

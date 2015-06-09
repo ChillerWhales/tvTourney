@@ -1,23 +1,26 @@
 angular.module('new.invite', [])
-.controller('inviteFriendsCtrl', function ($scope, invite) {
-  $scope.invitedUsers = invite.getInvitedUsers();
+.controller('inviteFriendsCtrl', function ($scope, invite, $location) {
+  $scope.invitedUsers = [];
 
   $scope.inviteUser = function() {
-    invite.inviteUser($scope.league.id, $scope.username);
-    $scope.username = "";
+    invite.inviteUser($scope.league.id, $scope.username, function(invitedUser) {
+      $scope.invitedUsers.push(invitedUser);
+      $scope.username = "";
+    });
+  }
+  $scope.saveInvite = function() {
+    if ($scope.invitedUsers.length){
+      $location.path('/leagues/list');
+    }
   }
 })
 
 
 .factory('invite', function($http) {
-  //should be an empty array once route works
-  var invitedUsers = [];
-
-  var inviteUser = function(leagueId, username) {
-
+  var inviteUser = function(leagueId, username, callback) {
     $http.post('/league/' + leagueId + '/invite', {'username': username})
       .success(function(invitedUser){
-        invitedUsers.push(invitedUser);
+        callback(invitedUser);
       })
       .error(function(err){
         console.log('error:', err);
@@ -25,11 +28,10 @@ angular.module('new.invite', [])
   }
 
   var getInvitedUsers = function() {
-    return invitedUsers;
+    return $scope.invitedUsers;
   }
 
   return {
-    inviteUser: inviteUser,
-    getInvitedUsers: getInvitedUsers
+    inviteUser: inviteUser
   }
 });
