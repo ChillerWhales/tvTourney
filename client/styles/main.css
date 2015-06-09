@@ -140,10 +140,14 @@ input {
   background-color:#8BADA3;
   border:none;
   color:#FFF;
+  border-bottom: 1px solid #78968E;
+  border-right: 1px solid #8DB0A6;
+  border-left: 1px solid #8DB0A6;
+  border-top: 1px solid #8FB2A9;
 }
 
 .options:hover, .previous:hover, .next:hover {
-  background-color: #7B9990;
+  background-color: #96BAAF;
 }
 
 .previous, .next, .options {
@@ -173,7 +177,7 @@ input {
 
 h1, h2, h3 {
   font-family: 'Carter One', cursive;
-  color: #0D1F30;
+  color: #0D1E3B;
 }
 
 h1 {
@@ -202,6 +206,11 @@ h3 {
   width:100%;
 }
 
+.draftContainer {
+  width:80%;
+  margin:0 auto;
+}
+
 form, .formText {
   text-align:left;
   font-size: .9em;
@@ -209,7 +218,7 @@ form, .formText {
 }
 
 .logIn form {
-    width: 90%;
+    width: 75%;
     margin:40px auto 0 auto;
 }
 
@@ -233,10 +242,10 @@ button.action{
   background-color: #F27D11;
   border:none;
   color:#FFF;
-  border-top:1px solid #FF8E11;
+  border-top:1px solid #FF8412;
   border-left:1px solid #FF8E11;
-  border-bottom:1px solid #D6770F;
-  border-right:1px solid #D6770F;
+  border-bottom:1px solid #D66F0F;
+  border-right:1px solid #F27D11;
 }
 
 button.action {
@@ -260,8 +269,9 @@ button.action:hover {
 }
 
 .myLeagues {
-  width:90%;
+  width:80%;
   margin: 0 auto;
+ ;
 }
 
 .textLink {
@@ -277,14 +287,15 @@ button.action:hover {
   border-top: 1px solid #fff;
   border-bottom:1px solid #DDD;
   cursor:pointer;
+  box-shadow:0px 1px 4px #EEE;
 }
 
 .listView:hover {
-  background-color:#F0E3C0;
+  background-color:#ECECEC;
 }
 
 .createLeague, .showPage {
-  width:90%;
+  width:80%;
   margin:0 auto;
   color:#444;
 }
@@ -351,9 +362,6 @@ ul.character li:hover {
 }
 
 .leagueInfo > div, .usersDivide {
-/*  color:#444;
-  margin:5px 0;*/
-  /*width:75%;*/
   margin:0 auto;
 }
 
@@ -378,6 +386,7 @@ ul.character li:hover {
   margin: 20px 0 5px 0;
   padding:4px 0;
   font-family: 'Carter One', cursive;
+  color: #0D1E3B;
 }
 
 .eventButton {

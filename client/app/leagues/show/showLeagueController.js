@@ -10,6 +10,8 @@ angular.module('app.leagues.show', [])
   $scope.showTool = false;
   $scope.showUserRoster = true;
   $scope.charEventTrigger = {};
+  $scope.all = true;
+  $scope.closed = true;
 
  
   $scope.updateScores = function() {
@@ -41,7 +43,7 @@ angular.module('app.leagues.show', [])
         if (userHasCharacter) {
           $scope.userRosters[user].totalScore += data.score_up;
         }
-        userHasCharacters = false;
+        userHasCharacter = false;
       }
       /* force angular to update views - could alternatively wrap all the previous socket code inside a function and pass
       it to apply as an argument, this would allow angular to catch any errors that our code throws, but for our purposes
@@ -98,12 +100,17 @@ angular.module('app.leagues.show', [])
 
   $scope.showRoster = function(index, userId) {
     //if that roster is already being displayed, close it
+
     if ($scope.indexSelect === index) {
       $scope.indexSelect = null;
+      $scope.closed = true;
     }
     else {
       //display roster of the user that was clicked
       $scope.indexSelect = index;
+      $scope.closed = false;
+      $scope.open = true;
+
     }
   }
 

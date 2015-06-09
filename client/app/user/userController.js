@@ -97,7 +97,7 @@ angular.module('app.user', [])
   }
 
   var getUserInfo = function() {
-    return currentUser;
+    return JSON.parse(localStorage.getItem('user'));
   }
 
   return {
