@@ -34,6 +34,11 @@ angular.module('app.user', [])
       $state.go('login');
     });
   };
+
+  $scope.home = function() {
+    $state.go('leagues.list');
+  };
+
   $scope.getUserInfo = User.getUserInfo
 
 })
@@ -92,7 +97,7 @@ angular.module('app.user', [])
   }
 
   var getUserInfo = function() {
-    return currentUser;
+    return JSON.parse(localStorage.getItem('user'));
   }
 
   return {

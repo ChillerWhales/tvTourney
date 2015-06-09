@@ -89,21 +89,6 @@ module.exports = {
 		});
 	},
 
-	// leagueGET: function(req, res) {
-	// 	var leagueId = req.params.leagueId;
-	// 	db.UserLeagues.find({where: {}})
-	// 	db.League.find({where: {id: leagueId}}).then(function(foundLeague) {
-	// 		if (foundLeague) {
-	// 			logger.info("Returned a league object");
-	// 			res.status(200).json(foundLeague);
-	// 		}
-	// 		else {
-	// 			logger.info("League not found.");
-	// 			res.status(400).send("League not found");
-	// 		}
-	// 	});
-	// },
-
 	/*this code expects that the req will have the id of the league event so it
 	can confirm that the user is indeed the owner of the the league specified.*/
 	eventGET: function(req, res) {
@@ -166,8 +151,8 @@ module.exports = {
 	},
  
 	/*
-	leaugesCharactersGET: This returns a JSON of characters for the requested league ID token
-	leaugesCharactersPOST: This will insert the array of characters in the table (for the league id)
+	leaguesCharactersGET: This returns a JSON of characters for the requested league ID token
+	leaguesCharactersPOST: This will insert the array of characters in the table (for the league id)
 	 */
 	leagueCharactersPOST: function(req, res, user) {
 		// Receive leagueId as leagueId from req params and character  (name) and creates one record
@@ -217,33 +202,6 @@ module.exports = {
 				res.end();
 			}
 		});
-	},
-	
-	leagueCharactersDELETE: function(req, res) {
-		if(!req.params.characterId) {
-			logger.info("leagueCharactersDELETE attempted without charaIdcter");
-			res.status(403).send("yo - where's your character_id");
-		}
-
-		utils.findUserId(req.session.token, function(user){
-			utils.findLeagueById(parseInt(req.params.leagueId), function(league){
-				if(user.id === league.owner) {
-		
-					db.LeagueCharacter.destroy({
-						where: {
-							id: req.params.characterId
-						}
-					})
-					.then(function(result) {
-						res.status(201).json(result);
-					});
-				} else {
-					// current user is not the owner of the league
-					logger.info("character Delete - League owner and logged in user does not match");
-					res.status(400).send("You must be owner of the league to add characters");
-				} 
-			}); //  end findUserId
-		});//  end findLeagueById
 	},
 
 	leagueInvitePOST: function(req, res) {

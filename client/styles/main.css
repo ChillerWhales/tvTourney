@@ -63,25 +63,29 @@ body {
   font-size: 1em;
   font-family: helvetica, sans-serif;
   background-image: url(../img/bg.png);
+  background-color:#EEE;
   background-repeat: none;
   text-shadow: 0px 1px 1px #FFF;
-
-
 }
 
 div.nav {
   width:100%;
-  min-height:32px;
-  margin: 0 0 70px 0;
+  min-height:40px;
+  margin: 0 0 50px 0;
   background-color: #3B6670;
-  /*margin: 0 auto;*/
 }
 
-nav .logout {
-  font-size:1.2em;
+nav .logout, nav .home {
+  font-size:1.4em;
   border:none;
   color:#FFF;
   background:none;
+}
+
+nav .home {
+  position:relative;
+  top:6px;
+  padding-left:15px;
 }
 
 nav .navText {
@@ -94,16 +98,23 @@ nav .navText {
 button {
   cursor: pointer;
   border-radius:3px;
+  text-shadow:none;
 }
 
 input {
-  padding:5px;
+  padding:8px 5px;
   border-radius:4px;
   border-top:1px solid #CCC;
   border-left:1px solid #CCC;
   border-right:1px solid #FFF;
   border-bottom:1px solid #FFF;
-  color: #444;
+  color: #3B6670;
+  font-size:.9em;
+
+}
+
+.accentColor{
+  color:;
 }
 
 .left {
@@ -129,10 +140,14 @@ input {
   background-color:#8BADA3;
   border:none;
   color:#FFF;
+  border-bottom: 1px solid #78968E;
+  border-right: 1px solid #8DB0A6;
+  border-left: 1px solid #8DB0A6;
+  border-top: 1px solid #8FB2A9;
 }
 
 .options:hover, .previous:hover, .next:hover {
-  background-color: #7B9990;
+  background-color: #96BAAF;
 }
 
 .previous, .next, .options {
@@ -151,7 +166,7 @@ input {
 
 .logOut {
   float:right;
-  padding:7px 10px;
+  padding:8px 15px;
 }
 
 .logOutNav {
@@ -159,20 +174,22 @@ input {
   margin:0 auto;
 }
 
+
 h1, h2, h3 {
   font-family: 'Carter One', cursive;
-  color: #0D1F30;
+  color: #0D1E3B;
 }
 
 h1 {
   text-align: center;
   font-size:2.1em;
   text-shadow: 0px 1px 3px #FFF;
-  margin-bottom:45px;
+  margin-bottom:40px;
+  cursor:pointer;
 }
 
 h2 {
-  margin-bottom:15px;
+  margin-bottom:20px;
   font-size:1.4em;
   text-shadow: 0px 1px 1px #FFF;
 }
@@ -186,7 +203,12 @@ h3 {
   min-height:600px;
   border-radius:3px;
   max-width:500px;
-  width:70%;
+  width:100%;
+}
+
+.draftContainer {
+  width:80%;
+  margin:0 auto;
 }
 
 form, .formText {
@@ -196,13 +218,21 @@ form, .formText {
 }
 
 .logIn form {
-    width: 90%;
+    width: 75%;
     margin:40px auto 0 auto;
+}
+
+.formText {
+  margin:5px 2px;
+}
+
+input {
+  margin-top:5px !important;
 }
 
 .logIn input {
   display:block;
-  margin:0 auto;
+  margin:5px auto;
   padding:5px 2px;
   text-align:left;
   width:100%;
@@ -212,10 +242,10 @@ button.action{
   background-color: #F27D11;
   border:none;
   color:#FFF;
-  border-top:1px solid #FF8E11;
+  border-top:1px solid #FF8412;
   border-left:1px solid #FF8E11;
-  border-bottom:1px solid #D6770F;
-  border-right:1px solid #D6770F;
+  border-bottom:1px solid #D66F0F;
+  border-right:1px solid #F27D11;
 }
 
 button.action {
@@ -239,8 +269,9 @@ button.action:hover {
 }
 
 .myLeagues {
-  width:90%;
+  width:80%;
   margin: 0 auto;
+ ;
 }
 
 .textLink {
@@ -253,17 +284,20 @@ button.action:hover {
   min-height:15px;
   padding:12px 3px;
   font-size:1em;
-  border-bottom: 1px solid #fff;
-  border-top:1px solid #DDD;
+  border-top: 1px solid #fff;
+  border-bottom:1px solid #DDD;
+  cursor:pointer;
+  box-shadow:0px 1px 4px #EEE;
 }
 
 .listView:hover {
-  background-color:#F0E3C0;
+  background-color:#ECECEC;
 }
 
-.createLeague {
-  width:90%;
+.createLeague, .showPage {
+  width:80%;
   margin:0 auto;
+  color:#444;
 }
 
 button.backToLeagues {
@@ -328,9 +362,6 @@ ul.character li:hover {
 }
 
 .leagueInfo > div, .usersDivide {
-/*  color:#444;
-  margin:5px 0;*/
-  width:75%;
   margin:0 auto;
 }
 
@@ -344,7 +375,7 @@ ul.character li:hover {
 
 .leagueInfo > .leagueShow, .leagueInfo > .leagueOwner, .leagueInfo > .leagueLimit {
   color:#444;
-  margin:3px 0;
+  margin:4px 0;
 }
 
 .leagueInfo > .leagueOwner, .leagueInfo > .leagueLimit {
@@ -355,6 +386,7 @@ ul.character li:hover {
   margin: 20px 0 5px 0;
   padding:4px 0;
   font-family: 'Carter One', cursive;
+  color: #0D1E3B;
 }
 
 .eventButton {
@@ -362,10 +394,12 @@ ul.character li:hover {
 }
 
 .roster{
-  margin:25px 0 10px 0;
-  padding:3px 15px;
-  font-size:.8em;
+  margin:25px 15px 10px 15px;
+  padding:10px 15px;
+  border-top:1px solid #CCC;
+  font-size:.9em;
   font-weight:bold;
+  width:90%;
 }
 
 .genList {

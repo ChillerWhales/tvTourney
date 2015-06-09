@@ -14,7 +14,8 @@ function setup(app, routeHandlers, deleteHandlers) {
     .post(routeHandlers.leagueCreatePOST);
   app.route('/league/:leagueId')
     .all(auth)
-    .get(routeHandlers.leagueGET);
+    .get(routeHandlers.leagueGET)
+    .delete(deleteHandlers.leagueDELETE);
   app.route('/league/:leagueId/users')
     .all(auth)
     .get(routeHandlers.leagueUsersGET);
@@ -22,12 +23,15 @@ function setup(app, routeHandlers, deleteHandlers) {
     .all(auth)
     .get(routeHandlers.eventGET)
     .post(routeHandlers.eventPOST);
+  app.route('/league/:id/events/:eventId')
+    .all(auth)
+    .delete(deleteHandlers.leagueEventsDELETE);
   app.route('/league/:leagueId/characters')
     .get(routeHandlers.leagueCharactersGET)
     .post(auth,routeHandlers.leagueCharactersPOST);
   app.route('/league/:leagueId/characters/:characterId')
-    .delete(routeHandlers.leagueCharactersDELETE)
-    .all(auth);
+    .all(auth)
+    .delete(deleteHandlers.leagueCharactersDELETE);
   app.route('/league/:leagueId/invite')
     .post(routeHandlers.leagueInvitePOST);
   app.route('/league/:leagueId/roster')
@@ -41,7 +45,6 @@ function setup(app, routeHandlers, deleteHandlers) {
   app.route('/league/:leagueId/triggerevent')
     .post(routeHandlers.triggerEventCharacterPOST)
     .get(routeHandlers.triggerEventCharacterGET);
-  //deletion routes
   
   /*adding auth here protects the route from unauthenticated users
   if user is authenticated, auth will call next and the next routehandler
