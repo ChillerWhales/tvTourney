@@ -1,7 +1,16 @@
 angular.module('app.leagues.draft', [])
-.controller('draftLeagueController', function ($scope, DraftLeague, $stateParams) { 
+.controller('draftLeagueController', function ($scope, DraftLeague, $stateParams, ShowLeague, User) { 
   $scope.leagueId = $stateParams.id;
-  $scope.roster = DraftLeague.getRoster();
+  $scope.roster = [];
+
+  $scope.queryRoster = function() {
+      ShowLeague.getUserRoster($scope.leagueId, User.getUserInfo().id, function(created, roster) {
+        for (var i = 0; i < roster.length; i++) {
+          $scope.roster.push(roster[i].league_character);
+        }
+    });
+  }
+  // $scope.roster = DraftLeague.getRoster();
   DraftLeague.queryCharacters(function(response) {
     $scope.characters = response;
   });
@@ -10,22 +19,23 @@ angular.module('app.leagues.draft', [])
     DraftLeague.draftCharacter({
       characterId: this.character.id,
       name: this.character.name
+    }, function(draftedCharacter) {
+      $scope.roster.push(draftedCharacter);
     })
   }
+
+  $scope.queryRoster();
 })
 
 .factory('DraftLeague', function($http, $stateParams, $state) {
 
   var characters = [];
-  var roster = [];
-  // var lastDraftedCharacter;
 
   var getCharacters = function() {
     return characters;
   }
 
   var queryCharacters = function(callback) {
-    //httprequesto
     $http({
       method: 'GET',
       url: '/league/' + $stateParams.id + '/characters'
@@ -38,8 +48,7 @@ angular.module('app.leagues.draft', [])
     });
   }
 
-  var draftCharacter = function(characterToDraft) {
-    // lastDraftedCharacter = characterToDraft.name;
+  var draftCharacter = function(characterToDraft, callback) {
     $http({
       method: "POST",
       url: '/league/' + $stateParams.id + '/roster',
@@ -47,18 +56,13 @@ angular.module('app.leagues.draft', [])
     })
       .success(function(draftedCharacter) {
         draftedCharacter.name = characterToDraft.name;
-        roster.push(draftedCharacter);
+        callback(draftedCharacter);
       })
-  }
-
-  var getRoster = function() {
-    return roster;
   }
 
   return {
     getCharacters: getCharacters,
     queryCharacters: queryCharacters,
-    getRoster: getRoster,
     draftCharacter: draftCharacter
   }
 
