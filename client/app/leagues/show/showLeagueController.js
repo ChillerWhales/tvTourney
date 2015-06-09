@@ -103,13 +103,12 @@ angular.module('app.leagues.show', [])
 
     if ($scope.indexSelect === index) {
       $scope.indexSelect = null;
-      $scope.closed = true;
+      $scope.openIndex = null;
     }
     else {
       //display roster of the user that was clicked
       $scope.indexSelect = index;
-      $scope.closed = false;
-      $scope.open = true;
+      $scope.openIndex = index;
 
     }
   }
