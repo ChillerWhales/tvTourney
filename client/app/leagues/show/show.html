@@ -25,7 +25,7 @@
     users
   </div>
   <div ng-repeat="user in users" class="listView">
-    <span class="left" ng-click="showRoster($index, user.id)"><i ng-class="{'fa' : all, 'fa-caret-down': open, 'fa-caret-right': closed, 'space': all}"></i>  {{user.username}}</span>
+    <span class="left" ng-click="showRoster($index, user.id)"><i ng-class="{'fa' : all, 'fa-caret-down': openIndex == $index, 'fa-caret-right': openIndex != $index, 'space': all}"></i>  {{user.username}}</span>
     <span class="points right"> {{userRosters[user.id].totalScore}} pts</span>
     <div class="roster" ng-show="$index == indexSelect">
       roster:
