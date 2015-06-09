@@ -5,8 +5,8 @@ module.exports = {
 
 	logger: {
 		//server logger
-		api: "logs/api.log",
-		exception: "logs/exception.log"
+		api: 'logs/api.log',
+		exception: 'logs/exception.log'
 	},
 
   // passport config

@@ -1,12 +1,12 @@
 var Sequelize = require("sequelize");
 
-//no password
+// no password
 var connect = function(dbPath) {
 	var sequelize = new Sequelize('database', 'root', '', {
 		host:'localhost',
 		dialect: 'sqlite',
 
-		//not sure exactly what this does, copying config documentation
+		// not sure exactly what this does, copying config documentation
 		pool: {
 			max: 5,
 			min: 0,
@@ -21,7 +21,7 @@ var connect = function(dbPath) {
 	return sequelize;
 }
 
-//construct is just a boolean input - allows same function to be used for testing and the actual server
+// construct is just a boolean input - allows same function to be used for testing and the actual server
 var createSchemas = function(dbConnection, construct) {
 	var tableConfig = {
 		underscored: true,
@@ -41,7 +41,7 @@ var createSchemas = function(dbConnection, construct) {
 	LeagueCharacter.belongsTo(League);
 	League.hasMany(LeagueCharacter, {onDelete: 'cascade'});
 
-	//user league associations
+	// user league associations
 	User.belongsToMany(League, { through: UserLeague});
 	League.belongsToMany(User, { through: UserLeague});
 	User.hasMany(UserLeague);
@@ -49,15 +49,15 @@ var createSchemas = function(dbConnection, construct) {
 	League.hasMany(UserLeague)
 	UserLeague.belongsTo(League);
 
-	//owner league associations
+	// owner league associations
 	User.hasMany(League, {as: 'OwnLeagues', foreignKey: 'owner', onDelete: 'cascade'});
 	League.belongsTo(User, {as: 'Owner', foreignKey: 'owner'});
 
-	//league event associatoons
+	// league event associatoons
 	LeagueEvent.belongsTo(League);
 	League.hasMany(LeagueEvent, {onDelete: 'cascade'});
 
-	//associations for the user roster table
+	// associations for the user roster table
 	UserRoster.belongsTo(League);
 	UserRoster.belongsTo(LeagueCharacter);
 	UserRoster.belongsTo(User);
@@ -66,7 +66,7 @@ var createSchemas = function(dbConnection, construct) {
 	User.hasMany(UserRoster);
 
 
-	//associations for the CharacterEvent table
+	// associations for the CharacterEvent table
 	CharacterEvent.belongsTo(League);
 	CharacterEvent.belongsTo(LeagueCharacter);
 	CharacterEvent.belongsTo(LeagueEvent);
@@ -74,7 +74,7 @@ var createSchemas = function(dbConnection, construct) {
 	LeagueCharacter.hasMany(CharacterEvent, {onDelete: 'cascade'});
 	LeagueEvent.hasMany(CharacterEvent, {onDelete: 'cascade'});
 
-	//Basically check if tables exists, if not, creates it
+	// Basically check if tables exists, if not, creates it
 	if (construct) {
 		User.sync();
 		UserLeague.sync();

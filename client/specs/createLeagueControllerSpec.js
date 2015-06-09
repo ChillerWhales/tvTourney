@@ -41,8 +41,8 @@
 
     it('should POST request to /league the saveLeagueInfo', function() {
       $scope.league = {
-        name: "leagueName",
-        show: "tvShow",
+        name: 'leagueName',
+        show: 'tvShow',
         roster_limit: 1
       };
       $httpBackend.expect('POST', '/league', $scope.league).respond(false, $scope.league);

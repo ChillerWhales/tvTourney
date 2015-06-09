@@ -40,8 +40,8 @@ describe('InviteController', function () {
 
   it('should POST request to /league/:leagueId/invite when invite factory is called through inviteUser scope function', function() {
     $scope.league = {
-      name: "leagueName",
-      show: "tvShow",
+      name: 'leagueName',
+      show: 'tvShow',
       roster_limit: 1,
       id: 5
     };

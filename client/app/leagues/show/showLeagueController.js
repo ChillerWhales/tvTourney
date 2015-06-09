@@ -263,7 +263,7 @@ angular.module('app.leagues.show', [])
         callback(triggeredEvent);
       })
       .error(function(err) {
-        console.log("Error");
+        console.log('Error');
         callback(err);
       })
   };

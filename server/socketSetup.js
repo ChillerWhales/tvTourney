@@ -19,8 +19,10 @@ module.exports = function(server) {
 			socket.join(joinRequest.leagueId);
 		});
 
-		/* When a client notifies the server that an event that has been triggered, the server passes that message along to all
-		clients that are looking at the same league which the event was triggered on */
+		/**
+		 * When a client notifies the server that an event that has been triggered, the server passes that message along to all
+		 * clients that are looking at the same league which the event was triggered on 
+		 */
 		socket.on('triggerEvent', function(triggeredEvent) {
 			logger.info(triggeredEvent, "was emitted to league: ", triggeredEvent.leagueId);
 			io.to(triggeredEvent.leagueId).emit('triggerEvent', triggeredEvent);
