@@ -1,10 +1,10 @@
-/*
+/**
  * Routing angular application
  * set State, url, templateUrl and controller
-*/
+ */
 angular.module('app.routes', ['ui.router'])
 .config(
-  function($stateProvider, $urlRouterProvider){
+  function($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise("/login");
     $stateProvider
       .state('signup', {
@@ -21,8 +21,10 @@ angular.module('app.routes', ['ui.router'])
         url: '/',
         templateUrl: 'app/leagues/leagues.html',
         controller: 'leagueController',
-        /*kind of like middleware, the function inside resolve is treated as a promise. Angular will wait
-        for the promise to resolve to either true or false before proceeding with the routing */
+        /**
+         * kind of like middleware, the function inside resolve is treated as a promise. Angular will wait
+         * for the promise to resolve to either true or false before proceeding with the routing 
+         */
         resolve: {authenticate: authenticate}
       }) 
       .state('leagues.new', {
@@ -50,20 +52,24 @@ angular.module('app.routes', ['ui.router'])
         resolve: {authenticate: authenticate}
       });
       
-      /*this is kind of complicated, if you want a more in-depth explanation
-      go here: http://stackoverflow.com/questions/22537311/angular-ui-router-login-authentication*/
+      /** 
+       * this is kind of complicated, if you want a more in-depth explanation
+       * go here: http://stackoverflow.com/questions/22537311/angular-ui-router-login-authentication
+       */
       function authenticate ($q, User, $state, $timeout) {
         if (User.isAuthenticated()) {
           //resolves promise successfully (I think this is basically the same as done())
           return $q.when()
         }
         else {
-          /*this is the interesting part, basically if you dont use $timeout then
-          you would never be able to resolve the promise as rejected because it would
-          leave the user stuck at their current route, but the way this executes is
-          the promise resolves as rejected, preventing the user from changing state to 
-          the protected route, and then the function inside $timeout executes afterwards,
-          redirecting them to the login state */
+          /**
+           * this is the interesting part, basically if you dont use $timeout then
+           * you would never be able to resolve the promise as rejected because it would
+           * leave the user stuck at their current route, but the way this executes is
+           * the promise resolves as rejected, preventing the user from changing state to 
+           * the protected route, and then the function inside $timeout executes afterwards,
+           * redirecting them to the login state 
+           */
           $timeout(function() {
             $state.go('login')
           }); 

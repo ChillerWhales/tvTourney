@@ -6,5 +6,4 @@ angular.module('app.leagues', [
   'app.leagues.draft'
 ])
 .controller('leagueController', function ($scope) { 
-  $scope.test = 1;
 });

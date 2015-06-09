@@ -38,16 +38,18 @@ describe('InviteController', function () {
     $httpBackend.flush();
   });
 
-  it('should POSTrequest to /league/:leagueId/invite when invite factory is called through inviteUser scope function', function() {
+  it('should POST request to /league/:leagueId/invite when invite factory is called through inviteUser scope function', function() {
     $scope.league = {
-      name: "leagueName",
-      show: "tvShow",
+      name: 'leagueName',
+      show: 'tvShow',
       roster_limit: 1,
       id: 5
     };
     $httpBackend.expect('POST', '/league/' + $scope.league.id + '/invite').respond({username: 'testUser'});
     $httpBackend.expect('GET', 'app/user/login.html').respond(200);
-    invite.inviteUser($scope.league.id, 'testUser');
+    invite.inviteUser($scope.league.id, 'testUser', function(response){
+      expect(response.username).to.be('testUser');
+    });
 
     $httpBackend.flush();
   });

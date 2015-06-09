@@ -11,21 +11,11 @@ module.exports = function(req, res, next) {
 				next();
 			}
 			else {
-				res.status(401).send("Not logged in!");
+				res.status(401).send('Not logged in!');
 			}
 		});
 	}
 	else {
-		res.status(401).send("Not logged in!");
+		res.status(401).send('Not logged in!');
 	}
 }
-
-	/*very simple implementation, simply checks if user has a token
-	if they do, they're allowed to proceed*/
-	// console.log("authentication function called");
-	// if (req.session.token) {
-	// 	next();
-	// }
-	// else {
-	// 	res.status(401).send("Not logged in!");
-	// }

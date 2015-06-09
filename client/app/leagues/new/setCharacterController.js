@@ -1,16 +1,15 @@
-/* 
-'setCharactersCtrl' - manages characters addition, display and deletion 
-- currently used on leage creation step2
-*/
+/** 
+ * 'setCharactersCtrl' - manages characters addition, display and deletion 
+ * - currently used on leage creation step2
+ */
 angular.module('new.character', [])
 .controller('setCharactersCtrl', function ($scope, Character) {
-  //get league.id from scope 
+  // get league.id from scope 
   $scope.character = {};
   $scope.addCharacter = function(){
     Character.saveCharacter($scope.league.id, $scope.character.name, function(err, character){
       if(character) {
         $scope.setCharacter(character);
-        console.log(character);
         $scope.appendCharacters(character);
         $scope.character = {};
       }
@@ -18,15 +17,10 @@ angular.module('new.character', [])
   };
 
   $scope.deleteCharacter = function($index){
-    console.log("in deleteCharacter $index is ", $index);
-    // var currentCharacter = $scope.characters[$index]
-
     var currentCharacter = $scope.getCharacterByIndex($index);
-    console.log('currentCharacter is : ', currentCharacter);
 
     Character.deleteCharacter(currentCharacter.league_id, currentCharacter.id, function(err, result){
-      if (result) { // count GT 0 
-        console.log("on success clinet - characters deleted " ,result);
+      if (result) { 
         $scope.removeCharacter($index);
       }
     });
@@ -36,11 +30,11 @@ angular.module('new.character', [])
   var saveCharacter = function(leagueId, characterName, callback){
     $http({
       method: 'POST',
-      url: '/league/'+leagueId+'/characters',
+      url: '/league/' + leagueId + '/characters',
       data: {name: characterName}
     })
     .success(function(character){
-      console.log('created a character' , character);
+      console.log('created a character', character);
       callback(false, character);
     })
     .error(function(err){

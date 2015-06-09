@@ -53,8 +53,8 @@
 
     it('should POST request to /league the saveLeagueInfo', function() {
       $scope.league = {
-        name: "leagueName",
-        show: "tvShow",
+        name: 'leagueName',
+        show: 'tvShow',
         roster_limit: 1,
         id: 5
       };

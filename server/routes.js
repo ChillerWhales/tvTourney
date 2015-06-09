@@ -46,10 +46,12 @@ function setup(app, routeHandlers, deleteHandlers) {
     .post(routeHandlers.triggerEventCharacterPOST)
     .get(routeHandlers.triggerEventCharacterGET);
   
-  /*adding auth here protects the route from unauthenticated users
-  if user is authenticated, auth will call next and the next routehandler
-  will catch the requeset and process it, otherwise the user will receive
-  a 401 */
+  /** 
+   * adding auth here protects the route from unauthenticated users
+   * if user is authenticated, auth will call next and the next routehandler
+   * will catch the requeset and process it, otherwise the user will receive
+   * a 401 
+   */
   app.route('/testauth')
     //basically route-specific middleware
     .all(auth)
