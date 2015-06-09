@@ -43,7 +43,7 @@ angular.module('app.leagues.show', [])
         if (userHasCharacter) {
           $scope.userRosters[user].totalScore += data.score_up;
         }
-        userHasCharacters = false;
+        userHasCharacter = false;
       }
       /* force angular to update views - could alternatively wrap all the previous socket code inside a function and pass
       it to apply as an argument, this would allow angular to catch any errors that our code throws, but for our purposes
