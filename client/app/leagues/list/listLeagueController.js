@@ -8,8 +8,10 @@ angular.module('app.leagues.list', [])
   $scope.leagues = [];
   $scope.getLeagues = function() {
     console.log('CALL GET LEAGUES');
-    /*uses our getLeagues handler function to GET request on server
-    for the list of leagues the user is associated with.*/
+    /**
+     * uses our getLeagues handler function to GET request on server
+     * for the list of leagues the user is associated with.
+     */
     ListLeague.getLeagues(function (err, user) {
       if (err) {
 
@@ -21,7 +23,7 @@ angular.module('app.leagues.list', [])
 
   $scope.getLeagues();
 })
-//factory for handling get and post request to server for league creation activity
+// factory for handling get and post request to server for league creation activity.
 .factory('ListLeague', function($http) {
   var getLeagues = function(callback) {
     $http({

@@ -9,8 +9,8 @@ angular.module('app.leagues.draft', [])
           $scope.roster.push(roster[i].league_character);
         }
     });
-  }
-  // $scope.roster = DraftLeague.getRoster();
+  };
+
   DraftLeague.queryCharacters(function(response) {
     $scope.characters = response;
   });
@@ -22,7 +22,7 @@ angular.module('app.leagues.draft', [])
     }, function(draftedCharacter) {
       $scope.roster.push(draftedCharacter);
     })
-  }
+  };
 
   $scope.queryRoster();
 })
@@ -33,7 +33,7 @@ angular.module('app.leagues.draft', [])
 
   var getCharacters = function() {
     return characters;
-  }
+  };
 
   var queryCharacters = function(callback) {
     $http({
@@ -46,11 +46,11 @@ angular.module('app.leagues.draft', [])
     .error(function (err) {
       console.log(err);
     });
-  }
+  };
 
   var draftCharacter = function(characterToDraft, callback) {
     $http({
-      method: "POST",
+      method: 'POST',
       url: '/league/' + $stateParams.id + '/roster',
       data: {characterId: characterToDraft.characterId}
     })
@@ -58,7 +58,7 @@ angular.module('app.leagues.draft', [])
         draftedCharacter.name = characterToDraft.name;
         callback(draftedCharacter);
       })
-  }
+  };
 
   return {
     getCharacters: getCharacters,
