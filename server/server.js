@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 var should = require('should');
 //middleware that automatically logs responses, requests, and associated data
-var logger = require('morgan');
+// var logger = require('morgan');
 var routes = require('./routes');
 var fs = require('fs');
 var parser = require('body-parser');
@@ -19,11 +19,11 @@ var passport =  require('passport');
 
 //what does flag do?
 //setup log file
-var expressLogFile = fs.createWriteStream('./logs/express.log', {flags: 'a'});
+// var expressLogFile = fs.createWriteStream('./logs/express.log', {flags: 'a'});
 
 //configuration
 //log requests/responses to file
-app.use(logger('combined', {stream: expressLogFile}));
+// app.use(logger('combined', {stream: expressLogFile}));
 
 
 

@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "description": "Fantasy-style brackets for your favorite TV shows",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "scripts": {	
+    "start": "node index.js",
+    "postinstall": "bower install"
   },
   "author": "chillerWhales",
   "license": "ISC",

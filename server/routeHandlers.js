@@ -1,4 +1,4 @@
-var logger = require('bristol');
+// var logger = require('bristol');
 var db = require('./db');
 var utils = require('./lib/utils');
 var url = require('url');
@@ -20,18 +20,18 @@ module.exports = {
 					password: params.password
 				//after creating user, return it to client
 				}).then(function(newUser) {
-					logger.info('User created successfully');
+					// logger.info('User created successfully');
 					res.status(201).json(newUser);
 				})
 			}
 			//if user already exists, tell client
 			else if (user) {
-				logger.info('User tried to register with a taken username')
+				// logger.info('User tried to register with a taken username')
 				res.status(400).send('Username already exists!');
 			}
 			//error out (should never happen)
 			else {
-				logger.info('Error while trying to create user');
+				// logger.info('Error while trying to create user');
 				res.status(500).send('Check your code bro');
 			}
 		})
@@ -41,14 +41,14 @@ module.exports = {
 		db.User.findOne({where: {username: params.username}}).then(function(user) {
 			//if user doesnt exist, create user
 			if (!user || user.password !== params.password) {
-				logger.info('User attempted to login with invalid information');
+				// logger.info('User attempted to login with invalid information');
 				res.status(401).send('That username/password combination doesnt exist');
 			}
 			else if (user && user.password === params.password) {
 				//create a sessions
 				req.session.token = user.username;
 				res.status(200).json(user);
-				logger.info('User successfully logged in');
+				// logger.info('User successfully logged in');
 			}
 		});
 	},
@@ -60,7 +60,7 @@ module.exports = {
 	logoutGET: function(req, res) {
 		//do we need to check if the sessions exists before doing this?
 		req.session.destroy(function() {
-			logger.info('User was successfully logged out');
+			// logger.info('User was successfully logged out');
 			res.status(200).send('User successfully logged out');
 		});
 	},
@@ -80,12 +80,12 @@ module.exports = {
 					}
 				}).then(function(newLeague, created) {
 					user.addLeague(newLeague[0]);
-					logger.info('New league successfully created');
+					// logger.info('New league successfully created');
 					//have to send the 0 index because findOrCreate returns an array
 					res.status(201).json(newLeague[0]);
 				});
 			} else if (ownerId === undefined) {
-				logger.info('League was not successfully created');
+				// logger.info('League was not successfully created');
 				res.status(400).send('League was not created.');
 			}
 		});
@@ -101,7 +101,7 @@ module.exports = {
 			db.UserLeague.findOne({where: {league_id : req.params.id, user_id: user.id}}).then(function(result) {
 				//checks to see if the league under the id is a user on the league
 				if(result) {
-					logger.info('User is the owner of the league. Create events!');
+					// logger.info('User is the owner of the league. Create events!');
 					db.LeagueEvent.findAll({
 						where: {
 							league_id: req.params.id
@@ -112,7 +112,7 @@ module.exports = {
 					});
 				}
 				else {
-					logger.info('User does not have access creating events on this league');
+					// logger.info('User does not have access creating events on this league');
 					res.status(403).send('User doesnt have access to this page.');
 					res.end();
 				}
@@ -128,11 +128,11 @@ module.exports = {
 			// expects league_id, description, score
 			db.League.findOne({where: {id: params.league_id, owner: ownerId}}).then(function(result) {
 				if(!result) {
-					logger.info('user is not the owner of the league');
+					// logger.info('user is not the owner of the league');
 					res.status(403).send('User doesnt have access to this page')
 				}
 				else if(!params.league_id || !params.description || !params.score) {
-					logger.info('Invalid form inputs');
+					// logger.info('Invalid form inputs');
 					res.status(400).send('Invalid inputs');
 				}
 				else {
@@ -142,7 +142,7 @@ module.exports = {
 						// doesnt account for the fact that score could be negative. all scores will be in score_up
 						score_up : params.score
 					}).then(function(newLeagueEvent) {
-						logger.info('Added event successfully');
+						// logger.info('Added event successfully');
 						res.status(201).json(newLeagueEvent);
 					});
 				}
@@ -162,7 +162,7 @@ module.exports = {
 		// Receive leagueId as leagueId from req params and character  (name) and creates one record
 	
 		if(!req.params.leagueId) {
-			logger.info('leagueCharactersPOST attempted without leagueId');
+			// logger.info('leagueCharactersPOST attempted without leagueId');
 			res.status(403).send('yo - wheres your league_id');
 		}
 		
@@ -181,7 +181,7 @@ module.exports = {
 					});
 				} else {
 					// current user is not the owner of the league
-					logger.info('League owner and logged in user does not match');
+					// logger.info('League owner and logged in user does not match');
 					res.status(400).send('You must be owner of the league to add characters');
 				} 
 			}); //  end findUserId
@@ -200,7 +200,7 @@ module.exports = {
 				res.status(200).json(characters)
 				res.end();
 			} else {
-				logger.info('No characters exist for league : ' + leagueId);
+				// logger.info('No characters exist for league : ' + leagueId);
 				res.status(403).send('No characters exist for league : ' + leagueId);
 				res.end();
 			}
@@ -216,7 +216,7 @@ module.exports = {
 					db.User.findOne({where: {username: params.username}}).then(function (user){
 						if(user) {
 							user.addLeague(league).then(function(){
-								logger.info('Added new users to league successfully');
+								// logger.info('Added new users to league successfully');
 								res.status(201).json(user);
 							});
 						}else {
@@ -224,7 +224,7 @@ module.exports = {
 						}
 					})
 				} else {
-					logger.info('User is not owner of league');
+					// logger.info('User is not owner of league');
 					res.status(403).send('You must be the league owner to invite players');
 				}
 			});
@@ -258,16 +258,16 @@ module.exports = {
 							league_character_id: params.characterId
 						}}).spread(function(draftedCharacter, created) {
 							if (created) {
-								logger.info('User drafted character');
+								// logger.info('User drafted character');
 								res.status(201).json(draftedCharacter);
 							}
 							else {
 								if (draftedCharacter) {
-									logger.info('User has already drafted that character');
+									// logger.info('User has already drafted that character');
 									res.status(403).json('User has already drafted that character');		
 								}
 								else {
-									logger.info('User was unable to draft character');
+									// logger.info('User was unable to draft character');
 									res.status(400).send('User was unable to draft that character');
 								}
 							}
@@ -342,11 +342,11 @@ module.exports = {
 			league_event_id: params.eventId
 		}).then(function(triggeredEvent) {
 			if (triggeredEvent) {
-				logger.info('Triggered an event on a character');
+				// logger.info('Triggered an event on a character');
 				res.status(201).json(triggeredEvent);
 			}
 			else {
-				logger.info('Event was not triggered');
+				// logger.info('Event was not triggered');
 				res.status(500).send('Event was not triggered');
 			}
 		})
@@ -357,11 +357,11 @@ module.exports = {
 			{where: {league_id: req.params.leagueId}}
 		).then(function(triggeredEvents) {
 			if (triggeredEvents) {
-				logger.info('Retrieved the following events:', triggeredEvents);
+				// logger.info('Retrieved the following events:', triggeredEvents);
 				res.status(200).json(triggeredEvents);
 			}
 			else {
-				logger.info('Unable to retrieve triggered events');
+				// logger.info('Unable to retrieve triggered events');
 				res.status(500).send('Unable to retrieve triggered events');
 			}
 		})
@@ -386,16 +386,16 @@ module.exports = {
 					//checks if user is part of the league
 					league.hasUser(userId).then(function(authorized) {
 						if (authorized) {
-							logger.info('Returned a league object');
+							// logger.info('Returned a league object');
 							res.status(200).json(league);
 						} else {
-							logger.info('User is not authorized to access league');
+							// logger.info('User is not authorized to access league');
 							res.status(401).send('User is not authorized');
 						}
 					});
 				}
 				else {
-					logger.info('League not found');
+					// logger.info('League not found');
 					res.status(400).send('League not found');
 				}
 			});
@@ -416,16 +416,16 @@ module.exports = {
 							]
 						})
 						.then(function (users){
-							logger.info('Retrieved the following users ', users);
+							// logger.info('Retrieved the following users ', users);
 							res.status(200).json(users);
 						});
 					}else {
-						logger.info('The user ', user.username, ' does not have permission to retrieve the users in this league ', leagueId);
+						// logger.info('The user ', user.username, ' does not have permission to retrieve the users in this league ', leagueId);
 						res.status(401).json('User doesnt not belong to this league');
 					}
 				});
 			}else{
-				logger.info('Unable to retrieve users league');
+				// logger.info('Unable to retrieve users league');
 				res.status(500).send('Unable to retrieve users league');
 			}
 		});
