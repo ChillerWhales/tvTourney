@@ -54,7 +54,7 @@ var start = function() {
 	//attachs all the routes to the server
 	routes.setup(app, routeHandlers, deleteHandlers);
 	//if deployed to heroku will use heroku port, otherwise on local machine will use port 3000
-	var port = process.env.port || 3000;
+	var port = process.env.PORT || 3000;
 	var server = app.listen(port);
 	//layers socket.io ontop of the express server
 	socketSetup(server);
